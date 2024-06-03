@@ -1,0 +1,22 @@
+{
+  "name": "find-the-culprit",
+  "version": "1.5.0",
+  "description": "A foundry module to find misbehaving modules using binary search",
+  "main": "scripts/init.mjs",
+  "scripts": {
+    "sass": "sass styles/main.scss styles/find-the-culprit.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esheyw/find-the-culprit.git"
+  },
+  "author": "Emmanuel Wineberg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esheyw/find-the-culprit/issues"
+  },
+  "homepage": "https://github.com/esheyw/find-the-culprit#readme",
+  "devDependencies": {
+    "sass": "^1.77.4"
+  }
+}

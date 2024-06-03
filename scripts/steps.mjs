@@ -5,7 +5,17 @@ export async function stepZero(ev) {
   ev.preventDefault();
   ev.stopPropagation();
 
-  const original = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
+  const existingMods = game.modules.map((m) => m.id);
+  //This is to prune out modules that have a saved value in this world but are no longer installed.
+  //Not sure if only my broken test world requires it, but I can't see how it'd hurt.
+  const original = Object.entries(game.settings.get("core", ModuleManagement.CONFIG_SETTING)).reduce(
+    (acc, [mod, active]) => {
+      if (existingMods.includes(mod)) acc[mod] = active;
+      return acc;
+    },
+    {}
+  );
+
   const settings = {
     original,
     active: Object.keys(original).filter((e) => original[e] && e !== MODULE_ID),
@@ -16,35 +26,38 @@ export async function stepZero(ev) {
   const templateData = {
     activeModules: settings.active.map((m) => ({
       id: m,
-      title: game.modules.get(m).title,
+      title: game.modules.get(m)?.title, //todo: remove the optional chaining once you're fairly sure you can
     })),
     locks,
   };
   const content = await renderTemplate(template, templateData);
-  const app = new Dialog({
-    title: "Find the culprit",
-    content,
-    buttons: {
-      yes: {
-        icon: '<i class="fa-solid fa-check"></i>',
-        label: "Start",
-        callback: async (html) => {
-          const chosen = Array.from(html[0].querySelectorAll('input[type="checkbox"].ftc-checkbox:checked') || []).map(
-            (e) => e.dataset.module
-          );
+  const app = new Dialog(
+    {
+      title: "Find the culprit",
+      content,
+      buttons: {
+        yes: {
+          icon: '<i class="fa-solid fa-check"></i>',
+          label: "Start",
+          callback: async (html) => {
+            const chosen = Array.from(html.querySelectorAll('input[type="checkbox"].ftc-checkbox:checked') || []).map(
+              (e) => e.dataset.module
+            );
 
-          settings.active = settings.active.filter((e) => !chosen.includes(e));
-          settings.chosen = chosen;
-          await game.settings.set(MODULE_ID, "modules", settings);
-          deactivationStep([]);
+            settings.active = settings.active.filter((e) => !chosen.includes(e));
+            settings.chosen = chosen;
+            await game.settings.set(MODULE_ID, "modules", settings);
+            deactivationStep([]);
+          },
+        },
+        no: {
+          icon: '<i class="fa-solid fa-times"></i>',
+          label: "Cancel",
         },
       },
-      no: {
-        icon: '<i class="fa-solid fa-times"></i>',
-        label: "Cancel",
-      },
     },
-  }).render(true);
+    { jQuery: false }
+  ).render(true);
   const search = new SearchFilter({
     inputSelector: 'input[name="search"]',
     contentSelector: ".ftc-module-list",
@@ -109,7 +122,7 @@ export async function stepZero(ev) {
           $(checkbox).trigger("change");
         });
       },
-      no: () => { },
+      no: () => {},
     });
   }
 
@@ -139,7 +152,7 @@ export async function stepZero(ev) {
 export async function renderFinalDialog(culprit) {
   const template = `modules/${MODULE_ID}/templates/foundTheCulprit.hbs`;
   const templateData = {
-    culpritTitle: game.modules.get(culprit).title
+    culpritTitle: game.modules.get(culprit).title,
   };
   const content = await renderTemplate(template, templateData);
   new Dialog({

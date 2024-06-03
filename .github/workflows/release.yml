@@ -10,6 +10,10 @@ jobs:
     steps:
       # Checkout
       - uses: actions/checkout@v2
+      # install deps
+      - run: npm ci
+      # build sass
+      - run: npm run sass
 
       # Substitute the Manifest and Download URLs in the module.json
       - name: Substitute Manifest and Download Links For Versioned Ones
