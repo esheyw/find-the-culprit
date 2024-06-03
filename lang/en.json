@@ -1,0 +1,16 @@
+{
+  "FindTheCulprit": {
+    "CurrentlyActive": "Currently Active",
+    "FoundTheCulprit": {
+      "Header": "We found the culprit!"
+    },
+    "SelectMods": {
+      "Prompt": "Choose modules to keep active:",
+      "Usage": {
+        "P1": "After clicking start the page will refresh and you will be prompted to check whether your issue still exists. This will repeat multiple times until the culprit was found.",
+        "P2": "After the culprit was found you will be able to choose whether you want to reactivate all currently activated modules or not.",
+        "P3": "Don't worry if you accidently close one of the popups, just refresh the page manually and it will reappear."
+      }
+    }
+  }
+}
