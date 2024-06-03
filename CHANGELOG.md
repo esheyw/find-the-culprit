@@ -4,6 +4,10 @@
 - v12 Compatibility
 - Capitalization normalization
 
+## V1.4.9
+
+- Test of new release process
+
 ## v1.4.6
 
 - Added semicolon to end of `await game.settings.set(...)` was causing reload logic to error
