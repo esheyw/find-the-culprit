@@ -4,7 +4,7 @@
   "description": "A foundry module to find misbehaving modules using binary search",
   "main": "scripts/init.mjs",
   "scripts": {
-    "sass": "sass styles/main.scss styles/find-the-culprit.css"
+    "sass": "sass styles/find-the-culprit.scss styles/find-the-culprit.css"
   },
   "repository": {
     "type": "git",
