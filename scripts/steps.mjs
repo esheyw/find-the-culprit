@@ -22,7 +22,7 @@ export async function stepZero(ev) {
     step: 0,
   };
   const locks = game.settings.get(MODULE_ID, "locks");
-  const template = `modules/${MODULE_ID}/templates/selectMods.hbs`;
+  const template = `modules/${MODULE_ID}/templates/old-selectMods.hbs`;
   const templateData = {
     activeModules: settings.active.map((m) => ({
       id: m,

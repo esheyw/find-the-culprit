@@ -1,14 +1,23 @@
 {
   "FindTheCulprit": {
+    "Start": "Start",
+    "ClearAll": "Clear All",
+    "Error": {
+      "SelectModsSingleton": "Only one SelectMods app is allowed to exist."
+    },
     "CurrentlyActive": "Currently Active",
     "FoundTheCulprit": {
       "Header": "We found the culprit!"
     },
     "SelectMods": {
+      "DisabledBecauseLocked": "To deselect this module, unlock it first.",
+      "ForceLockedBecauseLibraryTooltip": "This module cannot be unlocked while the Lock Libraries box is checked above.",
       "Prompt": "Choose modules to keep active:",
+      "LockLibraries": "Lock Libraries",
+      "LockLibrariesTooltip": "Lock all modules marked as libraries, as those are generally dependencies of other modules.",
       "Usage": {
-        "P1": "After clicking start the page will refresh and you will be prompted to check whether your issue still exists. This will repeat multiple times until the culprit was found.",
-        "P2": "After the culprit was found you will be able to choose whether you want to reactivate all currently activated modules or not.",
+        "P1": "After clicking Start, the page will refresh and you will be prompted to check whether your issue still exists. This may repeat multiple times until the culprit was found.",
+        "P2": "After the culprit was found you will be able to choose whether you want to return your active modules list to its pre-run state.",
         "P3": "Don't worry if you accidently close one of the popups, just refresh the page manually and it will reappear."
       }
     }

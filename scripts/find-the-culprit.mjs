@@ -1,11 +1,14 @@
+import { FindTheCulpritApp } from "./apps/FindTheCulpritApp.mjs";
 import { registerSettings } from "./settings.mjs";
 import { renderFinalDialog, stepZero } from "./steps.mjs";
 export const MODULE_ID = "find-the-culprit";
-
-Hooks.once("init", () => {
+export const MODULE = () => game.modules.get(MODULE_ID);
+Hooks.once("init", () => {  
   registerSettings();
 });
-
+Hooks.once("setup", ()=> {
+  MODULE().app = new FindTheCulpritApp();
+})
 Hooks.on("renderModuleManagement", onRenderModuleManagement);
 
 function onRenderModuleManagement(app, html, options) {

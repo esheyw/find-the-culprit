@@ -14,12 +14,11 @@
       "discord": "esheyw"
     }
   ],
-  "url": "https://github.com/eshey/find-the-culprit",
-  "license": "https://github.com/eshey/find-the-culprit/blob/master/LICENSE",
-  "readme": "https://github.com/eshey/find-the-culprit#find-the-culprit",
-  "bugs": "https://github.com/eshey/find-the-culprit/issues",
-  "changelog": "https://github.com/eshey/find-the-culprit/blob/master/CHANGELOG.md",
-  "flags": {},
+  "url": "https://github.com/esheyw/find-the-culprit",
+  "license": "https://github.com/esheyw/find-the-culprit/blob/master/LICENSE",
+  "readme": "https://github.com/esheyw/find-the-culprit#find-the-culprit",
+  "bugs": "https://github.com/esheyw/find-the-culprit/issues",
+  "changelog": "https://github.com/esheyw/find-the-culprit/blob/master/CHANGELOG.md",
   "version": "1.5.0",
   "compatibility": {
     "minimum": "11",
@@ -37,5 +36,10 @@
   ],
   "relationships": {},
   "manifest": "{{updatedByRelease}}",
-  "download": "{{updatedByRelease}}"
+  "download": "{{updatedByRelease}}",
+  "flags": {
+    "hotReload": {
+      "extensions": ["css", "hbs", "json"]
+    }
+  }
 }
