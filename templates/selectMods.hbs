@@ -1,19 +1,39 @@
 <form>
   <p>
-    {{localize "FindTheCulprit.SelectMods.Prompt"}}
-    <label class="library-toggle" data-tooltip="{{localize "FindTheCulprit.SelectMods.LockLibrariesTooltip"}}">
-      <input type="checkbox" name="lockLibraries" {{checked lockLibraries}}>
-      {{localize "FindTheCulprit.SelectMods.LockLibraries"}}
-      <button type="button" class="ftc-clear">
-        {{localize "FindTheCulprit.ClearAll"}}
-      </button>
-    </label>
+    {{localize "FindTheCulprit.SelectMods.Prompt"}}    
   </p>
+  <div class="dialog-buttons">
+    <label 
+      class="library-toggle" 
+      data-tooltip="{{localize 
+        (concat "FindTheCulprit.SelectMods.Libraries" 
+          (ifThen lockLibraries "LockedTooltip" "UnlockedTooltip"))}}">
+      <input class="hidden" type="checkbox" name="lockLibraries" {{checked lockLibraries}}>
+      <i class="fa-solid fa-book{{#unless lockLibraries}}-open{{/unless}}"></i>
+      {{localize (concat "FindTheCulprit.SelectMods.Libraries" (ifThen lockLibraries "Locked" "Unlocked"))}}
+    </label>
+    <button type="button" data-button="lockSelected">
+      {{localize "FindTheCulprit.LockSelected"}}
+    </button>
+    <button type="button" data-button="clear">
+      {{localize "FindTheCulprit.ClearAll"}}
+    </button>
+  </div>
   <input type="text" name="search" placeholder="Filter Modules" value="">  
   <ul class='ftc-module-list-2 ftc-module-chooser'>
     {{#each activeModules}}
     <li data-module="{{id}}">
-      <label class="ftc-lock-checkbox" {{#if (and @root.lockLibraries library)}}data-tooltip="{{localize "FindTheCulprit.SelectMods.ForceLockedBecauseLibraryTooltip"}}"{{/if}}>
+      <label 
+        class="ftc-lock-checkbox" 
+        data-tooltip="{{localize 
+          (concat "FindTheCulprit.SelectMods." 
+            (ifThen (and @root.lockLibraries library) 
+              "ForceLockedBecauseLibraryTooltip" 
+              (ifThen locked "LockedTooltip" "UnlockedTooltip")
+            )
+          )
+        }}"
+      >
         <input class="lock-btn hidden" type="checkbox" name="locks.{{id}}" tabindex="-1" {{checked locked}} {{disabled (and @root.lockLibraries library)}} />
         <span class="fa-solid fa-lock{{#unless locked}}-open{{/unless}}"></span>
       </label>

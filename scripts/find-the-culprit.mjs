@@ -9,7 +9,10 @@ Hooks.once("init", () => {
 Hooks.once("setup", ()=> {
   MODULE().app = new FindTheCulpritApp();
 })
-Hooks.on("renderModuleManagement", onRenderModuleManagement);
+Hooks.once("ready", ()=> {
+  MODULE().app.doStep();
+})
+// Hooks.on("renderModuleManagement", onRenderModuleManagement);
 
 function onRenderModuleManagement(app, html, options) {
   html = html instanceof jQuery ? html[0] : html;
@@ -22,7 +25,7 @@ function onRenderModuleManagement(app, html, options) {
   app.setPosition();
 }
 
-Hooks.on("ready", doStep);
+// Hooks.on("ready", doStep);
 
 async function doStep() {
   const curr = game.settings.get(MODULE_ID, "modules");
@@ -169,7 +172,7 @@ export async function deactivationStep(chosenModules = []) {
 
 export async function reactivateModules() {
   const curr = game.settings.get(MODULE_ID, "modules");
-  let original = duplicate(game.settings.get("core", ModuleManagement.CONFIG_SETTING));
+  let original = foundry.utils.duplicate(game.settings.get("core", ModuleManagement.CONFIG_SETTING));
   for (let mod in curr.original) original[mod] = curr.original[mod];
 
   await game.settings.set("core", ModuleManagement.CONFIG_SETTING, original);

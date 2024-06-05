@@ -1,7 +1,12 @@
 {
   "FindTheCulprit": {
+    "FindTheCulprit": "Find the Culprit!",
     "Start": "Start",
     "ClearAll": "Clear All",
+    "LockSelected": "Lock Selected",
+    "ReactivateAllModules": "Reactivate All Modules",
+    "MissingDependency": "{module} requires a module with ID {dependency}, which is not installed!",
+    "DisabledDependency": "{module} requires {dependency}, which is not enabled!",
     "Error": {
       "SelectModsSingleton": "Only one SelectMods app is allowed to exist."
     },
@@ -13,13 +18,21 @@
       "DisabledBecauseLocked": "To deselect this module, unlock it first.",
       "ForceLockedBecauseLibraryTooltip": "This module cannot be unlocked while the Lock Libraries box is checked above.",
       "Prompt": "Choose modules to keep active:",
-      "LockLibraries": "Lock Libraries",
-      "LockLibrariesTooltip": "Lock all modules marked as libraries, as those are generally dependencies of other modules.",
+      "LockedTooltip": "This module is locked. Click to unlock it.",
+      "LibrariesLocked": "Libraries Locked",
+      "LibrariesLockedTooltip": "All modules marked as libraries are force locked.",
+      "LibrariesUnlocked": "Libraries Unlocked",
+      "LibrariesUnlockedTooltip": "Library modules are being treated normally.",
+      "UnlockedTooltip": "This module is unlocked. Click to lock it. Locked status is remembered.",
       "Usage": {
         "P1": "After clicking Start, the page will refresh and you will be prompted to check whether your issue still exists. This may repeat multiple times until the culprit was found.",
         "P2": "After the culprit was found you will be able to choose whether you want to return your active modules list to its pre-run state.",
         "P3": "Don't worry if you accidently close one of the popups, just refresh the page manually and it will reappear."
       }
+    },
+    "StartOfRun": {
+      "AllModulesDeactivated": "All modules, except your chosen ones, are deactivated.",
+      "DoesIssuePersist": "Does your issue persist?"
     }
   }
 }

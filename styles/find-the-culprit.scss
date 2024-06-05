@@ -54,14 +54,21 @@
   color: red;
 }
 .find-the-culprit-app {
-  label.library-toggle {
-    float: right;
-    align-items: center;
+  
+  label.library-toggle {    
+    cursor: pointer;
+    flex: 2;
     display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    i {
+      padding-right: 0.3em;
+    }
+    &:hover {
+      box-shadow: 0 0 5px var(--color-shadow-primary);
+    }
   }
-  button.ftc-clear {
-    font-size: 0.7rem;
-  }
+
   label.ftc-lock-checkbox:has(input[disabled]) span {
     display: inline-block;
     transform: rotate(180deg);

@@ -19,7 +19,7 @@
   "readme": "https://github.com/esheyw/find-the-culprit#find-the-culprit",
   "bugs": "https://github.com/esheyw/find-the-culprit/issues",
   "changelog": "https://github.com/esheyw/find-the-culprit/blob/master/CHANGELOG.md",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "compatibility": {
     "minimum": "11",
     "verified": "12"
