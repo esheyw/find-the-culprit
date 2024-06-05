@@ -1,4 +1,3 @@
-import { AllSelection } from "../../app/common/prosemirror/_module.mjs";
 import { MODULE, MODULE_ID } from "../find-the-culprit.mjs";
 const fu = foundry.utils;
 export class FindTheCulpritApp extends FormApplication {
