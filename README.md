@@ -1,4 +1,4 @@
-# Find the culprit
+# Find the Culprit
 
 <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/esheyw/find-the-culprit?style=for-the-badge"> <img alt="GitHub Releases" src="https://img.shields.io/github/downloads/esheyw/find-the-culprit/latest/total?style=for-the-badge">
 
