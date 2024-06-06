@@ -280,11 +280,14 @@ export class FindTheCulpritApp extends FormApplication {
     const el = event.currentTarget;
     const ignoreCheckboxen = ["lockLibraries", "mute"];
     if (ignoreCheckboxen.includes(el.name)) return;
-    if (el.name.startsWith("locks") && !this.#mute) {
-      AudioHelper.play({
-        src: `sounds/doors/industrial/${el.checked ? "lock" : "unlock"}.ogg`,
-        volume: game.settings.get("core", "globalAmbientVolume"),
-      });
+    if (el.name.startsWith("locks")) {
+      if (!this.#mute) {
+        AudioHelper.play({
+          src: `sounds/doors/industrial/${el.checked ? "lock" : "unlock"}.ogg`,
+          volume: game.settings.get("core", "globalAmbientVolume"),
+        });
+      }
+      if (!el.checked) return; // don't trigger dependency checks for unlocking
     }
     const modID = el.name.split(".")[1];
     const wrongStateDeps = this.#checkDepenencies(modID) ?? [];

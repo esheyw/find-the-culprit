@@ -1,3 +1,7 @@
+## v2.0.3
+
+- Prevent running dependency checks when unlocking a module
+
 ## v2.0.2
 
 - Attempt number two at fixing packaging issue
