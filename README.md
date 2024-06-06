@@ -12,6 +12,8 @@ This module helps you debug compatibility issues of modules, by finding the modu
   - Depending on the amount of modules you have installed this process could take a while, but at most `log(n) + 2` iterations, where _n_ is the amount of modules you have activated.
 - If you accidently close one of the prompts, just refresh the page manually and it will reappear.
 
+## [Patch Notes](https://github.com/esheyw/find-the-culprit/blob/main/CHANGELOG.md)
+
 ## Current Dev Status
 
 With v12 finally fully removing some deprecated code paths, this module has been picked up by a new author and is under active development again. Please report bugs to the tracker, feel free to make PRs, I'll accept useful help from anywhere.

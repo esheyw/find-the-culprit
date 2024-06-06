@@ -1,3 +1,11 @@
+## v2.0.0
+
+- Refactored the whole module
+- New initial module selection FormApp has several new UI features
+  - Force lock modules toggle
+  - Clear all button (removes all locks and deselects all modules)
+- Moved all UI text to localization strings. Localization PRs welcome!
+
 ## v1.5.0
 
 - First release under new management
