@@ -2,3 +2,4 @@ app
 jsconfig.json
 styles/*.css
 styles/*.map
+*.lock
