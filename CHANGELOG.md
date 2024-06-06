@@ -1,3 +1,7 @@
+## v2.0.1
+
+- Hopefully fix bizzare packaging issue around template file case and packaging
+
 ## v2.0.0
 
 - Refactored the whole module
