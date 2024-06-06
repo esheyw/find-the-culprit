@@ -4,6 +4,7 @@
 - New initial module selection FormApp has several new UI features
   - Force lock modules toggle
   - Clear all button (removes all locks and deselects all modules)
+  - Sound indicator on module lock/unlock (mute button included top right)  
 - Moved all UI text to localization strings. Localization PRs welcome!
 
 ## v1.5.0

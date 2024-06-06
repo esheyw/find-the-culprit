@@ -15,6 +15,13 @@
       <i class="fa-solid fa-arrow-rotate-left"></i>
       {{localize "FindTheCulprit.ClearAll"}}
     </button>
+    <label class="mute-toggle" data-tooltip="{{localize 
+      (concat "FindTheCulprit.SelectMods." (ifThen mute "MutedTooltip" "UnmutedTooltip"))}}">
+      <input class="hidden" type="checkbox" name="mute" {{checked mute}}>      
+      <button type="button" data-button="mute">
+        <i class="fa-solid fa-volume{{ifThen mute "-xmark" "-high" }}"></i>
+      </button>
+    </label>
   </div>
   <input type="text" name="search" placeholder="Filter Modules" value="">  
   <ul class='ftc-module-list ftc-module-chooser'>

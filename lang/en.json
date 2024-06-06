@@ -7,7 +7,7 @@
     "ReactivateAllModules": "Reactivate All Modules",
     "MissingDependency": "{module} requires a module with ID {dependency}, which is not installed!",
     "DisabledDependency": "{module} requires {dependency}, which is not enabled!",
-    "BinarySearchStep":{
+    "BinarySearchStep": {
       "CurrentStatistics": "Current Statistics",
       "StatsData": "{numRemaining} modules still in the list. {stepsLeft} or fewer steps remain."
     },
@@ -18,9 +18,9 @@
     "FoundTheCulprit": {
       "Header": "We found the culprit!"
     },
-    "IPWOS":{
-      "BlameModules":"Seems like the issue is a bug in your chosen module list:",
-      "BlameCoreOrSystem":"Seems like the issue is a bug in the game system or the core software."
+    "IPWOS": {
+      "BlameModules": "Seems like the issue is a bug in your chosen module list:",
+      "BlameCoreOrSystem": "Seems like the issue is a bug in the game system or the core software."
     },
     "SelectMods": {
       "DisabledBecauseLocked": "To deselect this module, unlock it first.",
@@ -31,6 +31,8 @@
       "LibrariesLockedTooltip": "All modules marked as libraries are force locked.",
       "LibrariesUnlocked": "Libraries Unlocked",
       "LibrariesUnlockedTooltip": "Library modules are being treated normally.",
+      "MutedTooltip": "Lock sounds muted.",
+      "UnmutedTooltip": "Lock sounds unmuted.",
       "UnlockedTooltip": "This module is unlocked. Click to lock it. Locked status is remembered.",
       "Usage": {
         "P1": "After clicking Start, the page will refresh and you will be prompted to check whether your issue still exists. This may repeat multiple times until the culprit was found.",

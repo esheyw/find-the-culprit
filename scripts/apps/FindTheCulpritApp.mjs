@@ -6,6 +6,7 @@ export class FindTheCulpritApp extends FormApplication {
   #lockLibraries;
   #stepData;
   #persists = null;
+  #mute;
 
   constructor(object = {}, options = {}) {
     if (MODULE().app instanceof FindTheCulpritApp)
@@ -22,6 +23,7 @@ export class FindTheCulpritApp extends FormApplication {
       },
       {}
     );
+    this.#mute = game.settings.get(MODULE_ID, "mute");
     this.#lockLibraries = game.settings.get(MODULE_ID, "lockLibraries");
     Hooks.on("renderModuleManagement", this.#onRenderModuleManagement.bind(this));
   }
@@ -40,7 +42,7 @@ export class FindTheCulpritApp extends FormApplication {
   get search() {
     this.#search ??= new SearchFilter({
       inputSelector: 'input[name="search"]',
-      contentSelector: ".ftc-module-list-2",
+      contentSelector: ".ftc-module-list",
       callback: (event, query, rgx, html) => {
         for (let li of html.children) {
           if (!query) {
@@ -67,7 +69,7 @@ export class FindTheCulpritApp extends FormApplication {
   doStep() {
     if (typeof this.#stepData.step !== "number") return;
     if (this.#stepData.step === 0) {
-      this.onlySelectedMods();      
+      this.onlySelectedMods();
     } else {
       this.binarySearchStep();
     }
@@ -259,7 +261,8 @@ export class FindTheCulpritApp extends FormApplication {
 
   getData(options = {}) {
     const context = super.getData(options);
-    const locks = game.settings.get(MODULE_ID, "locks-2");
+    const locks = game.settings.get(MODULE_ID, "locks");
+    context.mute = this.#mute;
     context.lockLibraries = this.#lockLibraries;
     context.activeModules = game.modules
       .filter((m) => m.active && m.id !== MODULE_ID)
@@ -275,8 +278,9 @@ export class FindTheCulpritApp extends FormApplication {
   }
   async _onChangeCheckbox(event) {
     const el = event.currentTarget;
-    if (el.name === "lockLibraries") return;
-    if (el.name.startsWith("locks")) {
+    const ignoreCheckboxen = ["lockLibraries", "mute"];
+    if (ignoreCheckboxen.includes(el.name)) return;
+    if (el.name.startsWith("locks") && !this.#mute) {
       AudioHelper.play({
         src: `sounds/doors/industrial/${el.checked ? "lock" : "unlock"}.ogg`,
         volume: game.settings.get("core", "globalAmbientVolume"),
@@ -371,8 +375,10 @@ export class FindTheCulpritApp extends FormApplication {
     formData = fu.expandObject(new FormDataExtended(this.form, { disabled: true }).object);
     this.#lockLibraries = formData.lockLibraries;
     await game.settings.set(MODULE_ID, "lockLibraries", this.#lockLibraries);
+    this.#mute = formData.mute;
+    await game.settings.set(MODULE_ID, "lockLibraries", this.#mute);
     fu.mergeObject(this.#selectedModules, formData.modules);
-    await game.settings.set(MODULE_ID, "locks-2", formData.locks);
+    await game.settings.set(MODULE_ID, "locks", formData.locks);
     this.render();
   }
 

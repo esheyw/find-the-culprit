@@ -1,10 +1,5 @@
 import { MODULE_ID } from "./find-the-culprit.mjs";
 export function registerSettings() {
-  game.settings.register(MODULE_ID, "modules", {
-    default: {},
-    type: Object,
-    config: false,
-  });
   game.settings.register(MODULE_ID, "locks", {
     default: {},
     type: Object,
@@ -20,12 +15,12 @@ export function registerSettings() {
     type: Object,
     config: false,
   });
-  game.settings.register(MODULE_ID, "locks-2", {
-    default: {},
-    type: Object,
+  game.settings.register(MODULE_ID, "lockLibraries", {
+    default: true,
+    type: Boolean,
     config: false,
   });
-  game.settings.register(MODULE_ID, "lockLibraries", {
+  game.settings.register(MODULE_ID, "mute", {
     default: true,
     type: Boolean,
     config: false,
