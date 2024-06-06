@@ -1,6 +1,6 @@
 ## v2.0.1
 
-- Hopefully fix bizzare packaging issue around template file case and packaging
+- Hopefully fix bizarre packaging issue around template file case and packaging
 
 ## v2.0.0
 
