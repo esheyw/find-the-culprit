@@ -1,0 +1,21 @@
+<form>
+  <h2>{{localize "FindTheCulprit.BinarySearchStep.CurrentStatistics"}}</h2>
+  <p>
+    {{localize "FindTheCulprit.BinarySearchStep.StatsData" numRemaining=numRemaining stepsLeft=stepsLeft}}
+  </p>
+  <ul class="ftc-module-list">
+    {{#each active}}
+      <li data-active="true" data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
+        <i class="fa-solid fa-check"></i>
+        {{title}}
+      </li>
+    {{/each}}
+    {{#each inactive}}
+      <li data-active="false" data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
+        <i class="fa-solid fa-xmark"></i>
+        {{title}}
+      </li>
+    {{/each}}
+  </ul>
+  <h2 class="persist-prompt">{{localize "FindTheCulprit.StartOfRun.DoesIssuePersist"}}</h2>
+</form>

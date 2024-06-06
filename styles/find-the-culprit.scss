@@ -1,85 +1,46 @@
-.ftc-module-list {
-  background: rgba(0, 0, 0, 0.05);
-  border: 2px inset #6666;
-  border-radius: 0.5em;
-
-  padding: 0.5em;
-  list-style-type: disc;
-  height: 300px;
-  overflow-y: scroll;
-  padding: 0.5em;
-  list-style-type: none;
-
-  li {
-    display: flex;
-    align-items: center;
-
-    input.ftc-checkbox {
-      margin-right: 1em;
-    }
-
-    &:not(:first-child) {
-      border-top: 1px dashed #6666;
-    }
-  }
-
-  i {
-    min-width: 1.5ch;
-  }
-
-  label.ftc-lock-checkbox {
-    margin-left: 8px;
-    margin-right: 5px;
-    width: 15px;
-    font-size: 10.5px;
-  }
-
-  .hidden {
-    display: none;
-  }
-
-  .lock-btn + .fa-solid::before {
-    content: "\f3c1";
-  }
-
-  .lock-btn:checked + .fa-solid::before {
-    content: "\f023";
-  }
-}
-.ftc-active {
-  color: green;
-}
-
-.ftc-inactive {
-  color: red;
-}
 .find-the-culprit-app {
-  
-  label.library-toggle {    
-    cursor: pointer;
-    flex: 2;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    i {
-      padding-right: 0.3em;
+  [data-active="true"] {
+    color: var(--color-level-success);
+  }
+  [data-active="false"] {
+    color: var(--color-level-error);
+  }
+  [data-active] i {
+    padding-right: 0.2em;
+  }
+  div.button-row {
+    display: flex;
+    flex-direction: row;
+    & > * {
+      flex: 1;
     }
+  }
+  label.library-toggle {
+    cursor: pointer;
+    display: block;
+    margin-right: 0.1em;
+    margin-bottom: 0.1em;
     &:hover {
       box-shadow: 0 0 5px var(--color-shadow-primary);
     }
+    button {
+      pointer-events: none;
+    }
+  }
+  [data-button="clear"] {
+    margin-left: 0.1em;
+    margin-bottom: 0.1em;
   }
 
   label.ftc-lock-checkbox:has(input[disabled]) span {
     display: inline-block;
     transform: rotate(180deg);
   }
-  .ftc-module-list-2 {
+  .ftc-module-list {
     background: rgba(0, 0, 0, 0.05);
     border: 2px inset #6666;
     border-radius: 0.5em;
-
     padding: 0.5em;
-    // list-style-type: disc; //why was this here?
     height: 300px;
     overflow-y: scroll;
     padding: 0.5em;

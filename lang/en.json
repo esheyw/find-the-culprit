@@ -7,12 +7,20 @@
     "ReactivateAllModules": "Reactivate All Modules",
     "MissingDependency": "{module} requires a module with ID {dependency}, which is not installed!",
     "DisabledDependency": "{module} requires {dependency}, which is not enabled!",
+    "BinarySearchStep":{
+      "CurrentStatistics": "Current Statistics",
+      "StatsData": "{numRemaining} modules still in the list. {stepsLeft} or fewer steps remain."
+    },
     "Error": {
       "SelectModsSingleton": "Only one SelectMods app is allowed to exist."
     },
     "CurrentlyActive": "Currently Active",
     "FoundTheCulprit": {
       "Header": "We found the culprit!"
+    },
+    "IPWOS":{
+      "BlameModules":"Seems like the issue is a bug in your chosen module list:",
+      "BlameCoreOrSystem":"Seems like the issue is a bug in the game system or the core software."
     },
     "SelectMods": {
       "DisabledBecauseLocked": "To deselect this module, unlock it first.",

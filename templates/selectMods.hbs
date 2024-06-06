@@ -2,38 +2,29 @@
   <p>
     {{localize "FindTheCulprit.SelectMods.Prompt"}}    
   </p>
-  <div class="dialog-buttons">
-    <label 
-      class="library-toggle" 
-      data-tooltip="{{localize 
-        (concat "FindTheCulprit.SelectMods.Libraries" 
-          (ifThen lockLibraries "LockedTooltip" "UnlockedTooltip"))}}">
-      <input class="hidden" type="checkbox" name="lockLibraries" {{checked lockLibraries}}>
-      <i class="fa-solid fa-book{{#unless lockLibraries}}-open{{/unless}}"></i>
-      {{localize (concat "FindTheCulprit.SelectMods.Libraries" (ifThen lockLibraries "Locked" "Unlocked"))}}
+  <div class="button-row">  
+    <label class="library-toggle" data-tooltip="{{localize 
+      (concat "FindTheCulprit.SelectMods.Libraries" (ifThen lockLibraries "LockedTooltip" "UnlockedTooltip"))}}">
+      <input class="hidden" type="checkbox" name="lockLibraries" {{checked lockLibraries}}>      
+      <button type="button" data-button="libraries">
+        <i class="fa-solid fa-lock{{#unless lockLibraries}}-open{{/unless}}"></i>
+        {{localize (concat "FindTheCulprit.SelectMods.Libraries" (ifThen lockLibraries "Locked" "Unlocked"))}}
+      </button>
     </label>
-    <button type="button" data-button="lockSelected">
-      {{localize "FindTheCulprit.LockSelected"}}
-    </button>
     <button type="button" data-button="clear">
+      <i class="fa-solid fa-arrow-rotate-left"></i>
       {{localize "FindTheCulprit.ClearAll"}}
     </button>
   </div>
   <input type="text" name="search" placeholder="Filter Modules" value="">  
-  <ul class='ftc-module-list-2 ftc-module-chooser'>
+  <ul class='ftc-module-list ftc-module-chooser'>
     {{#each activeModules}}
     <li data-module="{{id}}">
-      <label 
-        class="ftc-lock-checkbox" 
-        data-tooltip="{{localize 
+      <label class="ftc-lock-checkbox"  data-tooltip="{{localize 
           (concat "FindTheCulprit.SelectMods." 
             (ifThen (and @root.lockLibraries library) 
               "ForceLockedBecauseLibraryTooltip" 
-              (ifThen locked "LockedTooltip" "UnlockedTooltip")
-            )
-          )
-        }}"
-      >
+              (ifThen locked "LockedTooltip" "UnlockedTooltip")))}}">
         <input class="lock-btn hidden" type="checkbox" name="locks.{{id}}" tabindex="-1" {{checked locked}} {{disabled (and @root.lockLibraries library)}} />
         <span class="fa-solid fa-lock{{#unless locked}}-open{{/unless}}"></span>
       </label>
@@ -45,7 +36,7 @@
   <p>{{localize "FindTheCulprit.SelectMods.Usage.P1"}}</p>
   <p>{{localize "FindTheCulprit.SelectMods.Usage.P2"}}</p>
   <p>{{localize "FindTheCulprit.SelectMods.Usage.P2"}}</p>
-  <div class="dialog-buttons">
+  <div class="button-row">
     <button type="submit" data-button="start">
       <i class="fa-solid fa-check"></i>
       {{localize "FindTheCulprit.Start"}}
