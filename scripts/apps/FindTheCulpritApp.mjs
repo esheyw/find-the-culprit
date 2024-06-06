@@ -60,7 +60,7 @@ export class FindTheCulpritApp extends FormApplication {
   }
 
   get template() {
-    return `modules/${MODULE_ID}/templates/selectMods.hbs`;
+    return `modules/${MODULE_ID}/templates/initialSelectMods.hbs`;
   }
 
   get title() {
@@ -78,7 +78,7 @@ export class FindTheCulpritApp extends FormApplication {
   async onlySelectedMods() {
     this.#persists = await Dialog.confirm({
       title: this.title,
-      content: await renderTemplate(`modules/${MODULE_ID}/templates/startOfRun.hbs`),
+      content: await renderTemplate(`modules/${MODULE_ID}/templates/onlySelectedActive.hbs`),
     });
     if (this.#persists) {
       return this.issuePeristsWithOnlySelected();
