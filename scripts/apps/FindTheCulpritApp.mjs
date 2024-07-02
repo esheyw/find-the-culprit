@@ -27,8 +27,6 @@ export class FindTheCulpritApp extends FormApplication {
     this.#mute = game.settings.get(MODULE_ID, "mute");
     this.#lockLibraries = game.settings.get(MODULE_ID, "lockLibraries");
     this.#reloadAll = game.settings.get(MODULE_ID, "reloadAll");
-    this.dump();
-    globalThis.ftc = MODULE();
     Hooks.on("renderModuleManagement", this.#onRenderModuleManagement.bind(this));
   }
 
@@ -43,9 +41,6 @@ export class FindTheCulpritApp extends FormApplication {
     });
   }
 
-  dump() {
-    console.warn({ mute: this.#mute, ll: this.#lockLibraries, realoadAll: this.#reloadAll });
-  }
   get search() {
     this.#search ??= new SearchFilter({
       inputSelector: 'input[name="search"]',

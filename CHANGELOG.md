@@ -1,3 +1,7 @@
+## v2.1.2
+
+- Remove debug code
+
 ## v2.1.1
 
 - Fix the mute toggle saving to the wrong setting, overwriting lock libraries
