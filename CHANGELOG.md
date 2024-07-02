@@ -1,3 +1,9 @@
+## v2.1.0
+
+- Add support for reloading all connected clients along with the culprit-finder's
+- New toggle button in the main window
+- The CSS is potentially flaky, please let me know if you experience weirdness
+
 ## v2.0.3
 
 - Prevent running dependency checks when unlocking a module

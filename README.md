@@ -7,9 +7,9 @@ This module helps you debug compatibility issues of modules, by finding the modu
 - You will be asked to select a module to keep active at all times. Choose the module that you want to debug.
 - Your page will refresh, deactivating all modules, except the chosen one and this.
 - Check whether your issue still persists.
-- If the issue persists, the module will start a binary search by only reactivating half of your previous modules, refreshing the page, going on like this until the culprit is found.
+- If the issue persists, the module will start a binary search by only reactivating half of your previously active modules, refreshing the page, going on like this until the culprit is found.
   - Just follow the prompts appearing after each refresh.
-  - Depending on the amount of modules you have installed this process could take a while, but at most `log(n) + 2` iterations, where _n_ is the amount of modules you have activated.
+  - Depending on the number of modules you have installed this process could take a while, but at most `log(n) + 2` iterations, where _n_ is the number of modules you have activated.
 - If you accidently close one of the prompts, just refresh the page manually and it will reappear.
 
 ## [Patch Notes](https://github.com/esheyw/find-the-culprit/blob/main/CHANGELOG.md)
