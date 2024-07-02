@@ -27,6 +27,8 @@ export class FindTheCulpritApp extends FormApplication {
     this.#mute = game.settings.get(MODULE_ID, "mute");
     this.#lockLibraries = game.settings.get(MODULE_ID, "lockLibraries");
     this.#reloadAll = game.settings.get(MODULE_ID, "reloadAll");
+    this.dump();
+    globalThis.ftc = MODULE();
     Hooks.on("renderModuleManagement", this.#onRenderModuleManagement.bind(this));
   }
 
@@ -41,6 +43,9 @@ export class FindTheCulpritApp extends FormApplication {
     });
   }
 
+  dump() {
+    console.warn({ mute: this.#mute, ll: this.#lockLibraries, realoadAll: this.#reloadAll });
+  }
   get search() {
     this.#search ??= new SearchFilter({
       inputSelector: 'input[name="search"]',
@@ -376,8 +381,8 @@ export class FindTheCulpritApp extends FormApplication {
   }
 
   #clearAll() {
-    const allCheckboxes = this.form.querySelectorAll(`input[type=checkbox]`);
-    for (const checkbox of allCheckboxes) {
+    const almostAllCheckboxes = this.form.querySelectorAll(`:is(.ftc-module-list, .library-toggle) input[type=checkbox]`);
+    for (const checkbox of almostAllCheckboxes) {
       checkbox.disabled = false;
       checkbox.checked = false;
     }
@@ -389,8 +394,8 @@ export class FindTheCulpritApp extends FormApplication {
     this.#lockLibraries = formData.lockLibraries;
     await game.settings.set(MODULE_ID, "lockLibraries", this.#lockLibraries);
     this.#mute = formData.mute;
-    await game.settings.set(MODULE_ID, "lockLibraries", this.#mute);
-    this.#reloadAll = formData.reloadAll
+    await game.settings.set(MODULE_ID, "mute", this.#mute);
+    this.#reloadAll = formData.reloadAll;
     await game.settings.set(MODULE_ID, "reloadAll", this.#reloadAll);
     fu.mergeObject(this.#selectedModules, formData.modules);
     await game.settings.set(MODULE_ID, "locks", formData.locks);

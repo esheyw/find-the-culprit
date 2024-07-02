@@ -1,3 +1,8 @@
+## v2.1.1
+
+- Fix the mute toggle saving to the wrong setting, overwriting lock libraries
+- Fix the Clear All button clearing the mute and reload all checkboxen
+
 ## v2.1.0
 
 - Add support for reloading all connected clients along with the culprit-finder's
