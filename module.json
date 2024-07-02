@@ -15,10 +15,10 @@
     }
   ],
   "url": "https://github.com/esheyw/find-the-culprit",
-  "license": "https://github.com/esheyw/find-the-culprit/blob/master/LICENSE",
+  "license": "https://github.com/esheyw/find-the-culprit/blob/main/LICENSE",
   "readme": "https://github.com/esheyw/find-the-culprit#find-the-culprit",
   "bugs": "https://github.com/esheyw/find-the-culprit/issues",
-  "changelog": "https://github.com/esheyw/find-the-culprit/blob/master/CHANGELOG.md",
+  "changelog": "https://github.com/esheyw/find-the-culprit/blob/main/CHANGELOG.md",
   "version": "1.6.0",
   "compatibility": {
     "minimum": "11",

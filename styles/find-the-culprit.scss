@@ -13,14 +13,14 @@
     flex-direction: row;
     & > * {
       flex: 3;
+      margin: 0 0.1em 0.1em 0;
     }
   }
+  label.reload-all-toggle,
   label.library-toggle,
   label.mute-toggle {
     cursor: pointer;
     display: block;
-    margin-right: 0.1em;
-    margin-bottom: 0.1em;
     &:hover {
       box-shadow: 0 0 5px var(--color-shadow-primary);
     }
@@ -29,8 +29,16 @@
     }
   }
   [data-button="clear"] {
-    margin: 0 0.1em 0.1em;
+    display: block;
+    max-width: fit-content;
+    label {
+      margin: 0 0.2em;
+    }
   }
+  label.mute-toggle {
+    margin-right: 0;
+  }
+  label.reload-all-toggle,
   label.mute-toggle {
     flex: 1;
   }

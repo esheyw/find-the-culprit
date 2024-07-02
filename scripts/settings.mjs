@@ -25,4 +25,9 @@ export function registerSettings() {
     type: Boolean,
     config: false,
   });
+  game.settings.register(MODULE_ID, "reloadAll", {
+    default: false,
+    type: Boolean,
+    config: false,
+  });
 }

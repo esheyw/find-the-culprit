@@ -6,6 +6,7 @@ export class FindTheCulpritApp extends FormApplication {
   #lockLibraries;
   #stepData;
   #persists = null;
+  #reloadAll;
   #mute;
 
   constructor(object = {}, options = {}) {
@@ -25,6 +26,7 @@ export class FindTheCulpritApp extends FormApplication {
     );
     this.#mute = game.settings.get(MODULE_ID, "mute");
     this.#lockLibraries = game.settings.get(MODULE_ID, "lockLibraries");
+    this.#reloadAll = game.settings.get(MODULE_ID, "reloadAll");
     Hooks.on("renderModuleManagement", this.#onRenderModuleManagement.bind(this));
   }
 
@@ -66,6 +68,7 @@ export class FindTheCulpritApp extends FormApplication {
   get title() {
     return game.i18n.localize("FindTheCulprit.FindTheCulprit");
   }
+
   doStep() {
     if (typeof this.#stepData.step !== "number") return;
     if (this.#stepData.step === 0) {
@@ -121,8 +124,9 @@ export class FindTheCulpritApp extends FormApplication {
       },
       { classes: ["dialog", "find-the-culprit-app"] }
     );
+    //reactiveModules also calls resetSettings
     if (reactivate) await this.reactivateModules();
-    this.resetSettings();
+    else this.resetStepDataSetting();
   }
 
   async binarySearchStep() {
@@ -196,6 +200,7 @@ export class FindTheCulpritApp extends FormApplication {
       await game.settings.set(MODULE_ID, "stepData", this.#stepData);
     }
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, currentModList);
+    if (this.#reloadAll) game.socket.emit("reload");
     foundry.utils.debouncedReload();
   }
 
@@ -203,6 +208,8 @@ export class FindTheCulpritApp extends FormApplication {
     const currentModList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
     foundry.utils.mergeObject(currentModList, this.#stepData.original);
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, currentModList);
+    await this.resetStepDataSetting();
+    if (this.#reloadAll) game.socket.emit("reload");
     foundry.utils.debouncedReload();
   }
 
@@ -232,11 +239,12 @@ export class FindTheCulpritApp extends FormApplication {
       },
       { classes: ["dialog", "find-the-culprit-app"] }
     );
-    if (reactivate) await this.reactivateModules();
-    this.resetSettings();
+    //reactiveModules also calls resetStepDataSetting
+    if (reactivate) this.reactivateModules();
+    else this.resetStepDataSetting();
   }
 
-  async resetSettings() {
+  async resetStepDataSetting() {
     const defaultValue = game.settings.settings.get(`${MODULE_ID}.stepData`).default;
     return game.settings.set(MODULE_ID, "stepData", defaultValue);
   }
@@ -264,6 +272,7 @@ export class FindTheCulpritApp extends FormApplication {
     const locks = game.settings.get(MODULE_ID, "locks");
     context.mute = this.#mute;
     context.lockLibraries = this.#lockLibraries;
+    context.reloadAll = this.#reloadAll;
     context.activeModules = game.modules
       .filter((m) => m.active && m.id !== MODULE_ID)
       .map((m) => ({
@@ -276,6 +285,7 @@ export class FindTheCulpritApp extends FormApplication {
       .sort((a, b) => a.title.localeCompare(b.title));
     return context;
   }
+
   async _onChangeCheckbox(event) {
     const el = event.currentTarget;
     const ignoreCheckboxen = ["lockLibraries", "mute"];
@@ -325,7 +335,7 @@ export class FindTheCulpritApp extends FormApplication {
   #checkDepenencies(modID) {
     const mod = game.modules.get(modID);
     const modCheckbox = this.form[`modules.${modID}`];
-    if (!("requires" in mod.relationships) || !mod.relationships.requires.size) return;
+    if (!("requires" in (mod?.relationships ?? {})) || !mod.relationships.requires.size) return;
     return mod.relationships.requires.reduce((acc, rel) => {
       const depInstalled = game.modules.get(rel.id);
       if (!depInstalled) {
@@ -380,6 +390,8 @@ export class FindTheCulpritApp extends FormApplication {
     await game.settings.set(MODULE_ID, "lockLibraries", this.#lockLibraries);
     this.#mute = formData.mute;
     await game.settings.set(MODULE_ID, "lockLibraries", this.#mute);
+    this.#reloadAll = formData.reloadAll
+    await game.settings.set(MODULE_ID, "reloadAll", this.#reloadAll);
     fu.mergeObject(this.#selectedModules, formData.modules);
     await game.settings.set(MODULE_ID, "locks", formData.locks);
     this.render();

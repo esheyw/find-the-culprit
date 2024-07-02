@@ -11,10 +11,17 @@
         {{localize (concat "FindTheCulprit.SelectMods.Libraries" (ifThen lockLibraries "Locked" "Unlocked"))}}
       </button>
     </label>
-    <button type="button" data-button="clear">
-      <i class="fa-solid fa-arrow-rotate-left"></i>
-      {{localize "FindTheCulprit.ClearAll"}}
+    <button type="button" data-button="clear" data-tooltip="{{localize "FindTheCulprit.ClearAllTooltip"}}">
+      <label><i class="fa-solid fa-arrow-rotate-left"></i>
+      {{localize "FindTheCulprit.ClearAll"}}</label>
     </button>
+    <label class="reload-all-toggle" data-tooltip="{{localize 
+      (concat "FindTheCulprit.SelectMods.Do" (ifThen reloadAll "" "nt") "ReloadAllClientsTooltip")}}">
+      <input class="hidden" type="checkbox" name="reloadAll" {{checked reloadAll}}>      
+      <button type="button" data-button="reloadAll">
+        <i class="fa-solid fa-user{{#if reloadAll}}s{{/if}}"></i>
+      </button>
+    </label>
     <label class="mute-toggle" data-tooltip="{{localize 
       (concat "FindTheCulprit.SelectMods." (ifThen mute "MutedTooltip" "UnmutedTooltip"))}}">
       <input class="hidden" type="checkbox" name="mute" {{checked mute}}>      
