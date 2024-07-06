@@ -1,0 +1,51 @@
+{
+  "FindTheCulprit": {
+    "FindTheCulprit": "Find the Culprit!",
+    "Start": "Começar",
+    "ClearAll": "Limpar Todos",
+    "ClearAllTooltip": "Define todos os módulos como desbloqueados e desmarcados",
+    "LockSelected": "Bloquear Selecionado",
+    "ReactivateAllModules": "Reativar Todos os Módulos",
+    "MissingDependency": "{module} exige um módulo com ID {dependency}, que não está instalado!",
+    "DisabledDependency": "{module} exige {dependency}, que não está habilitado!",
+    "BinarySearchStep": {
+      "CurrentStatistics": "Estatísticas Atuais",
+      "StatsData": "{numRemaining} módulos ainda estão na lista. {stepsLeft} ou menos passos restantes."
+    },
+    "Error": {
+      "SelectModsSingleton": "Apenas um aplicativo SelectMods pode existir."
+    },
+    "CurrentlyActive": "Atualmente Ativos",
+    "FoundTheCulprit": {
+      "Header": "Encontramos o culpado!"
+    },
+    "IPWOS": {
+      "BlameModules": "Parece que o problema é um bug na sua lista de módulos escolhidos:",
+      "BlameCoreOrSystem": "Parece que o problema é um bug no sistema do jogo ou no software principal."
+    },
+    "SelectMods": {
+      "DisabledBecauseLocked": "Para desmarcar este módulo, desbloqueie-o primeiro.",
+      "ForceLockedBecauseLibraryTooltip": "Este módulo não pode ser desbloqueado enquanto a opção Bloquear Bibliotecas estiver marcada acima",
+      "Prompt": "Escolha módulos para manter ativos:",
+      "LockedTooltip": "Este módulo está bloqueado. Clique para desbloqueá-lo",
+      "LibrariesLocked": "Bibliotecas Bloqueadas",
+      "LibrariesLockedTooltip": "Todos os módulos marcados como bibliotecas são bloqueados à força",
+      "LibrariesUnlocked": "Bibliotecas Desbloqueadas",
+      "LibrariesUnlockedTooltip": "Módulos de biblioteca serão tratados normalmente",
+      "DoReloadAllClientsTooltip":"Todos os clientes conectados serão recarregados junto com o MJ",
+      "DontReloadAllClientsTooltip":"Somente o cliente MJ irá recarregar",
+      "MutedTooltip": "Bloquear Sons Mutado",
+      "UnmutedTooltip": "Bloquear Sons Desmutado",
+      "UnlockedTooltip": "Este módulo está desbloqueado. Clique para bloqueá-lo. O status bloqueado é lembrado",
+      "Usage": {
+        "P1": "Após clicar em Iniciar, a página será atualizada e você será solicitado a verificar se o problema ainda existe. Isso pode se repetir várias vezes até que o culpado seja encontrado.",
+        "P2": "Depois que o culpado for encontrado, você poderá escolher se deseja retornar sua lista de módulos ativos ao estado anterior à execução.",
+        "P3": "Não se preocupe se você fechar acidentalmente uma das janelas, basta atualizar a página e ela irá aparecer novamente."
+      }
+    },
+    "StartOfRun": {
+      "AllModulesDeactivated": "Todos os módulos, exceto os escolhidos, estão desativados.",
+      "DoesIssuePersist": "Seu problema persiste?"
+    }
+  }
+}
