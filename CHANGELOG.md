@@ -1,3 +1,7 @@
+## v2.1.3
+
+- Fix closing the Only Selected Mods step dialog without clicking a button being treated as clicking No
+
 ## v2.1.2
 
 - Remove debug code

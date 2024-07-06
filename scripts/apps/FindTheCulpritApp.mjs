@@ -83,12 +83,17 @@ export class FindTheCulpritApp extends FormApplication {
       title: this.title,
       content: await renderTemplate(`modules/${MODULE_ID}/templates/onlySelectedActive.hbs`),
     });
-    if (this.#persists) {
-      return this.issuePeristsWithOnlySelected();
-    } else {
-      this.#stepData.step = 1;
-      await game.settings.set(MODULE_ID, "stepData", this.#stepData);
-      this.deactivationStep(this.#stepData.active);
+    switch (this.#persists) {
+      case true:
+        return this.issuePeristsWithOnlySelected();
+      case false:
+        this.#stepData.step = 1;
+        await game.settings.set(MODULE_ID, "stepData", this.#stepData);
+        this.deactivationStep(this.#stepData.active);
+        break;
+      case null:
+      default:
+        return;
     }
   }
 
@@ -147,7 +152,7 @@ export class FindTheCulpritApp extends FormApplication {
       })),
     };
     const content = await renderTemplate(template, templateData);
-    Dialog.wait(
+    new Dialog(
       {
         title: this.title,
         content,
@@ -178,7 +183,7 @@ export class FindTheCulpritApp extends FormApplication {
         close: () => false,
       },
       { classes: ["dialog", "find-the-culprit-app"] }
-    );
+    ).render(true);
   }
 
   async deactivationStep(chosenModules = []) {
@@ -376,7 +381,9 @@ export class FindTheCulpritApp extends FormApplication {
   }
 
   #clearAll() {
-    const almostAllCheckboxes = this.form.querySelectorAll(`:is(.ftc-module-list, .library-toggle) input[type=checkbox]`);
+    const almostAllCheckboxes = this.form.querySelectorAll(
+      `:is(.ftc-module-list, .library-toggle) input[type=checkbox]`
+    );
     for (const checkbox of almostAllCheckboxes) {
       checkbox.disabled = false;
       checkbox.checked = false;
