@@ -35,8 +35,8 @@
     }
   ],
   "relationships": {},
-  "manifest": "{{updatedByRelease}}",
-  "download": "{{updatedByRelease}}",
+  "manifest": "updatedByRelease",
+  "download": "updatedByRelease",
   "flags": {
     "hotReload": {
       "extensions": ["css", "hbs", "json"]
