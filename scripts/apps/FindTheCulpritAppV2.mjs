@@ -93,8 +93,6 @@ export class FindTheCulpritAppV2 extends HandlebarsApplicationMixin(ApplicationV
     return context;
   }
 
-  
-
   #checkDepenencies(modID) {
     const mod = game.modules.get(modID);
     const modCheckbox = this.form[`modules.${modID}`];

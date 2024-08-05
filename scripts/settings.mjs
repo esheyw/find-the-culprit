@@ -1,4 +1,3 @@
-import { activate } from "../app/dist/server/sockets.mjs";
 import { FindTheCulpritAppV2 } from "./apps/FindTheCulpritAppV2.mjs";
 import { MODULE_ID } from "./find-the-culprit.mjs";
 const fields = foundry.data.fields;
@@ -22,7 +21,6 @@ class FtCSettingsModel extends foundry.abstract.DataModel {
       mute: new fields.BooleanField({ initial: false }),
       lockLibraries: new fields.BooleanField({ initial: false }),
       reloadAll: new fields.BooleanField({ initial: false }),
-      original: new fields.ObjectField(),
     };
   }
 }
@@ -32,6 +30,16 @@ export function registerSettings() {
     config: false,
     name: "FTC.Setting.Data.Name",
     hint: "FTC.Setting.Data.Hint",
+    default: {
+      locks: [],
+      original: [],
+      active: [],
+      chosen: [],
+      state: FindTheCulpritAppV2.STATES.DORMANT,
+      mute: false,
+      lockLibraries: false,
+      reloadAll: true,
+    }
   });
   game.settings.register(MODULE_ID, "locks", {
     default: {},
