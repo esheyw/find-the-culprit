@@ -1,63 +1,49 @@
-<div>
+<div class="specificity">
   <p>
-    {{localize "FindTheCulprit.SelectMods.Prompt"}}    
-  </p>
-  <div class="button-row">  
-    <label class="library-toggle" data-tooltip="{{localize 
-      (concat "FindTheCulprit.SelectMods.Libraries" (ifThen lockLibraries "LockedTooltip" "UnlockedTooltip"))}}">
-      <input class="hidden" type="checkbox" name="lockLibraries" {{checked lockLibraries}}>      
-      <button type="button" data-action="lockLibraries">
-        <i class="fa-solid fa-lock{{#unless lockLibraries}}-open{{/unless}}"></i>
-        {{localize (concat "FindTheCulprit.SelectMods.Libraries" (ifThen lockLibraries "Locked" "Unlocked"))}}
-      </button>
-    </label>
-    <button type="button" data-button="clear" data-tooltip="{{localize "FindTheCulprit.ClearAllTooltip"}}">
-      <label><i class="fa-solid fa-arrow-rotate-left"></i>
-      {{localize "FindTheCulprit.ClearAll"}}</label>
-    </button>
-    <label class="reload-all-toggle" data-tooltip="{{localize 
-      (concat "FindTheCulprit.SelectMods.Do" (ifThen reloadAll "" "nt") "ReloadAllClientsTooltip")}}">
-      <input class="hidden" type="checkbox" name="reloadAll" {{checked reloadAll}}>      
-      <button type="button" data-button="reloadAll">
-        <i class="fa-solid fa-user{{#if reloadAll}}s{{/if}}"></i>
-      </button>
-    </label>
-    <label class="mute-toggle" data-tooltip="{{localize 
-      (concat "FindTheCulprit.SelectMods." (ifThen mute "MutedTooltip" "UnmutedTooltip"))}}">
-      <input class="hidden" type="checkbox" name="mute" {{checked mute}}>      
-      <button type="button" data-button="mute">
-        <i class="fa-solid fa-volume{{ifThen mute "-xmark" "-high" }}"></i>
-      </button>
-    </label>
-  </div>
-  <input type="text" name="search" placeholder="Filter Modules" value="">  
+    {{~localize "FindTheCulprit.SelectMods.Prompt"~}}
+  </p>  
+  <input type="text" name="search" placeholder="Filter Modules" value="" />
   <ul class='ftc-module-list ftc-module-chooser'>
     {{#each activeModules}}
     <li data-module="{{id}}">
-      <label class="ftc-lock-checkbox"  data-tooltip="{{localize 
-          (concat "FindTheCulprit.SelectMods." 
-            (ifThen (and @root.lockLibraries library) 
-              "ForceLockedBecauseLibraryTooltip" 
-              (ifThen locked "LockedTooltip" "UnlockedTooltip")))}}">
-        <input class="lock-btn hidden" type="checkbox" name="locks.{{id}}" tabindex="-1" {{checked locked}} {{disabled (and @root.lockLibraries library)}} />
-        <span class="fa-solid fa-lock{{#unless locked}}-open{{/unless}}"></span>
+      <label class="ftc-lock-container" data-tooltip="{{localize (ftc-lockTooltip locked @root.lockLibraries.value library)}}">
+        <input class="lock-btn hidden" type="checkbox" name="locks.{{id}}" {{checked locked}} {{disabled (and @root.lockLibraries.value library)}} />
+        <i class="fa-solid fa-lock{{#unless locked}}-open{{/unless}}"></i>
       </label>
-      <input class="ftc-checkbox" type="checkbox" name="modules.{{id}}" id="ftc-selectmods-{{id}}" {{checked (or locked selected)}} {{disabled locked}} {{#if locked}}data-tooltip="{{localize "FindTheCulprit.SelectMods.DisabledBecauseLocked"}}"{{/if}}/>
-      <label class="package-title" for="ftc-selectmods-{{id}}">{{title}}</label>
+      <span>
+        <input class="ftc-checkbox" type="checkbox" name="modules.{{id}}" id="ftc2-selectmods-{{id}}" {{checked (or locked selected)}} {{#if locked}}disabled data-tooltip="{{localize "FindTheCulprit.SelectMods.DisabledBecauseLocked"}}"{{/if}}/>
+      </span>
+      <label class="package-title" for="ftc2-selectmods-{{id}}" data-tooltip="<code>{{id}}</code>"> 
+        {{title}}
+      </label>
     </li>
     {{/each}}              
   </ul>
+  <div class="button-row">
+    <button type="button" data-action="clearAll" data-tooltip="{{localize "FindTheCulprit.SelectMods.Action.clearAll.Tooltip"}}">
+      <i class="fa-solid fa-arrow-rotate-left"></i>
+      <span>{{localize "FindTheCulprit.SelectMods.Action.clearAll.Label"}}</span>
+    </button>
+    <button type="button" data-action="lockLibraries" data-tooltip="{{localize (ftc-actionTooltip "lockLibraries" lockLibraries.value)}}">
+      <i class="fa-solid {{lockLibraries.icon}}"></i>
+      <span>{{localize (ftc-actionLabel "lockLibraries" lockLibraries.value)}}</span>
+    </button>
+    <button type="button" data-action="reloadAll" data-tooltip="{{localize (ftc-actionTooltip "reloadAll" reloadAll.value)}}">
+      <i class="fa-solid {{reloadAll.icon}}"></i>
+      <span>{{localize (ftc-actionLabel "reloadAll" reloadAll.value)}}</span>
+    </button>
+  </div>
   <p>{{localize "FindTheCulprit.SelectMods.Usage.P1"}}</p>
   <p>{{localize "FindTheCulprit.SelectMods.Usage.P2"}}</p>
   <p>{{localize "FindTheCulprit.SelectMods.Usage.P2"}}</p>
-  <div class="button-row">
+  <footer class="form-footer">
     <button type="submit" data-action="start">
       <i class="fa-solid fa-check"></i>
-      {{localize "FindTheCulprit.Start"}}
+      <span>{{localize "FindTheCulprit.Start"}}</span>
     </button>
-    <button type="button" data-action="cancel">
+    <button type="button" data-action="close">
       <i class="fa-solid fa-xmark"></i>
-      {{localize "Cancel"}}
+      <span>{{localize "Cancel"}}</span>
     </button>
-  </div>
+  </footer>
 </div>

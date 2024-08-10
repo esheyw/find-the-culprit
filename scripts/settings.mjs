@@ -1,26 +1,29 @@
-import { FindTheCulpritAppV2 } from "./apps/FindTheCulpritAppV2.mjs";
-import { MODULE_ID } from "./find-the-culprit.mjs";
+import { MODULE_ID } from "./constants.mjs";
 const fields = foundry.data.fields;
-const ModIDField = () => new fields.SetField(
-  new fields.StringField({
-    required: true,
-    nullable: false,
-    blank: false,
-    validate: (value) => !!game.modules.get(value),
-    validationError: "is not an installed module ID.",
-  })
-)
+const ModuleIDField = () =>
+  new fields.SetField(
+    new fields.StringField({
+      required: true,
+      nullable: false,
+      blank: false,
+      choices: () => game.modules.map((m) => m.id),
+      validate: (value) => !!game.modules.get(value),
+      validationError: "is not an installed module ID.",
+    })
+  );
 class FtCSettingsModel extends foundry.abstract.DataModel {
   static defineSchema() {
     return {
-      locks: ModIDField(),
-      original: ModIDField(),
-      active: ModIDField(),
-      chosen: ModIDField(),
-      state: new fields.NumberField({ nullable: false, min: 0, initial: 0 }),
-      mute: new fields.BooleanField({ initial: false }),
-      lockLibraries: new fields.BooleanField({ initial: false }),
-      reloadAll: new fields.BooleanField({ initial: false }),
+      locks: ModuleIDField(),
+      original: ModuleIDField(),
+      active: ModuleIDField(),
+      inactive: ModuleIDField(),
+      selected: ModuleIDField(),
+      runState: new fields.NumberField({ choices: [0, 1, 2], initial: 0, integer: true }),
+      maxSteps: new fields.NumberField({ nullable: true, required: false, min: 0, integer: true }),
+      mute: new fields.BooleanField(),
+      lockLibraries: new fields.BooleanField(),
+      reloadAll: new fields.BooleanField(),
     };
   }
 }
@@ -30,16 +33,19 @@ export function registerSettings() {
     config: false,
     name: "FTC.Setting.Data.Name",
     hint: "FTC.Setting.Data.Hint",
+    scope: "world",
     default: {
       locks: [],
       original: [],
       active: [],
       chosen: [],
-      state: FindTheCulpritAppV2.STATES.DORMANT,
-      mute: false,
-      lockLibraries: false,
-      reloadAll: true,
-    }
+      runState: 0,
+      toggles: {
+        mute: false,
+        lockLibraries: false,
+        reloadAll: true,
+      },
+    },
   });
   game.settings.register(MODULE_ID, "locks", {
     default: {},

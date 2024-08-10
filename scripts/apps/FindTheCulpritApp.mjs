@@ -1,4 +1,4 @@
-import { MODULE, MODULE_ID } from "../find-the-culprit.mjs";
+import { MODULE, MODULE_ID } from "../constants.mjs";
 const fu = foundry.utils;
 export class FindTheCulpritApp extends FormApplication {
   #search;
@@ -337,6 +337,7 @@ export class FindTheCulpritApp extends FormApplication {
     }
   }
 
+  
   #checkDepenencies(modID) {
     const mod = game.modules.get(modID);
     const modCheckbox = this.form[`modules.${modID}`];

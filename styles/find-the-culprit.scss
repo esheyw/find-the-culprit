@@ -1,3 +1,111 @@
+.find-the-culprit-app2 {
+  row-gap: 0;
+  .window-content {
+    padding-top: 0;
+  }
+  div.button-row {    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    // flex-wrap: wrap;
+    button {
+      // display: block;
+      min-width: fit-content;
+      // max-width: fit-content;
+      // flex: 3;
+      flex-grow: 3;
+      flex-shrink: 1;
+      padding: 0.5rem;
+      // margin: 0 0.1rem 0.1rem 0;
+    }
+  }
+
+  .ftc-module-list {
+    margin: 0.25rem 0;
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px inset #6666;
+    .theme-dark & {
+      border-color: var(--color-light-4);
+    }
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    height: 300px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    list-style-type: none;
+
+    li {
+      display: grid;
+      grid-template-columns: clamp(10px, 1.2rem, 40px) clamp(12px, 1.6rem, 56px) auto;
+      column-gap: clamp(1px, 0.1rem, 10px);
+      vertical-align: middle;
+
+      &:not(:first-child) {
+        border-top: 1px dashed #6666;
+      }
+
+      span {
+        display: flex;
+        justify-content: center;
+      }
+
+      label {
+        display: inline-block;
+        margin-top: auto;
+        margin-bottom: auto;
+        &.ftc-lock-container {
+          text-align: center;
+          font-size: 80%;
+          &:has(input[disabled]) i {
+            transform: rotate(180deg);
+          }
+        }
+      }
+
+      input.ftc-checkbox {        
+        &:checked {
+          background-image: radial-gradient(
+            circle at 50% 50%,
+            var(--checkbox-disabled-color) 0%,
+            var(--checkbox-disabled-color) 54%,
+            transparent 55%
+          );
+          &:disabled {
+            background-image: radial-gradient(
+              circle at 50% 50%,
+              var(--checkbox-checked-color) 0%,
+              var(--checkbox-checked-color) 50%,
+              transparent 51%
+            );
+          }
+        }
+        .theme-light & {
+          filter: drop-shadow(var(--checkbox-disabled-color) 0.1em 0.1em 0.1em);
+        }
+        .theme-dark & {
+          filter: drop-shadow(var(--color-cool-3) 0.1em 0.1em 0.1em);
+        }
+      }
+
+      
+    }
+
+    .hidden {
+      display: none;
+    }
+  }
+
+  footer.form-footer {
+    gap: clamp(3px, 0.1rem, 20px);
+  }
+}
+
+.ftc-dialog {
+  .window-content {
+    padding: 0.5rem;
+  }
+}
+
 .find-the-culprit-app {
   [data-active="true"] {
     color: var(--color-level-success);
@@ -43,7 +151,7 @@
     flex: 1;
   }
 
-  label.ftc-lock-checkbox:has(input[disabled]) span {
+  label.ftc-lock-container:has(input[disabled]) span {
     display: inline-block;
     transform: rotate(180deg);
   }
@@ -70,7 +178,7 @@
       }
     }
 
-    label.ftc-lock-checkbox {
+    label.ftc-lock-container {
       margin-left: 8px;
       margin-right: 5px;
       width: 1em;
