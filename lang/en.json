@@ -3,27 +3,30 @@
     "FindTheCulprit": "Find the Culprit!",
     "Start": "Start",
     "ClearAll": "Clear All",
-    "LockSelected": "Lock Selected",
     "ReactivateAllModules": "Reactivate All Modules",
     "MissingDependency": "{module} requires a module with ID {dependency} as a dependency, which is not installed!",
     "DisabledDependency": "{module} requires {dependency} as a dependency, which is not enabled!",
     "BinarySearchStep": {
       "CurrentStatistics": "Current Statistics",
-      "StatsData": "{numRemaining} modules still in the list. {stepsLeft} or fewer steps remain."
+      "StatsData": "Step {currentStep}: {numRemaining} unlocked modules still in the list. {stepsLeft} or fewer steps remain."
     },
     "Error": {
-      "SelectModsSingleton": "Only one FindTheCulprit app is allowed to exist."
+      "Singleton": "Only one FindTheCulprit app is allowed to exist."
     },
     "CurrentlyActive": "Currently Active",
+    "CurrentlyInactive": "Currently Inactive",
+    "SelectedModuleTooltip":"Selected Module - Locked",
     "FoundTheCulprit": {
-      "Header": "We found the culprit!"
+      "Header": "We found the culprit!",
+      "HeaderUncertain": "We (might have) found the culprit!",
+      "HasSelected": "You have {count} modules selected, any of which may be your true culprit. Otherwise, it's: "
     },
     "Dependency": {
       "RequiredToEnable": "{module} requires the following dependencies: "
     },
     "IPWOS": {
-      "BlameModules": "Seems like the issue is a bug in your chosen module list:",
-      "BlameCoreOrSystem": "Seems like the issue is a bug in the game system or the core software."
+      "BlameModules": ", or in your selected module list:",
+      "BlameCoreOrSystem": "Seems like the issue is a bug in the game system or the core software"
     },
     "SelectMods": {
       "Action": {
@@ -88,7 +91,8 @@
       }
     },
     "StartOfRun": {
-      "AllModulesDeactivated": "All modules, except your chosen ones, are deactivated.",
+      "AllModulesDeactivated": "All modules except Find the Culprit are deactivated.",
+      "AllButSelectedDeactivated":"All modules, except those selected and FtC itself, are deactivated. Searching will take at most {maxSteps} steps.",
       "DoesIssuePersist": "Does your issue persist?"
     }
   }

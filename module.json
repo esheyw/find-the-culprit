@@ -21,8 +21,8 @@
   "changelog": "https://github.com/esheyw/find-the-culprit/blob/main/CHANGELOG.md",
   "version": "1.6.0",
   "compatibility": {
-    "minimum": "11",
-    "verified": "12"
+    "minimum": "12",
+    "verified": "12.330"
   },
   "esmodules": ["scripts/find-the-culprit.mjs"],
   "styles": ["styles/find-the-culprit.css"],

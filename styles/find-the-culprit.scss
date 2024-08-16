@@ -1,23 +1,35 @@
-.find-the-culprit-app2 {
-  row-gap: 0;
-  .window-content {
-    padding-top: 0;
+.find-the-culprit-app {
+  &.ftc-dialog .standard-form {
+    footer.form-footer button {
+      min-width: 130px;
+    }
   }
-  div.button-row {    
+
+  .standard-form,
+  &.standard-form {
+    row-gap: 0;
+  }
+  .window-content {
+    padding-top: 0.5rem;
+  }
+  div.button-row {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    // flex-wrap: wrap;
     button {
-      // display: block;
       min-width: fit-content;
-      // max-width: fit-content;
-      // flex: 3;
       flex-grow: 3;
       flex-shrink: 1;
       padding: 0.5rem;
-      // margin: 0 0.1rem 0.1rem 0;
     }
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: unset;
+    border: none;
+    text-align: center;
   }
 
   .ftc-module-list {
@@ -40,6 +52,21 @@
       column-gap: clamp(1px, 0.1rem, 10px);
       vertical-align: middle;
 
+      .module-active {
+        color: var(--color-level-success);
+      }
+
+      .module-inactive {
+        color: var(--color-level-warning);
+      }
+
+      .module-selected {
+        color: var(--color-dark-4);
+      }
+      .module-culprit {
+        color: var(--color-level-error);
+      }
+
       &:not(:first-child) {
         border-top: 1px dashed #6666;
       }
@@ -53,6 +80,9 @@
         display: inline-block;
         margin-top: auto;
         margin-bottom: auto;
+        &.checkboxless {
+          grid-column: span 2;
+        }
         &.ftc-lock-container {
           text-align: center;
           font-size: 80%;
@@ -62,7 +92,7 @@
         }
       }
 
-      input.ftc-checkbox {        
+      input.ftc-checkbox {
         &:checked {
           background-image: radial-gradient(
             circle at 50% 50%,
@@ -86,8 +116,6 @@
           filter: drop-shadow(var(--color-cool-3) 0.1em 0.1em 0.1em);
         }
       }
-
-      
     }
 
     .hidden {
@@ -97,96 +125,5 @@
 
   footer.form-footer {
     gap: clamp(3px, 0.1rem, 20px);
-  }
-}
-
-.ftc-dialog {
-  .window-content {
-    padding: 0.5rem;
-  }
-}
-
-.find-the-culprit-app {
-  [data-active="true"] {
-    color: var(--color-level-success);
-  }
-  [data-active="false"] {
-    color: var(--color-level-error);
-  }
-  [data-active] i {
-    padding-right: 0.2em;
-  }
-  div.button-row {
-    display: flex;
-    flex-direction: row;
-    & > * {
-      flex: 3;
-      margin: 0 0.1em 0.1em 0;
-    }
-  }
-  label.reload-all-toggle,
-  label.library-toggle,
-  label.mute-toggle {
-    cursor: pointer;
-    display: block;
-    &:hover {
-      box-shadow: 0 0 5px var(--color-shadow-primary);
-    }
-    button {
-      pointer-events: none;
-    }
-  }
-  [data-button="clear"] {
-    display: block;
-    max-width: fit-content;
-    label {
-      margin: 0 0.2em;
-    }
-  }
-  label.mute-toggle {
-    margin-right: 0;
-  }
-  label.reload-all-toggle,
-  label.mute-toggle {
-    flex: 1;
-  }
-
-  label.ftc-lock-container:has(input[disabled]) span {
-    display: inline-block;
-    transform: rotate(180deg);
-  }
-  .ftc-module-list {
-    background: rgba(0, 0, 0, 0.05);
-    border: 2px inset #6666;
-    border-radius: 0.5em;
-    padding: 0.5em;
-    height: 300px;
-    overflow-y: scroll;
-    padding: 0.5em;
-    list-style-type: none;
-
-    li {
-      display: flex;
-      align-items: center;
-
-      input.ftc-checkbox {
-        margin-right: 1em;
-      }
-
-      &:not(:first-child) {
-        border-top: 1px dashed #6666;
-      }
-    }
-
-    label.ftc-lock-container {
-      margin-left: 8px;
-      margin-right: 5px;
-      width: 1em;
-      font-size: 0.8em;
-    }
-
-    .hidden {
-      display: none;
-    }
   }
 }

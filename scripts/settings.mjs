@@ -19,11 +19,12 @@ class FtCSettingsModel extends foundry.abstract.DataModel {
       active: ModuleIDField(),
       inactive: ModuleIDField(),
       selected: ModuleIDField(),
-      runState: new fields.NumberField({ choices: [0, 1, 2], initial: 0, integer: true }),
+      currentStep: new fields.NumberField({ nullable: true, required: false, integer: true }),
       maxSteps: new fields.NumberField({ nullable: true, required: false, min: 0, integer: true }),
       mute: new fields.BooleanField(),
       lockLibraries: new fields.BooleanField(),
       reloadAll: new fields.BooleanField(),
+      zero: new fields.BooleanField(),
     };
   }
 }
@@ -38,43 +39,18 @@ export function registerSettings() {
       locks: [],
       original: [],
       active: [],
-      chosen: [],
-      runState: 0,
-      toggles: {
-        mute: false,
-        lockLibraries: false,
-        reloadAll: true,
-      },
+      inactive: [],
+      selected: [],
+      currentStep: null,
+      maxSteps: null,
+      mute: false,
+      lockLibraries: false,
+      reloadAll: true,
     },
   });
-  game.settings.register(MODULE_ID, "locks", {
-    default: {},
-    type: Object,
+  game.settings.register(MODULE_ID, "cleaned", {
+    type: new fields.BooleanField(),
     config: false,
-  });
-  game.settings.register(MODULE_ID, "stepData", {
-    default: {
-      step: null,
-      original: null,
-      active: null,
-      inactive: null,
-    },
-    type: Object,
-    config: false,
-  });
-  game.settings.register(MODULE_ID, "lockLibraries", {
-    default: true,
-    type: Boolean,
-    config: false,
-  });
-  game.settings.register(MODULE_ID, "mute", {
-    default: true,
-    type: Boolean,
-    config: false,
-  });
-  game.settings.register(MODULE_ID, "reloadAll", {
-    default: false,
-    type: Boolean,
-    config: false,
-  });
+    scope: "world",
+  })
 }

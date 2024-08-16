@@ -1,21 +1,29 @@
-<form>
-  <h2>{{localize "FindTheCulprit.BinarySearchStep.CurrentStatistics"}}</h2>
-  <p>
-    {{localize "FindTheCulprit.BinarySearchStep.StatsData" numRemaining=numRemaining stepsLeft=stepsLeft}}
-  </p>
-  <ul class="ftc-module-list">
-    {{#each active}}
-      <li data-active="true" data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
-        <i class="fa-solid fa-check"></i>
-        {{title}}
-      </li>
-    {{/each}}
-    {{#each inactive}}
-      <li data-active="false" data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
-        <i class="fa-solid fa-xmark"></i>
-        {{title}}
-      </li>
-    {{/each}}
-  </ul>
-  <h2 class="persist-prompt">{{localize "FindTheCulprit.StartOfRun.DoesIssuePersist"}}</h2>
-</form>
+<p>
+  {{localize
+    "FindTheCulprit.BinarySearchStep.StatsData"
+    currentStep=currentStep
+    numRemaining=numRemaining
+    stepsLeft=stepsLeft
+  }}
+</p>
+<ul class="ftc-module-list">
+  {{#each active}}
+    <li data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
+      <i class="fa-solid fa-check module-active"></i>
+      <label class="checkboxless">{{ftc-modTitle this}}</label>
+    </li>
+  {{/each}}
+  {{#each inactive}}
+    <li data-tooltip="{{localize 'FindTheCulprit.CurrentlyInactive'}}">
+      <i class="fa-regular fa-square module-inactive"></i>
+      <label class="checkboxless">{{ftc-modTitle this}}</label>
+    </li>
+  {{/each}}
+  {{#each selected}}
+    <li data-tooltip="{{localize 'FindTheCulprit.SelectedModuleTooltip'}}">
+      <i class="fa-solid fa-lock module-selected"></i>
+      <label class="checkboxless">{{ftc-modTitle this}}</label>
+    </li>
+  {{/each}}
+</ul>
+<p>{{localize "FindTheCulprit.StartOfRun.DoesIssuePersist"}}</p>

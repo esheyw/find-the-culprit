@@ -1,4 +1,17 @@
-<h2>{{localize "FindTheCulprit.FoundTheCulprit.Header"}}</h2>
+
+<h2>{{localize (concat "FindTheCulprit.FoundTheCulprit.Header" (ifThen selected.size "Uncertain" ""))}}</h2>
+{{#if selected.size}}
+<p>{{localize "FindTheCulprit.FoundTheCulprit.HasSelected"}}</p>
+{{/if}}
 <ul class="ftc-module-list">
-  <li data-active="true" data-tooltip="{{localize "FindTheCulprit.CurrentlyActive"}}"><i class="fa-solid fa-check"></i>{{culpritTitle}}</li>
+  <li data-tooltip="{{localize "FindTheCulprit.CurrentlyActive"}}">
+    <i class="fa-solid fa-arrow-right module-culprit"></i>
+    <label class="checkboxless">{{ftc-modTitle culprit}}</label>
+  </li>
+  {{#each selected}}
+  <li data-tooltip="{{localize "FindTheCulprit.CurrentlyActive"}}">
+    <i class="fa-solid fa-lock module-selected"></i>
+    <label class="checkboxless">{{ftc-modTitle this}}</label>
+  </li>
+  {{/each}}
 </ul>

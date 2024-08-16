@@ -1,4 +1,4 @@
-import { MODULE, MODULE_ID } from "./constants.mjs";
+import { fu, MODULE, MODULE_ID } from "./constants.mjs";
 
 export function debug(...args) {
   if (MODULE().debug) console.warn(...args);
@@ -30,4 +30,24 @@ export function lockTooltip(locked, lockLibraries, library) {
     out += locked ? "Locked" : "Unlocked";
   }
   return out;
+}
+
+export function modTitle(modID) {
+  return game.modules.get(modID)?.title || "";
+}
+
+export function getDependencies(mod, inner = false) {
+  mod = mod instanceof foundry.packages.BaseModule ? mod : game.modules.get(mod);
+  const modDeps = [...mod.relationships.requires].filter((r) => r.type === "module");
+  const out = [];
+  if (inner) out.push(mod.id);
+  out.push(...modDeps.flatMap((d) => getDependencies(d.id, true)));
+  return [...new Set(out)];
+}
+
+export function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
 }

@@ -1,3 +1,15 @@
+## Version 2.5.0
+
+- Foundry v12+ only release
+- Converted the mod to ApplicationV2 exclusively
+  - New styles are still slightly TBD. Should work for anywhere between font size 3 and 7 without jankiness, though.
+  - Moved the mute toggle to the header controls dropdown
+  - Added a header controls button for 'Quick Zero Mods Test' for when you want _actually_ no modules but FtC active but don't want to mess with your lock settings
+  - Switched over to change listeners on form elements instead of submitOnChange - the module list will no longer flicker on state change if filtered
+- Debounced the lock sound - toggling Lock Libraries should sound better now
+- Implemented new algorithm for splitting mods in half between steps
+  - Attempts to keep dependency chains together when possible, should reduce false positives.
+
 ## v2.1.3
 
 - Fix closing the Only Selected Mods step dialog without clicking a button being treated as clicking No
@@ -35,7 +47,7 @@
 - New initial module selection FormApp has several new UI features
   - Force lock libraries toggle
   - Clear all button (removes all locks and deselects all modules)
-  - Sound indicator on module lock/unlock (mute button included top right)  
+  - Sound indicator on module lock/unlock (mute button included top right)
 - Moved all UI text to localization strings. Localization PRs welcome!
 
 ## v1.5.0
