@@ -2,7 +2,7 @@ import { FindTheCulpritAppV2 } from "./apps/FindTheCulpritAppV2.mjs";
 import { registerSettings } from "./settings.mjs";
 import { MODULE } from "./constants.mjs";
 import { helpers } from "./handlebars.mjs";
-import { cleanOldSettings } from "./helpers.mjs";
+import { FindTheCulpritAppV3 } from "./apps/FindTheCulpritAppV3.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
@@ -12,13 +12,16 @@ Hooks.once("init", () => {
 
 Hooks.once("setup", () => {
   if (game.user !== activeRealGM()) return;
-  
+
   // if (!MODULE().debug) cleanOldSettings();
 });
 Hooks.once("ready", () => {
-  if (game.user !== activeRealGM()) return;  
+  if (game.user !== activeRealGM()) return;
   MODULE().app = new FindTheCulpritAppV2();
+  MODULE().app2 = new FindTheCulpritAppV3();
   MODULE().app.doStep();
+  MODULE().app2.doStep();
+  globalThis.ftc2 = MODULE().app2;
 });
 
 function activeRealGM() {

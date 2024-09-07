@@ -64,6 +64,14 @@
           "Tooltip": "Sets every module to unlocked and unselected"
         }
       },
+      "ModuleTooltip":{
+        "Preamble":"This module is force pinned because:",
+        "LockedLibrary": "It is a library and the Lock Libraries toggle is enabled",
+        "DependencyOf": "It is a dependency of pinned module(s) {pinnedDependants}",
+        "Pinned":"Pinned: will be enabled at all times during the search",
+        "Excluded":"Excluded: will be disabled for the duration of the search",
+        "Search": "Search: This module is in the pool of potential culprits"
+      },
       "Lock": {
         "Tooltip": {
           "Locked": "This module is locked. Click to unlock it.",

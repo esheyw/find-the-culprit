@@ -58,7 +58,7 @@ export class FindTheCulpritAppV2 extends HandlebarsApplicationMixin(ApplicationV
   #selected = new Set();
 
   constructor() {
-    if (MODULE().app2 instanceof FindTheCulpritAppV2)
+    if (MODULE().app instanceof FindTheCulpritAppV2)
       throw new Error(game.i18n.localize("FindTheCulprit.Error.Singleton"));
     super();
 

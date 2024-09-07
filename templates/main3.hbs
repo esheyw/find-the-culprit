@@ -1,0 +1,72 @@
+<div class="specificity">
+  <p>Pin any modules that you want to <em>stay</em> enabled throughout the search.</p>
+  <p>Disable any modules that want <em>excluded</em> from the search (they will be reenabled after).</p>
+  <input type="text" name="search" placeholder="Filter Modules" value="" />
+  <ul class="ftc-module-list">
+    {{#each modules}}
+    {{log this}}
+      <li data-module="{{id}}"{{#if hidden}} class="ftc-hidden"{{/if}} >
+        <div class="tooltip-wrapper" data-tooltip="{{> moduleTooltip this~}}" data-tooltip-class="ftc-module-tooltip" data-tooltip-direction="LEFT">
+          <button type="button" id="find-the-culprit-toggle-{{id}}" data-action="cycle" data-state="{{state}}" {{disabled (eq state "forced")}}>
+            <i class="fa-solid {{icon}}"></i>
+          </button>
+        </div>
+        <label class="module-title" {{#unless (eq state "forced")}}for="find-the-culprit-toggle-{{id}}"{{/unless}}>
+          {{~title~}}
+        </label>
+      </li>
+    {{/each}}
+  </ul>
+  <div class="button-row">
+    <button
+      type="button"
+      data-action="clearAll"      
+      data-tooltip="{{localize 'FindTheCulprit.SelectMods.Action.clearAll.Tooltip'}}"
+    >
+      <i class="fa-solid fa-arrow-rotate-left"></i>
+      <span>{{localize "FindTheCulprit.SelectMods.Action.clearAll.Label"}}</span>
+    </button>
+    <button
+      type="button"
+      data-action="lockLibraries"
+      data-tooltip="{{localize (ftc-actionTooltip 'lockLibraries' lockLibraries.value)}}"
+    >
+      <i class="fa-solid {{lockLibraries.icon}}"></i>
+      <span>{{localize (ftc-actionLabel "lockLibraries" lockLibraries.value)}}</span>
+    </button>
+    <button
+      type="button"
+      data-action="reloadAll"
+      data-tooltip="{{localize (ftc-actionTooltip 'reloadAll' reloadAll.value)}}"
+    >
+      <i class="fa-solid {{reloadAll.icon}}"></i>
+      <span>{{localize (ftc-actionLabel "reloadAll" reloadAll.value)}}</span>
+    </button>
+  </div>
+  <footer class="form-footer">
+    <button type="submit" data-action="start">
+      <i class="fa-solid fa-check"></i>
+      <span>{{localize "FindTheCulprit.Start"}}</span>
+    </button>
+    <button type="button" data-action="close">
+      <i class="fa-solid fa-xmark"></i>
+      <span>{{localize "Cancel"}}</span>
+    </button>
+  </footer>
+</div>
+
+{{~#*inline "moduleTooltip"~}}
+  {{~#if (eq state "forced")~}}
+    {{localize "FindTheCulprit.SelectMods.ModuleTooltip.Preamble"}}
+    <ul>
+      {{#if pinnedDependants}}<li>{{localize "FindTheCulprit.SelectMods.ModuleTooltip.DependencyOf" pinnedDependants=pinnedDependants}}</li>{{/if}}
+      {{#if isLockedLibrary}}<li>{{localize "FindTheCulprit.SelectMods.ModuleTooltip.LockedLibrary"}}</li>{{/if}}
+    </ul>
+  {{else if (eq state "pinned")}}
+    {{localize "FindTheCulprit.SelectMods.ModuleTooltip.Pinned"}}
+  {{else if (eq state "excluded")}}
+    {{localize "FindTheCulprit.SelectMods.ModuleTooltip.Excluded"}}
+  {{else}}
+    {{localize "FindTheCulprit.SelectMods.ModuleTooltip.Search"}}
+  {{/if}}
+{{~/inline~}}
