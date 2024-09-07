@@ -26,6 +26,10 @@ export function lockTooltip(locked, lockLibraries, library) {
   return out;
 }
 
+export function modTitle(modID) {
+  return game.modules.get(modID)?.title || "";
+}
+
 export function getDependencies(mod, { inner = false, pinned = new Set() } = {}) {
   mod = mod instanceof foundry.packages.BaseModule ? mod : game.modules.get(mod);
   pinned = pinned instanceof Set ? pinned : new Set(pinned);
