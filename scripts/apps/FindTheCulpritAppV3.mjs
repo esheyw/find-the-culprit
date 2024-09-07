@@ -196,17 +196,23 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   async #update(changes, { render = true, recursive = true } = {}) {
     changes ??= this.#data.toObject(false);
     try {
-      // const beforeUpdate = this.#data.toObject();
-      // for (const modID in beforeUpdate.modules) {
-      //   beforeUpdate.modules[modID] = beforeUpdate.modules[modID].toObject();
-      // }
-      // debug("changes for update, initial state", changes, beforeUpdate);
+      const beforeUpdate = this.#data.toObject();
+      for (const modID in beforeUpdate.modules) {
+        beforeUpdate.modules[modID] =
+          beforeUpdate.modules[modID] instanceof FtCModuleModel
+            ? beforeUpdate.modules[modID].toObject()
+            : beforeUpdate.modules[modID];
+      }
+      debug("changes for update, initial state", changes, beforeUpdate);
       this.#data.updateSource(changes, { recursive });
-      // const afterUpdate = this.#data.toObject();
-      // for (const modID in afterUpdate.modules) {
-      //   afterUpdate.modules[modID] = afterUpdate.modules[modID].toObject();
-      // }
-      // debug("after update, diff", afterUpdate, fu.diffObject(beforeUpdate, afterUpdate));
+      const afterUpdate = this.#data.toObject();
+      for (const modID in afterUpdate.modules) {
+        afterUpdate.modules[modID] =
+          afterUpdate.modules[modID] instanceof FtCModuleModel
+            ? afterUpdate.modules[modID].toObject()
+            : afterUpdate.modules[modID];
+      }
+      debug("after update, diff", afterUpdate, fu.diffObject(beforeUpdate, afterUpdate));
       if (render) this.render();
       return game.settings.set(MODULE_ID, "data2", this.#data);
     } catch (error) {
