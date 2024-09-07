@@ -131,6 +131,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         });
       }
     }
+    debug("preparing modules", modules);
     return this.#update({ modules }, { render: false });
   }
 
@@ -195,13 +196,17 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   async #update(changes, { render = true, recursive = true } = {}) {
     changes ??= this.#data.toObject(false);
     try {
-      debug("update made", {
-        changes,
-        data: this.#data,
-        dataObject: this.#data.toObject(false),
-        diff: fu.diffObject(changes, this.#data.toObject(false)),
-      });
+      const beforeUpdate = this.#data.toObject();
+      for (const modID in beforeUpdate.modules) {
+        beforeUpdate.modules[modID] = beforeUpdate.modules[modID].toObject();
+      }
+      debug("changes for update, initial state", changes, beforeUpdate);
       this.#data.updateSource(changes, { recursive });
+      const afterUpdate = this.#data.toObject();
+      for (const modID in afterUpdate.modules) {
+        afterUpdate.modules[modID] = afterUpdate.modules[modID].toObject();
+      }
+      debug("after update, diff", afterUpdate, fu.diffObject(beforeUpdate, afterUpdate));
       if (render) this.render();
       return game.settings.set(MODULE_ID, "data2", this.#data);
     } catch (error) {
@@ -288,11 +293,10 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const states = ["search", "pinned", "excluded"];
     const newState =
       states[(states.indexOf(state) + (event.type === "contextmenu" ? -1 : 1) + states.length) % states.length];
-    debug("cycle", modID, state, newState);
-    this.#data.modules[modID].updateSource({
-      pinned: newState === "pinned" ? true : newState === "excluded" ? null : false
-    })
-    return this.#update();
+    debug("cycle", { modID, state, newState });
+    return this.#update({
+      [`modules.${modID}.pinned`]: newState === "pinned" ? true : newState === "excluded" ? null : false,
+    });
   }
 
   #findPinnedDependants(data) {
