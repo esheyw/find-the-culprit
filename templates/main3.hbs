@@ -4,7 +4,6 @@
   <input type="text" name="search" placeholder="Filter Modules" value="" />
   <ul class="ftc-module-list">
     {{#each modules}}
-    {{log this}}
       <li data-module="{{id}}"{{#if hidden}} class="ftc-hidden"{{/if}} >
         <div class="tooltip-wrapper" data-tooltip="{{> moduleTooltip this~}}" data-tooltip-class="ftc-module-tooltip" data-tooltip-direction="LEFT">
           <button type="button" id="find-the-culprit-toggle-{{id}}" data-action="cycle" data-state="{{state}}" {{disabled (eq state "forced")}}>

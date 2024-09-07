@@ -96,18 +96,17 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
 
   async #prepareModules() {
     const activeModIDs = game.modules.filter((m) => m.active && m.id !== MODULE_ID).map((m) => m.id);
-    const modules = fu.deepClone(this.#data.modules);
-    // debug('modules as saved ', modules)
-    //prune all disabled modules first so we have a list to remove from dependcyOf
-    const disabledSinceLastLoad = Object.keys(this.#data.modules).filter((modID) => !activeModIDs.includes(modID));
-    for (const modID of disabledSinceLastLoad) {
-      delete modules[modID];
-      modules[`-=${modID}`] = true;
-    }
+    const modules = this.#data.modules;
+    // // prune all disabled modules first so we have a list to remove from dependcyOf
+    // const disabledSinceLastLoad = Object.keys(this.#data.modules).filter((modID) => !activeModIDs.includes(modID));
+    // for (const modID of disabledSinceLastLoad) {
+    //   delete modules[modID];
+    //   modules[`-=${modID}`] = true;
+    // }
     //add all new modules and reset non-persistent properties
-    for (const modID of activeModIDs) {
-      modules[modID] ??= new FtCModuleModel({ id: modID });
-      modules[modID].updateSource({
+    for (const id of activeModIDs) {
+      modules[id] ??= new FtCModuleModel({ id });
+      modules[id].updateSource({
         dependencyOf: [],
         requires: [],
       });
@@ -115,7 +114,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
 
     //process dependencies - has to be its own loop to guarantee all modules have a dependencyOf set to add to
     for (const modID in modules) {
-      if (modID.startsWith("-=")) continue;
+      // keep uninstalled modules state
+      if (!!game.modules.get(modID)) continue;
       modules[modID].updateSource({
         requires: this.#getAllDependencies(modID),
       });
@@ -131,7 +131,10 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         });
       }
     }
-    debug("preparing modules", modules);
+    // process inner datamodels so we don't pollute the source with complex objects
+    for (const modID in modules) {
+      modules[modID] = modules[modID].toObject();
+    }
     return this.#update({ modules }, { render: false });
   }
 
@@ -196,23 +199,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   async #update(changes, { render = true, recursive = true } = {}) {
     changes ??= this.#data.toObject(false);
     try {
-      const beforeUpdate = this.#data.toObject();
-      for (const modID in beforeUpdate.modules) {
-        beforeUpdate.modules[modID] =
-          beforeUpdate.modules[modID] instanceof FtCModuleModel
-            ? beforeUpdate.modules[modID].toObject()
-            : beforeUpdate.modules[modID];
-      }
-      debug("changes for update, initial state", changes, beforeUpdate);
       this.#data.updateSource(changes, { recursive });
-      const afterUpdate = this.#data.toObject();
-      for (const modID in afterUpdate.modules) {
-        afterUpdate.modules[modID] =
-          afterUpdate.modules[modID] instanceof FtCModuleModel
-            ? afterUpdate.modules[modID].toObject()
-            : afterUpdate.modules[modID];
-      }
-      debug("after update, diff", afterUpdate, fu.diffObject(beforeUpdate, afterUpdate));
       if (render) this.render();
       return game.settings.set(MODULE_ID, "data2", this.#data);
     } catch (error) {
@@ -280,8 +267,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   static async #clearAll() {
     const update = {
       lockLibraries: false,
-      modules: Object.entries(this.#data.modules).reduce((mods, [modID, data]) => {
-        mods[modID] = {
+      modules: this.#modules.reduce((mods, data) => {
+        mods[data.id] = {
           pinned: false,
         };
         return mods;
@@ -299,7 +286,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const states = ["search", "pinned", "excluded"];
     const newState =
       states[(states.indexOf(state) + (event.type === "contextmenu" ? -1 : 1) + states.length) % states.length];
-    debug("cycle", { modID, state, newState });
     return this.#update({
       [`modules.${modID}.pinned`]: newState === "pinned" ? true : newState === "excluded" ? null : false,
     });
@@ -314,11 +300,10 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     return effectivelyPinnedIDs;
   }
 
+  get #modules() {
+    return Object.values(this.#data.modules).filter((m) => !!game.modules.get(m.id));
+  }
   async _prepareContext(options = {}) {
-    // debug("before deps", this.#data.modules);
-    // this.#processDependencies();
-    // debug("after deps", this.#data.modules);
-    const modEntries = Object.entries(this.#data.modules);
     const context = {
       lockLibraries: {
         icon: this.#icons.lockLibraries[this.#data.lockLibraries ? 1 : 0],
@@ -328,9 +313,9 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         icon: this.#icons.reloadAll[this.#data.reloadAll ? 1 : 0],
         value: this.#data.reloadAll,
       },
-      modules: modEntries
-        .reduce((mods, [modID, data]) => {
-          const mod = game.modules.get(modID);
+      modules: this.#modules
+        .map((data) => {
+          const mod = game.modules.get(data.id);
           const pinnedDependants = this.#findPinnedDependants(data);
           const isLockedLibrary = mod.library && this.#data.lockLibraries;
           const state =
@@ -342,8 +327,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
               ? "pinned"
               : "search";
 
-          const modData = {
-            id: mod.id,
+          return {
+            id: data.id,
             title: mod.title,
             icon: this.#icons.module[state],
             state,
@@ -353,11 +338,38 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
                 : null,
             isLockedLibrary,
           };
-
-          mods.push(modData);
-          return mods;
-        }, [])
+        })
         .sort((a, b) => a.title.localeCompare(b.title)),
+      // modules: modEntries
+      //   .reduce((mods, [modID, data]) => {
+      //     const mod = game.modules.get(modID);
+      //     const pinnedDependants = this.#findPinnedDependants(data);
+      //     const isLockedLibrary = mod.library && this.#data.lockLibraries;
+      //     const state =
+      //       pinnedDependants.size > 0 || isLockedLibrary
+      //         ? "forced"
+      //         : data.pinned === null
+      //         ? "excluded"
+      //         : data.pinned
+      //         ? "pinned"
+      //         : "search";
+
+      //     const modData = {
+      //       id: mod.id,
+      //       title: mod.title,
+      //       icon: this.#icons.module[state],
+      //       state,
+      //       pinnedDependants:
+      //         pinnedDependants.size > 0
+      //           ? oxfordList([...pinnedDependants.map((d) => game.modules.get(d).title)], { and: "&" })
+      //           : null,
+      //       isLockedLibrary,
+      //     };
+
+      //     mods.push(modData);
+      //     return mods;
+      //   }, [])
+      // .sort((a, b) => a.title.localeCompare(b.title)),
     };
     return context;
   }
@@ -394,14 +406,14 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const forcedList = Array.from(this.element.querySelectorAll(`button[data-state="forced"]`)).map(
       (n) => n.closest("[data-module]").dataset.module
     );
-    debug("v3 start run", forcedList);
     for (const id of forcedList) {
       this.#data.modules[id].updateSource({
         pinned: true,
         priorPinned: this.#data.modules[id].pinned,
       });
     }
-    const searchableCount = Object.values(this.#data.modules).filter((d) => !d.pinned).length;
+    //searchables aren't pinned (true) or excluded (null)
+    const searchableCount = this.#modules.filter((d) => d.pinned === false).length;
     await this.#update({
       modules: this.#data.modules,
       currentStep: -1, //updateModListAndReload increments
@@ -418,17 +430,9 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
 
   async #updateModListAndReload(culpritInActiveHalf = true) {
     const currentModList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
-    // can't be a simple .partition() because active === false means 'passed'
-    const { active, inactive } = Object.values(this.#data.modules).reduce(
-      (acc, modData) => {
-        if (modData.active === true) acc.active.push(modData);
-        else if (modData.active === false) acc.inactive.push(modData);
-        return acc;
-      },
-      { active: [], inactive: [] }
-    );
-
+    const active = this.#modules.filter((m) => m.active === true);
     if (active.length === 1) return this.#renderFinalDialog(active[0].id);
+    const inactive = this.#modules.filter((m) => m.active === false);
 
     await this.#update({
       currentStep: this.#data.currentStep + 1,
@@ -437,11 +441,11 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     //Disable every module that isn't pinned. If zero is passed, disable those too.
     for (const modID in currentModList) {
       if (modID === MODULE_ID) continue;
-      currentModList[modID] = this.#data.modules[modID]?.pinned && !this.#data.zero;
+      currentModList[modID] = !!this.#data.modules[modID]?.pinned && !this.#data.zero;
     }
 
     // Only split active mods *after* step 0, which is 'only pinned active' or 'zero mods active'
-    if (currentStep > 0) {
+    if (this.#data.currentStep > 0) {
       const [newlyPassed, remainingSearchables] = culpritInActiveHalf ? [inactive, active] : [active, inactive];
       for (const mod of newlyPassed) {
         mod.updateSource({ active: null });
@@ -464,7 +468,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
           shuffled = true;
         }
         const pick = remainingSearchables.shift();
-        //some of our deps might have been put in active already by previous picks or be in the selected list
+        //some of our deps might have been put in active already by previous picks
+        // so we only care about the number of *new* deps coming along
         const effectiveSize =
           1 + pick.unpinnedDependencies.filter((depID) => !newActive.find((modData) => modData.id === depID)).length;
         if (effectiveSize + newActive.length > half) {
@@ -488,7 +493,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   doStep() {
-    debug("V3 do step");
     if (typeof this.#data.currentStep !== "number") return;
     if (this.#data.currentStep === 0) {
       if (this.#data.zero) this.#zeroModsDialog();
@@ -644,8 +648,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
 
   async reactivateOriginals() {
     const currentModList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
-    for (const id of Object.keys(this.#data.modules)) {
-      currentModList[id] = true;
+    for (const mod of this.#modules) {
+      currentModList[mod.id] = true;
     }
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, currentModList);
     await this.#resetSetting();
