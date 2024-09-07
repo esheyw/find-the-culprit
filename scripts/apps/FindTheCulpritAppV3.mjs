@@ -82,16 +82,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     Hooks.on("renderModuleManagement", this.#onRenderModuleManagement.bind(this));
   }
 
-  #getAllDependencies(mod) {
-    const allDeps = new Set();
-    mod = mod instanceof foundry.packages.BaseModule ? mod : game.modules.get(mod?.id) ?? game.modules.get(mod);
-    const modDeps = mod.relationships.requires.filter((r) => r.type === "module").map((r) => r.id);
-    for (const req of modDeps) {
-      allDeps.add(req);
-      const depDeps = this.#getAllDependencies(req);
-      depDeps.forEach((m) => allDeps.add(m));
-    }
-    return allDeps;
+  get #modules() {
+    return Object.values(this.#data.modules).filter((m) => !!game.modules.get(m.id));
   }
 
   async #prepareModules() {
@@ -111,13 +103,14 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         requires: [],
       });
     }
-
+    debug("modules after new additions", modules)
     //process dependencies - has to be its own loop to guarantee all modules have a dependencyOf set to add to
     for (const modID in modules) {
       // keep uninstalled modules state
-      if (!!game.modules.get(modID)) continue;
+      if (!game.modules.get(modID)) continue;
+      const requires = this.#getAllDependencies(modID);
       modules[modID].updateSource({
-        requires: this.#getAllDependencies(modID),
+        requires,
       });
       for (const reqID of modules[modID].requires) {
         if (!activeModIDs.includes(reqID)) {
@@ -132,10 +125,22 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       }
     }
     // process inner datamodels so we don't pollute the source with complex objects
-    for (const modID in modules) {
+    for (const modID in modules) {      
       modules[modID] = modules[modID].toObject();
     }
     return this.#update({ modules }, { render: false });
+  }
+
+  #getAllDependencies(mod) {
+    const allDeps = new Set();
+    mod = mod instanceof foundry.packages.BaseModule ? mod : game.modules.get(mod?.id) ?? game.modules.get(mod);
+    const modDeps = mod.relationships.requires.filter((r) => r.type === "module").map((r) => r.id);
+    for (const req of modDeps) {
+      allDeps.add(req);
+      const depDeps = this.#getAllDependencies(req);
+      depDeps.forEach((m) => allDeps.add(m));
+    }
+    return allDeps;
   }
 
   #initializeToggleHeaderControls() {
@@ -196,6 +201,19 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   async render(options = {}, _options = {}) {
     if (this.#data.currentStep !== null) return this.doStep();
     return super.render(options, _options);
+  }
+
+  _preRender(context, options) {
+    // only bother on the Select Mods window, and only on 2nd+ render
+    if (this.#data.currentStep !== null || options.isFirstRender) return;
+    for (const modData of context.modules) {
+      modData.hidden =
+        this.element.querySelector(`li[data-module="${modData.id}"]`)?.classList?.contains("ftc-hidden") ?? false;
+    }
+  }
+
+  _onRender(context, options) {
+    this.search.bind(this.element);
   }
 
   async #update(changes, { render = true, recursive = true } = {}) {
@@ -302,9 +320,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     return effectivelyPinnedIDs;
   }
 
-  get #modules() {
-    return Object.values(this.#data.modules).filter((m) => !!game.modules.get(m.id));
-  }
   async _prepareContext(options = {}) {
     const context = {
       lockLibraries: {
@@ -342,36 +357,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
           };
         })
         .sort((a, b) => a.title.localeCompare(b.title)),
-      // modules: modEntries
-      //   .reduce((mods, [modID, data]) => {
-      //     const mod = game.modules.get(modID);
-      //     const pinnedDependants = this.#findPinnedDependants(data);
-      //     const isLockedLibrary = mod.library && this.#data.lockLibraries;
-      //     const state =
-      //       pinnedDependants.size > 0 || isLockedLibrary
-      //         ? "forced"
-      //         : data.pinned === null
-      //         ? "excluded"
-      //         : data.pinned
-      //         ? "pinned"
-      //         : "search";
-
-      //     const modData = {
-      //       id: mod.id,
-      //       title: mod.title,
-      //       icon: this.#icons.module[state],
-      //       state,
-      //       pinnedDependants:
-      //         pinnedDependants.size > 0
-      //           ? oxfordList([...pinnedDependants.map((d) => game.modules.get(d).title)], { and: "&" })
-      //           : null,
-      //       isLockedLibrary,
-      //     };
-
-      //     mods.push(modData);
-      //     return mods;
-      //   }, [])
-      // .sort((a, b) => a.title.localeCompare(b.title)),
     };
     return context;
   }
@@ -381,24 +366,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   static async #zeroMods() {
     await this.#update({ zero: true });
     FindTheCulpritAppV3.#startRun.call(this);
-  }
-
-  _onClickAction(event, target) {
-    debug(event, target);
-  }
-
-  _preRender(context, options) {
-    // only bother on the Select Mods window, and only on 2nd+ render
-    if (this.#data.currentStep !== null || options.isFirstRender) return;
-    for (const modData of context.modules) {
-      modData.hidden =
-        this.element.querySelector(`li[data-module="${modData.id}"]`)?.classList?.contains("ftc-hidden") ?? false;
-    }
-  }
-
-  _onRender(context, options) {
-    //bind the searchfilter
-    this.search.bind(this.element);
   }
 
   /**
