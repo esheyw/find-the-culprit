@@ -1,0 +1,15 @@
+
+<p>{{~localize "FindTheCulprit.IPWOS.BlameCoreOrSystem"~}} 
+{{~#if pinned.length~}}
+  {{~localize "FindTheCulprit.IPWOS.BlameModules"~}}</p>  
+  <ul class="ftc-module-list">
+    {{#each pinned}}
+      <li>
+        <i class="fa-solid fa-thumbtack"></i>
+        <label class="checkboxless">{{ftc-modTitle id}}</label>
+      </li>
+    {{/each}}
+  </ul>
+{{~else~}}
+  .</p>
+{{~/if~}}

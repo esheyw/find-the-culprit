@@ -183,17 +183,19 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const btn = document.createElement("button");
     btn.type = "button";
     btn.innerHTML = `<i class="fa-solid fa-search"></i> ${game.i18n.localize("FindTheCulprit.FindTheCulprit")}*`;
-    btn.addEventListener("click", this.#conditionallyRender.bind(this));
+    btn.addEventListener("click", () => {
+      if (this.rendered) {
+        this.bringToFront();
+        if (this._minimized) this.maximize();
+      } else this.render({ force: true });
+    });
     footer.append(btn);
     app.setPosition();
   }
 
-  #conditionallyRender() {
+  async render(options = {}, _options = {}) {
     if (this.#data.currentStep !== null) return this.doStep();
-    if (this.rendered) {
-      this.bringToFront();
-      if (this._minimized) this.maximize();
-    } else this.render(true);
+    return super.render(options, _options);
   }
 
   async #update(changes, { render = true, recursive = true } = {}) {
@@ -559,9 +561,9 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async #issuePeristsWithOnlySelected() {
-    const template = `modules/${MODULE_ID}/templates/issuePersistsWithOnlySelected.hbs`;
+    const template = `modules/${MODULE_ID}/templates/issuePersistsWithOnlySelected3.hbs`;
     const content = await renderTemplate(template, {
-      selected: this.#data.selected,
+      pinned: this.#modules.filter((m) => m.pinned),
     });
     DialogV2.prompt({
       classes: ["ftc-dialog", "find-the-culprit-app3"],
