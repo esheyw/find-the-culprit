@@ -37,7 +37,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         {
           action: "zeroMods",
           icon: "fa-solid fa-table-list",
-          label: actionLabel("zeroMods"),
+          label: "FindTheCulprit.SelectMods.Action.zeroMods.Label",
         },
       ],
     },
@@ -89,12 +89,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   async #prepareModules() {
     const activeModIDs = game.modules.filter((m) => m.active && m.id !== MODULE_ID).map((m) => m.id);
     const modules = this.#data.modules;
-    // // prune all disabled modules first so we have a list to remove from dependcyOf
-    // const disabledSinceLastLoad = Object.keys(this.#data.modules).filter((modID) => !activeModIDs.includes(modID));
-    // for (const modID of disabledSinceLastLoad) {
-    //   delete modules[modID];
-    //   modules[`-=${modID}`] = true;
-    // }
     //add all new modules and reset non-persistent properties
     for (const id of activeModIDs) {
       modules[id] ??= new FtCModuleModel({ id });
@@ -103,7 +97,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         requires: [],
       });
     }
-    debug("modules after new additions", modules)
+    debug("modules after new additions", modules);
     //process dependencies - has to be its own loop to guarantee all modules have a dependencyOf set to add to
     for (const modID in modules) {
       // keep uninstalled modules state
@@ -125,7 +119,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       }
     }
     // process inner datamodels so we don't pollute the source with complex objects
-    for (const modID in modules) {      
+    for (const modID in modules) {
       modules[modID] = modules[modID].toObject();
     }
     return this.#update({ modules }, { render: false });
@@ -172,9 +166,9 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
             li.classList.remove("ftc-hidden");
             continue;
           }
-          const name = li.dataset.module;
+          const modID = li.dataset.module;
           const title = (li.querySelector(".module-title")?.textContent || "").trim();
-          const match = rgx.test(SearchFilter.cleanQuery(name)) || rgx.test(SearchFilter.cleanQuery(title));
+          const match = rgx.test(SearchFilter.cleanQuery(modID)) || rgx.test(SearchFilter.cleanQuery(title));
           li.classList.toggle("ftc-hidden", !match);
         }
       },
@@ -311,15 +305,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     });
   }
 
-  #findPinnedDependants(data) {
-    const effectivelyPinnedIDs = new Set();
-    for (const dID of data.dependencyOf) {
-      if (this.#data.modules[dID].pinned) effectivelyPinnedIDs.add(dID);
-      this.#findPinnedDependants(this.#data.modules[dID]).forEach((id) => effectivelyPinnedIDs.add(id));
-    }
-    return effectivelyPinnedIDs;
-  }
-
   async _prepareContext(options = {}) {
     const context = {
       lockLibraries: {
@@ -333,7 +318,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       modules: this.#modules
         .map((data) => {
           const mod = game.modules.get(data.id);
-          const pinnedDependants = this.#findPinnedDependants(data);
+          const pinnedDependants = data.dependencyOf.filter((modID) => this.#data.modules[modID].pinned);
           const isLockedLibrary = mod.library && this.#data.lockLibraries;
           const state =
             pinnedDependants.size > 0 || isLockedLibrary

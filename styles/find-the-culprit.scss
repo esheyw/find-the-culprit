@@ -143,9 +143,11 @@ aside#tooltip.ftc-module-tooltip {
   &.standard-form {
     row-gap: 0;
   }
+
   .window-content {
-    padding-top: 0.5rem;
+    padding-top: 0rem;
   }
+
   div.button-row {
     width: 100%;
     overflow: hidden;
@@ -159,14 +161,6 @@ aside#tooltip.ftc-module-tooltip {
       flex-shrink: 1;
     }
     margin-bottom: 0.2rem;
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: unset;
-    border: none;
-    text-align: center;
   }
 
   .ftc-module-list {
