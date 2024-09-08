@@ -373,7 +373,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       currentStep: -1, //updateModListAndReload increments
       maxSteps: Math.ceil(Math.log2(searchableCount)) + 1,
     });
-    debugger;
     this.#updateModListAndReload();
   }
 
@@ -388,9 +387,19 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     if (active.length === 1) return this.#renderFinalDialog(active[0].id);
     const inactive = this.#modules.filter((m) => m.active === false);
 
-    await this.#update({
+    const update = {
       currentStep: this.#data.currentStep + 1,
-    });
+    };
+    // on run start, filter dependency listings of pinned modules, since pinned state wont change from here
+    if (this.#data.currentStep === -1) {
+      update.modules = {};
+      for (const data of this.#modules) {
+        update[data.id] = {
+          requires: data.requires.filter((r) => !this.#data.modules[r].pinned),
+        };
+      }
+    }
+    await this.#update(update);
 
     //Disable every module that isn't pinned. If zero is passed, disable those too.
     for (const modID in currentModList) {
@@ -405,10 +414,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         mod.updateSource({ active: null });
       }
 
-      for (const mod of remainingSearchables) {
-        mod.unpinnedDependencies = mod.requires.filter((r) => !this.#data.modules[r].pinned);
-      }
-      remainingSearchables.sort((a, b) => b.unpinnedDependencies.size - a.unpinnedDependencies.size);
+      remainingSearchables.sort((a, b) => b.requires.size - a.requires.size);
       let shuffled = false;
       const newActive = [];
       const newInactive = [];
@@ -416,7 +422,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       // divide the remaining searchables, attempting to keep dependency chains together as long as possible
       // and cutting from the top when impossible
       do {
-        if (remainingSearchables[0].unpinnedDependencies.size === 0 && !shuffled) {
+        if (remainingSearchables[0].requires.size === 0 && !shuffled) {
           // all remaing should have no dependencies, we can randomize
           shuffleArray(remainingSearchables);
           shuffled = true;
