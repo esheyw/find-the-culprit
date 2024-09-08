@@ -160,6 +160,14 @@ aside#tooltip.ftc-module-tooltip {
     }
     margin-bottom: 0.2rem;
   }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: unset;
+    border: none;
+    text-align: center;
+  }
 
   .ftc-module-list {
     margin: 0.25rem 0;
