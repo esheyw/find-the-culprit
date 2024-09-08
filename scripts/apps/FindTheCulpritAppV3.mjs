@@ -1,6 +1,6 @@
 import { fu, MODULE, MODULE_ID } from "../constants.mjs";
 import { FtCModuleModel } from "../data/models.mjs";
-import { actionLabel, actionTooltip, debug, getDependencies, oxfordList, shuffleArray } from "../helpers.mjs";
+import { actionLabel, actionTooltip, debug,oxfordList, shuffleArray } from "../helpers.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 
 export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -19,7 +19,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     actions: {
       clearAll: FindTheCulpritAppV3.#clearAll,
       lockLibraries: FindTheCulpritAppV3.#toggleButton,
-      mute: FindTheCulpritAppV3.#toggleMute,
       reloadAll: FindTheCulpritAppV3.#toggleButton,
       zeroMods: FindTheCulpritAppV3.#zeroMods,
       cycle: {
@@ -53,7 +52,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
 
   #icons = {
     lockLibraries: ["fa-lock-open", "fa-lock"],
-    mute: ["fa-volume-high", "fa-volume-xmark"],
     reloadAll: ["fa-user", "fa-users"],
     module: {
       search: "fa-search",
@@ -64,7 +62,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   };
   #search;
   #data;
-  #debouncedPlayLock = fu.debounce(this.#playLock.bind(this), 50);
 
   constructor() {
     if (MODULE().app2 instanceof FindTheCulpritAppV3)
@@ -72,8 +69,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     super();
 
     this.#data = game.settings.get(MODULE_ID, "data2");
-
-    this.#initializeToggleHeaderControls();
 
     if (this.#data.currentStep === null) {
       this.#prepareModules();
@@ -103,7 +98,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         requires: [],
       });
     }
-    debug("modules after new additions", modules)
     //process dependencies - has to be its own loop to guarantee all modules have a dependencyOf set to add to
     for (const modID in modules) {
       // keep uninstalled modules state
@@ -141,25 +135,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       depDeps.forEach((m) => allDeps.add(m));
     }
     return allDeps;
-  }
-
-  #initializeToggleHeaderControls() {
-    for (const control of this.options.window.controls) {
-      const action = control.action;
-      if (action in this.#icons) {
-        const value = this.#data[action];
-        control.label = actionLabel(action, value);
-        control.icon = `fa-solid ${this.#icons[action][value ? 1 : 0]}`;
-      }
-    }
-  }
-
-  #playLock(locking = true) {
-    if (this.#data.mute) return;
-    foundry.audio.AudioHelper.play({
-      src: `sounds/doors/industrial/${locking ? "" : "un"}lock.ogg`,
-      volume: game.settings.get("core", "globalAmbientVolume"),
-    });
   }
 
   get search() {
@@ -234,20 +209,9 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const action = target.dataset.action;
     const newValue = !this.#data[action];
     await this.#update({ [action]: newValue });
-    if (action === "mute" || (newValue && action === "lockLibraries")) this.#debouncedPlayLock();
     return newValue;
   }
-
-  /**
-   * @this {FindTheCulpritAppV3}
-   */
-  static async #toggleMute(event, target) {
-    await this.#update({ mute: !this.#data.mute });
-    this.#debouncedPlayLock();
-    console.warn(target);
-    this.#toggleButtonDOM(target);
-  }
-
+  
   #toggleButtonDOM(target) {
     const action = target.dataset.action;
     const value = this.#data[action];
@@ -388,7 +352,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       currentStep: -1, //updateModListAndReload increments
       maxSteps: Math.ceil(Math.log2(searchableCount)) + 1,
     });
-    debugger;
     this.#updateModListAndReload();
   }
 
@@ -456,7 +419,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       for (const modData of newActive) currentModList[modData.id] = true;
       await this.#update();
     }
-    debugger;
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, currentModList);
     this.#reload();
   }

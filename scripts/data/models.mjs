@@ -30,7 +30,6 @@ export class FtCSettingsModel2 extends foundry.abstract.DataModel {
       modules: new MappingField(new fields.EmbeddedDataField(FtCModuleModel)),
       currentStep: new fields.NumberField({ nullable: true, required: false, integer: true }),
       maxSteps: new fields.NumberField({ nullable: true, required: false, min: 0, integer: true }),
-      mute: new fields.BooleanField(),
       lockLibraries: new fields.BooleanField(),
       reloadAll: new fields.BooleanField(),
       zero: new fields.BooleanField(),
