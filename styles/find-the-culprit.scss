@@ -184,6 +184,18 @@ aside#tooltip.ftc-module-tooltip {
       flex-direction: row;
       column-gap: 0.3rem;
       align-items: center;
+
+      [data-state="pinned"],
+      [data-state="forced"] {
+        color: var(--color-level-warning);
+      }
+      [data-state="excluded"] {
+        color: var(--color-level-error);
+      }
+      [data-state="search"] {
+        color: var(--color-level-info);
+      }
+      
       button {
         aspect-ratio: 1/1;
         height: 1.75rem;
@@ -196,19 +208,6 @@ aside#tooltip.ftc-module-tooltip {
 
         i {
           margin-right: 0;
-        }
-
-        &[data-state="pinned"] {
-          color: var(--color-level-warning);
-        }
-        &[data-state="excluded"] {
-          color: var(--color-level-error);
-        }
-        &[data-state="search"] {
-          color: var(--color-level-info);
-        }
-        &[data-state="forced"] {
-          color: var(--color-level-warning);
         }
       }
 

@@ -591,8 +591,9 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async #resetSetting() {
-    for (const modData of Object.values(this.#data.modules)) {
+    for (const modData of this.#modules) {
       modData.updateSource({
+        
         pinned: modData.priorPinned === undefined ? modData.pinned : modData.priorPinned,
         priorPinned: undefined,
       });
