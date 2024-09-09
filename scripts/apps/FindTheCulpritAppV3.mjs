@@ -591,15 +591,15 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async #resetSetting() {
-    for (const modData of this.#modules) {
-      modData.updateSource({
-        
-        pinned: modData.priorPinned === undefined ? modData.pinned : modData.priorPinned,
-        priorPinned: undefined,
-      });
-    }
     const update = {
-      modules: this.#data.modules,
+      modules: this.#modules.reduce((modUpdate, modData) => {
+        modUpdate[modData.id] = {
+          active: true,
+          pinned: modData.priorPinned === undefined ? modData.pinned : modData.priorPinned,
+          priorPinned: undefined,
+        };
+        return modUpdate;
+      }, {}),
       zero: false,
       currentStep: null,
       maxSteps: 0,
@@ -621,7 +621,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const template = `modules/${MODULE_ID}/templates/foundTheCulprit.hbs`;
     const content = await renderTemplate(template, {
       culprit,
-      selected: this.#data.selected,
+      pinned: this.#modules.filter((m) => m.pinned)
     });
     DialogV2.prompt({
       classes: ["ftc-dialog", "find-the-culprit-app3"],

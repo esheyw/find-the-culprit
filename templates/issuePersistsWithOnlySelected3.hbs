@@ -5,8 +5,8 @@
   <ul class="ftc-module-list">
     {{#each pinned}}
       <li>
-        <i class="fa-solid fa-thumbtack"></i>
-        <label class="checkboxless">{{ftc-modTitle id}}</label>
+        <i class="fa-solid fa-thumbtack" data-state="pinned"></i>
+        <label>{{ftc-modTitle id}}</label>
       </li>
     {{/each}}
   </ul>

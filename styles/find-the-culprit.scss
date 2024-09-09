@@ -133,11 +133,11 @@ aside#tooltip.ftc-module-tooltip {
 }
 
 .find-the-culprit-app3 {
-  &.ftc-dialog .standard-form {
-    footer.form-footer button {
-      min-width: 130px;
-    }
-  }
+  // &.ftc-dialog .standard-form {
+  //   footer.form-footer button {
+  //     min-width: 130px;
+  //   }
+  // }
 
   .standard-form,
   &.standard-form {
@@ -195,7 +195,7 @@ aside#tooltip.ftc-module-tooltip {
       [data-state="search"] {
         color: var(--color-level-info);
       }
-      
+
       button {
         aspect-ratio: 1/1;
         height: 1.75rem;
