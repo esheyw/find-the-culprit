@@ -1,0 +1,25 @@
+
+<h2>{{localize (concat "FindTheCulprit.FoundTheCulprit.Header" (ifThen pinned.length "Uncertain" ""))}}</h2>
+{{#if pinned.length}}
+<p>{{localize "FindTheCulprit.FoundTheCulprit.HasPinned" count=pinned.length}}</p>
+{{/if}}
+<ul class="ftc-module-list">
+  <li>
+    <div class="tooltip-wrapper" data-tooltip="{{localize "FindTheCulprit.StateTooltip.culprit"}}" data-tooltip-direction="LEFT">
+      <button type="button" data-state="culprit" disabled>
+        <i class="{{lookup @root.icons "culprit"}}"></i>
+      </button>
+    </div>
+    <label>{{ftc-modTitle culprit}}</label>
+  </li>
+  {{#each pinned}}
+  <li>
+    <div class="tooltip-wrapper" data-tooltip="{{localize "FindTheCulprit.StateTooltip.pinned"}}" data-tooltip-direction="LEFT">
+      <button type="button" data-state="pinned" disabled>
+        <i class="{{lookup @root.icons "pinned"}}"></i>
+      </button>
+    </div>
+    <label>{{ftc-modTitle id}}</label>
+  </li>
+  {{/each}}
+</ul>

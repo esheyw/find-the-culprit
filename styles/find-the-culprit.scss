@@ -133,11 +133,46 @@ aside#tooltip.ftc-module-tooltip {
 }
 
 .find-the-culprit-app3 {
-  // &.ftc-dialog .standard-form {
-  //   footer.form-footer button {
-  //     min-width: 130px;
-  //   }
-  // }
+  &.ftc-dialog .standard-form {
+    h2 {
+      text-align: center;
+      border-bottom: none;
+      margin-top: 1rem;
+      color: var(--color-text-primary);
+      text-shadow: none;
+      // font-weight: bold;
+      font-family: var(--font-primary)
+    }
+    footer.form-footer {
+      width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0.2rem;
+      button {
+        flex: 1 1 fit-content;
+      }
+    }
+    li {
+      &:has([data-state="culprit"]) {
+        font-size: 1.25rem;
+
+        // border-bottom: 1px solid var(--color-level-error);
+        button {
+          font-size: 1rem;
+          height: 1.5rem;
+        }
+        label {
+          border-bottom: 1px dashed var(--color-level-error);
+        }
+      }
+      button {
+        background: none;
+        height: 1.25rem;
+      }
+    }
+  }
 
   .standard-form,
   &.standard-form {
@@ -153,16 +188,22 @@ aside#tooltip.ftc-module-tooltip {
     overflow: hidden;
     display: flex;
     flex-flow: row wrap;
-    justify-content: space-between;
     gap: 0.2rem;
-    button {
-      flex-grow: 3;
-      flex-basis: fit-content;
-      flex-shrink: 1;
-    }
     margin-bottom: 0.2rem;
+
+    button {
+      flex: 1 0 fit-content;
+    }
   }
 
+  span.ftc-prompt {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 140%;
+    // margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
   .ftc-module-list {
     margin: 0.25rem 0;
     background: rgba(0, 0, 0, 0.05);
@@ -189,11 +230,19 @@ aside#tooltip.ftc-module-tooltip {
       [data-state="forced"] {
         color: var(--color-level-warning);
       }
-      [data-state="excluded"] {
+      [data-state="excluded"],
+      [data-state="culprit"] {
         color: var(--color-level-error);
       }
-      [data-state="search"] {
+      [data-state="suspect"],
+      [data-state="active"] {
         color: var(--color-level-info);
+      }
+      [data-state="exonerated"] {
+        color: var(--color-level-success);
+      }
+      [data-state="inactive"] {
+        color: var(--color-light-5);
       }
 
       button {
@@ -216,13 +265,13 @@ aside#tooltip.ftc-module-tooltip {
         border-top: none;
       }
     }
+  }
 
-    .ftc-hidden {
-      display: none;
-    }
+  .ftc-hidden {
+    display: none;
   }
 
   footer.form-footer {
-    gap: clamp(3px, 0.1rem, 20px);
+    gap: 0.2rem;
   }
 }

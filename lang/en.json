@@ -8,24 +8,45 @@
     "DisabledDependency": "{module} requires {dependency} as a dependency, which is not enabled!",
     "BinarySearchStep": {
       "CurrentStatistics": "Current Statistics",
-      "StatsData": "Step {currentStep}: {numRemaining} unlocked modules still in the list. {stepsLeft} or fewer steps remain."
+      "StatsData": "Step {currentStep}: {numRemaining} modules still suspect. {stepsLeft} or fewer step(s) remain.",
+      "Tooltip": {
+        "Pinned": "Pinned: Activated at all times during the search",
+        "Excluded": "Excluded: Disabled for the duration of the search",
+        "Exonerated": "Exonerated: You have indicated that the issue did not persist while this module was active",
+        "ExoneratedButActive": "Exonerated (Active): Despite being exonerated, this module is active because a non-exonerated active module requires it as a dependency"
+      }
+    },
+    "StateTooltip": {
+      "active": "Active: Currently active for this test step",
+      "culprit": "Culprit: The module causing (one of) your issue(s)",
+      "excluded": "Excluded: Disabled for the duration of the search",
+      "exonerated": "Exonerated: You indicated that the issue did not persist while this module was active",
+      "exoneratedButActive": "Exonerated (Active): Despite being exonerated, this module is active because one or more active suspect modules require it as a dependency",
+      "inactive": "Inactive: Still suspect, but not active this step",
+      "pinned": "Pinned: Active at all times during the search",
+      "suspect": "Suspect: A potential culprit"
     },
     "Error": {
       "Singleton": "Only one FindTheCulprit app is allowed to exist."
     },
     "CurrentlyActive": "Currently Active",
     "CurrentlyInactive": "Currently Inactive",
-    "SelectedModuleTooltip":"Selected Module - Locked",
+    "SelectedModuleTooltip": "Selected Module - Locked",
     "FoundTheCulprit": {
       "Header": "We found the culprit!",
       "HeaderUncertain": "We (might have) found the culprit!",
-      "HasSelected": "You have {count} modules selected, any of which may be your true culprit. Otherwise, it's: "
+      "HasSelected": "You have {count} modules selected, any of which may be your true culprit.",
+      "HasPinned": "You have {count} modules pinned, any of which may be your true culprit."
     },
     "Dependency": {
       "RequiredToEnable": "{module} requires the following dependencies: "
     },
+    "ErrorDialog": {
+      "EncounteredError": "Find the Culprit encountered an error:",
+      "Direction": "The module's data can be found in the console as an Error to assist with bug reporting. Clicking the button below or closing this dialog will return your world to it's pre-FtC-run state."
+    },
     "IPWOS": {
-      "BlameModules": ", or in your selected module list:",
+      "BlameModules": ", or in one of your pinned modules:",
       "BlameCoreOrSystem": "Seems like the issue is a bug in the game system or the core software"
     },
     "SelectMods": {
@@ -64,12 +85,12 @@
           "Tooltip": "Sets every module to unlocked and unselected"
         }
       },
-      "ModuleTooltip":{
-        "Preamble":"This module is force pinned because:",
+      "ModuleTooltip": {
+        "Preamble": "This module is force pinned because:",
         "LockedLibrary": "It is a library and the Lock Libraries toggle is enabled",
         "DependencyOf": "It is a dependency of pinned module(s) {pinnedDependants}",
-        "Pinned":"Pinned: will be enabled at all times during the search",
-        "Excluded":"Excluded: will be disabled for the duration of the search",
+        "Pinned": "Pinned: will be enabled at all times during the search",
+        "Excluded": "Excluded: will be disabled for the duration of the search",
         "Search": "Search: This module is in the pool of potential culprits"
       },
       "Lock": {
@@ -99,9 +120,15 @@
       }
     },
     "StartOfRun": {
+      "SomePinnedTitle": "Only Pinned Modules Active",
+      "NonePinnedTitle": "No Modules Active",
       "AllModulesDeactivated": "All modules except Find the Culprit are deactivated.",
-      "AllButSelectedDeactivated":"All modules, except those selected and FtC itself, are deactivated. Searching will take at most {maxSteps} steps.",
+      "AllButSelectedDeactivated": "All modules, except those pinned and Find the Culprit itself, are deactivated.",
+      "MaxSteps": "Searching will take at most {maxSteps} steps.",
       "DoesIssuePersist": "Does your issue persist?"
+    },
+    "ZeroModules": {
+      "Title": "Zero Modules"
     }
   }
 }

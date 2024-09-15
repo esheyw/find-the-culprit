@@ -31,9 +31,12 @@ export class FtCSettingsModel2 extends foundry.abstract.DataModel {
       currentStep: new fields.NumberField({ nullable: true, required: false, integer: true }),
       maxSteps: new fields.NumberField({ nullable: true, required: false, min: 0, integer: true }),
       mute: new fields.BooleanField(),
-      lockLibraries: new fields.BooleanField(),
+      lockLibraries: new fields.BooleanField({
+        initial: true,
+      }),
       reloadAll: new fields.BooleanField(),
       zero: new fields.BooleanField(),
+      deterministic: new fields.BooleanField(),
     };
   }
 }
@@ -57,6 +60,7 @@ export class FtCModuleModel extends foundry.abstract.DataModel {
         nullable: true,
         initial: true,
       }),
+      originallyActive: new fields.BooleanField(),
       requires: ModuleIDsField(),
       dependencyOf: ModuleIDsField(),
     };

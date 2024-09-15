@@ -52,38 +52,47 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   };
 
   #icons = {
-    lockLibraries: ["fa-lock-open", "fa-lock"],
-    mute: ["fa-volume-high", "fa-volume-xmark"],
-    reloadAll: ["fa-user", "fa-users"],
+    lockLibraries: ["fa-solid fa-lock-open", "fa-solid fa-lock"],
+    mute: ["fa-solid fa-volume-high", "fa-solid fa-volume-xmark"],
+    reloadAll: ["fa-solid fa-user", "fa-solid fa-users"],
     module: {
-      search: "fa-search",
-      pinned: "fa-thumbtack",
-      excluded: "fa-ban",
-      forced: "fa-lock",
+      active: "fa-solid fa-magnifying-glass-plus",
+      culprit: "fa-solid fa-handcuffs",
+      excluded: "fa-solid fa-ban",
+      exonerated: "fa-solid fa-thumbs-up",
+      exoneratedButActive: "fa-solid fa-check",
+      forced: "fa-solid fa-lock",
+      inactive: "fa-solid fa-magnifying-glass-minus",
+      pinned: "fa-solid fa-thumbtack",
+      suspect: "fa-solid fa-search",
     },
   };
   #search;
   #data;
+  #error;
+
   #debouncedPlayLock = fu.debounce(this.#playLock.bind(this), 50);
 
   constructor() {
     if (MODULE().app2 instanceof FindTheCulpritAppV3)
       throw new Error("Only one FindTheCulprit app is allowed to exist.");
     super();
-
     this.#data = game.settings.get(MODULE_ID, "data2");
 
     this.#initializeToggleHeaderControls();
 
-    if (this.#data.currentStep === null) {
+    Hooks.on("renderModuleManagement", this.#onRenderModuleManagement.bind(this));
+
+    // don't prepare modules if we're in an error state to preserve source
+    // only prepare modules if we're not mid-run
+    this.#error = game.settings.get(MODULE_ID, "error");
+    if (this.#error === null && this.#data.currentStep === null) {
       this.#prepareModules();
     }
-
-    Hooks.on("renderModuleManagement", this.#onRenderModuleManagement.bind(this));
   }
 
   get #modules() {
-    return Object.values(this.#data.modules).filter((m) => !!game.modules.get(m.id));
+    return Object.values(this.#data.modules).filter((m) => m.originallyActive);
   }
 
   async #prepareModules() {
@@ -93,25 +102,29 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     for (const id of activeModIDs) {
       modules[id] ??= new FtCModuleModel({ id });
       modules[id].updateSource({
+        originallyActive: true,
         dependencyOf: [],
         requires: [],
       });
     }
-    debug("modules after new additions", modules);
-    //process dependencies - has to be its own loop to guarantee all modules have a dependencyOf set to add to
+    // process dependencies and originallyActive status
+    // has to be its own loop to guarantee all modules have models associated already
     for (const modID in modules) {
       // keep uninstalled modules state
-      if (!game.modules.get(modID)) continue;
+      const mod = game.modules.get(modID);
+      if (!mod || !mod.active) {
+        modules[modID].updateSource({ originallyActive: false });
+        continue;
+      }
       const requires = this.#getAllDependencies(modID);
       modules[modID].updateSource({
         requires,
       });
       for (const reqID of modules[modID].requires) {
         if (!activeModIDs.includes(reqID)) {
-          ui.notifications.error(
-            `Find The Culprit | Active module ${mod.title} requires module "${reqID}" which is not active. This should never happen.`
+          this.#errorDialog(
+            `#prepareModules | Active module "${mod.title}" requires module ID "${reqID}" which is not active.`
           );
-          continue;
         }
         modules[reqID].updateSource({
           dependencyOf: modules[reqID].dependencyOf.add(modID),
@@ -268,11 +281,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const action = target.dataset.action;
     value ??= this.#data[action];
     icons ??= this.#icons[action];
-    const iconElement = target.querySelector("i.fa-solid");
-    const priorIcon = icons[value ? 0 : 1];
-    const newIcon = icons[value ? 1 : 0];
-    iconElement.classList.remove(priorIcon);
-    iconElement.classList.add(newIcon);
+    const iconElement = target.querySelector("i");
+    iconElement.classList.value = icons[value ? 1 : 0];
   }
 
   /**
@@ -297,7 +307,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   static async #cycle(event, target) {
     const modID = target.closest("[data-module]").dataset.module;
     const state = target.dataset.state;
-    const states = ["search", "pinned", "excluded"];
+    const states = ["suspect", "pinned", "excluded"];
     const newState =
       states[(states.indexOf(state) + (event.type === "contextmenu" ? -1 : 1) + states.length) % states.length];
     return this.#update({
@@ -327,7 +337,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
               ? "excluded"
               : data.pinned
               ? "pinned"
-              : "search";
+              : "suspect";
 
           return {
             id: data.id,
@@ -349,7 +359,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
    * @this {FindTheCulpritAppV3}
    */
   static async #zeroMods() {
-    await this.#update({ zero: true });
+    await this.#update({ zero: true }, { render: false });
     FindTheCulpritAppV3.#startRun.call(this);
   }
 
@@ -360,19 +370,24 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const forcedList = Array.from(this.element.querySelectorAll(`button[data-state="forced"]`)).map(
       (n) => n.closest("[data-module]").dataset.module
     );
+    const modUpdate = {};
     for (const id of forcedList) {
-      this.#data.modules[id].updateSource({
+      // updateSource so searchablesCount is accurate
+      modUpdate[id] = this.#data.modules[id].updateSource({
         pinned: true,
         priorPinned: this.#data.modules[id].pinned,
       });
     }
-    //searchables aren't pinned (true) or excluded (null)
-    const searchableCount = this.#modules.filter((d) => d.pinned === false).length;
-    await this.#update({
-      modules: this.#data.modules,
-      currentStep: -1, //updateModListAndReload increments
-      maxSteps: Math.ceil(Math.log2(searchableCount)) + 1,
-    });
+    // searchables aren't pinned (true) or excluded (null) and aren't exonerated
+    const searchablesCount = this.#modules.filter((m) => m.pinned === false && m.active !== null).length;
+    await this.#update(
+      {
+        modules: modUpdate,
+        currentStep: -1, // updateModListAndReload increments
+        maxSteps: Math.ceil(Math.log2(searchablesCount)) + 1,
+      },
+      { render: false }
+    );
     this.#updateModListAndReload();
   }
 
@@ -382,78 +397,141 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async #updateModListAndReload(culpritInActiveHalf = true) {
-    const currentModList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
-    const active = this.#modules.filter((m) => m.active === true);
-    if (active.length === 1) return this.#renderFinalDialog(active[0].id);
-    const inactive = this.#modules.filter((m) => m.active === false);
+    if (this.#data.currentStep === null) return;
 
-    const update = {
+    const active = this.#modules.filter((m) => m.pinned === false && m.active === true);
+    const inactive = this.#modules.filter((m) => m.pinned === false && m.active === false);
+    const [newlyExonerated, remainingSearchables] = culpritInActiveHalf ? [inactive, active] : [active, inactive];
+    if (remainingSearchables.length === 1) return this.#renderFinalDialog(remainingSearchables[0].id);
+
+    const coreModuleList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
+    // Disable every module that isn't pinned. If zero is passed, disable those too.
+    for (const modID in coreModuleList) {
+      if (modID === MODULE_ID) continue;
+      const activeMod = this.#modules.find((m) => m.id === modID);
+      coreModuleList[modID] = activeMod && activeMod.pinned && !this.#data.zero;
+    }
+
+    const initialUpdate = {
       currentStep: this.#data.currentStep + 1,
     };
-    // on run start, filter dependency listings of pinned modules, since pinned state wont change from here
-    if (this.#data.currentStep === -1) {
-      update.modules = {};
-      for (const data of this.#modules) {
-        update[data.id] = {
-          requires: data.requires.filter((r) => !this.#data.modules[r].pinned),
-        };
+
+    const afterSplitUpdate = {};
+    for (const mod of newlyExonerated) {
+      afterSplitUpdate[mod.id] = mod.updateSource({ active: null });
+    }
+
+    if (this.#data.currentStep === -1 && this.#modules.some((m) => m.pinned)) {
+      // on run start, filter pinned modules from requires listings, since pinned state wont change from here
+      initialUpdate.modules = {};
+      for (const mod of this.#modules) {
+        initialUpdate.modules[mod.id] = mod.updateSource({
+          requires: mod.requires.filter((id) => !this.#data.modules[id].pinned),
+        });
       }
     }
-    await this.#update(update);
-
-    //Disable every module that isn't pinned. If zero is passed, disable those too.
-    for (const modID in currentModList) {
-      if (modID === MODULE_ID) continue;
-      currentModList[modID] = !!this.#data.modules[modID]?.pinned && !this.#data.zero;
-    }
+    // update requires/dependencyOf prior to any list splitting
+    await this.#update(initialUpdate, { render: false });
 
     // Only split active mods *after* step 0, which is 'only pinned active' or 'zero mods active'
     if (this.#data.currentStep > 0) {
-      const [newlyPassed, remainingSearchables] = culpritInActiveHalf ? [inactive, active] : [active, inactive];
-      for (const mod of newlyPassed) {
-        mod.updateSource({ active: null });
+      //TODO: possibly add options for deterministic and/or fully dumb searching
+      // create filtered requires/dependencyOf lists for use in sorting remainingSearchables and costing picks when splitting
+      for (const mod of remainingSearchables) {
+        mod.filteredRequires = mod.requires.filter((id) => this.#data.modules[id].active !== null);
+        mod.filteredDependencyOf = mod.dependencyOf.filter((id) => this.#data.modules[id].active !== null);
       }
-
-      remainingSearchables.sort((a, b) => b.requires.size - a.requires.size);
+      // We want to pick mods with larger requires lists first, to more easily fit their dependencies in with them
+      // We also otherwise want to test modules that are dependencyOf other modules first so that they can go into the
+      // exonerated but active list, if not already pinned.
+      remainingSearchables.sort(
+        (a, b) =>
+          b.filteredRequires.size - a.filteredRequires.size || b.filteredDependencyOf.size - a.filteredDependencyOf.size
+      );
       let shuffled = false;
       const newActive = [];
       const newInactive = [];
       const half = Math.ceil(remainingSearchables.length / 2);
+      const exoneratedModulesRequired = new Set();
       // divide the remaining searchables, attempting to keep dependency chains together as long as possible
       // and cutting from the top when impossible
+      debugger;
       do {
-        if (remainingSearchables[0].requires.size === 0 && !shuffled) {
-          // all remaing should have no dependencies, we can randomize
+        if (
+          !this.#data.deterministic &&
+          remainingSearchables[0].filteredRequires.size + remainingSearchables[0].filteredDependencyOf.size === 0 &&
+          !shuffled
+        ) {
+          // all remaing should have no, and not be, dependencies, so we can randomize
           shuffleArray(remainingSearchables);
           shuffled = true;
         }
         const pick = remainingSearchables.shift();
-        //some of our deps might have been put in active already by previous picks
+        // some of our deps might have been put in active already by previous picks
         // so we only care about the number of *new* deps coming along
-        const effectiveSize =
-          1 + pick.unpinnedDependencies.filter((depID) => !newActive.find((modData) => modData.id === depID)).length;
+        // dependencies that are already exonerated also don't cost anything from a search perspective
+        let effectiveSize = 1;
+        const unpickedDependencyIDs = [];
+        const exoneratedDependencyIDs = [];
+        for (const id of pick.requires) {
+          if (newActive.find((m) => m.id === id)) {
+            // already picked, no cost, no action required
+            continue;
+          } else if (this.#data.modules[id].active === null) {
+            // store for activation *if* pick goes to newActive
+            exoneratedDependencyIDs.push(id);
+            continue;
+          } else if (newInactive.find((m) => m.id === id)) {
+            // this should never happen
+            //TODO: error dialog
+            debugger;
+          } else {
+            unpickedDependencyIDs.push(id);
+            effectiveSize++;
+          }
+        }
         if (effectiveSize + newActive.length > half) {
           newInactive.push(pick);
         } else {
           newActive.push(pick);
-          for (const depID of pick.unpinnedDependencies) {
-            const depData = remainingSearchables.findSplice((modData) => modData.id === depID);
-            if (depData) newActive.push(depData);
+          for (const depID of unpickedDependencyIDs) {
+            const depData = remainingSearchables.findSplice((m) => m.id === depID);
+            if (depData) {
+              newActive.push(depData);
+            } else {
+              this.#errorDialog(
+                `#updateModListAndReload | Module "${
+                  game.modules.get(pick.id).title
+                }" requires module ID "${depID}" which is not in the current Searchable or Exonerated modules.`
+              );
+              return;
+            }
           }
+          for (const id of exoneratedDependencyIDs) exoneratedModulesRequired.add(id);
         }
       } while (newActive.length < half);
 
-      for (const modData of newInactive) modData.updateSource({ active: false });
-      for (const modData of newActive) currentModList[modData.id] = true;
-      await this.#update();
+      // consolidate unpicked modules
+      newInactive.push(...remainingSearchables);
+
+      for (const modData of newInactive) {
+        afterSplitUpdate[modData.id] = { active: false };
+      }
+      for (const modData of newActive) {
+        afterSplitUpdate[modData.id] = { active: true };
+      }
+      const modIDsToEnable = newActive.map((m) => m.id).concat([...exoneratedModulesRequired]);
+      for (const id of modIDsToEnable) coreModuleList[id] = true;
+      debugger;
     }
-    debugger;
-    await game.settings.set("core", ModuleManagement.CONFIG_SETTING, currentModList);
+    await this.#update({ modules: afterSplitUpdate }, { render: false });
+    await game.settings.set("core", ModuleManagement.CONFIG_SETTING, coreModuleList);
     this.#reload();
   }
 
   doStep() {
     if (typeof this.#data.currentStep !== "number") return;
+    if (this.#error !== null) return void this.#errorDialog();
     if (this.#data.currentStep === 0) {
       if (this.#data.zero) this.#zeroModsDialog();
       else this.#onlySelectedMods();
@@ -466,7 +544,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     DialogV2.prompt({
       classes: ["ftc-dialog", "find-the-culprit-app3"],
       window: {
-        title: `${this.title} - Zero Modules`,
+        title: `${this.title} - ${game.i18n.localize("FindTheCulprit.ZeroModules.Title")}`,
         icon: this.options.window.icon,
       },
       content: `<p>${game.i18n.localize("FindTheCulprit.StartOfRun.AllModulesDeactivated")}</p>`,
@@ -482,14 +560,16 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     });
   }
   async #onlySelectedMods() {
-    const template = `modules/${MODULE_ID}/templates/onlySelectedActive.hbs`;
+    const template = `modules/${MODULE_ID}/templates/onlySelectedActive3.hbs`;
+    const anyPinned = this.#modules.filter((m) => m.pinned).length > 0;
     const content = await renderTemplate(template, {
+      anyPinned, // we only care about some or none pinned
       maxSteps: this.#data.maxSteps,
     });
-
+    const titleKey = "FindTheCulprit.StartOfRun." + (anyPinned ? "Some" : "None") + "PinnedTitle";
     const persists = await DialogV2.confirm({
       window: {
-        title: `${this.title} - Only Selected Modules`,
+        title: `${this.title} - ${game.i18n.localize(titleKey)}`,
         icon: this.options.window.icon,
       },
       content,
@@ -521,7 +601,12 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   async #issuePeristsWithOnlySelected() {
     const template = `modules/${MODULE_ID}/templates/issuePersistsWithOnlySelected3.hbs`;
     const content = await renderTemplate(template, {
-      pinned: this.#modules.filter((m) => m.pinned),
+      pinned: this.#modules
+        .filter((m) => m.pinned)
+        .map((m) => ({
+          id: m.id,
+          icon: m.priorPinned === undefined ? "fa-thumbtack" : "fa-lock",
+        })),
     });
     DialogV2.prompt({
       classes: ["ftc-dialog", "find-the-culprit-app3"],
@@ -543,15 +628,43 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async #binarySearchStep() {
-    const template = `modules/${MODULE_ID}/templates/binarySearchStep.hbs`;
+    const template = `modules/${MODULE_ID}/templates/binarySearchStep3.hbs`;
     const templateData = {
-      numRemaining: this.#data.active.size + this.#data.inactive.size,
+      numRemaining: this.#modules.filter((m) => m.pinned === false && m.active !== null).length,
       currentStep: this.#data.currentStep,
       stepsLeft: this.#data.maxSteps - this.#data.currentStep,
-      active: this.#data.active,
-      inactive: this.#data.inactive,
-      selected: this.#data.selected,
+      icons: this.#icons.module,
+      groups: this.#modules.reduce(
+        (groups, mod) => {
+          if (mod.pinned === null) {
+            groups.excluded.push(mod);
+          } else if (mod.pinned === true) {
+            groups.pinned.push(mod);
+          } else if (mod.active === null) {
+            if (game.modules.get(mod.id).active) groups.exoneratedButActive.push(mod);
+            else groups.exonerated.push(mod);
+          } else if (mod.active === true) {
+            groups.active.push(mod);
+          } else {
+            groups.inactive.push(mod);
+          }
+          return groups;
+        },
+        {
+          active: [],
+          exoneratedButActive: [],
+          inactive: [],
+          pinned: [],
+          exonerated: [],
+          excluded: [],
+        }
+      ),
     };
+    for (const group in templateData.groups) {
+      templateData.groups[group].sort((a, b) =>
+        game.modules.get(a.id).title.localeCompare(game.modules.get(b.id).title)
+      );
+    }
     const content = await renderTemplate(template, templateData);
     const response = await DialogV2.confirm({
       classes: ["ftc-dialog", "find-the-culprit-app3"],
@@ -563,8 +676,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       buttons: [
         {
           action: "reset",
-          icon: "fa-solid fa-rotate-right",
-          label: "Reset", //Actually a localization key
+          icon: "fa-solid fa-list-check",
+          label: "FindTheCulprit.ReactivateAllModules",
           callback: () => "reset",
         },
       ],
@@ -578,10 +691,8 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         this.reactivateOriginals();
         break;
       case true:
-        this.#updateModListAndReload(this.#data.active);
-        break;
       case false:
-        this.#updateModListAndReload(this.#data.inactive);
+        this.#updateModListAndReload(response);
         break;
       case null:
       default:
@@ -604,13 +715,14 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       currentStep: null,
       maxSteps: 0,
     };
+    await game.settings.set(MODULE_ID, "error", null);
     return this.#update(update);
   }
 
   async reactivateOriginals() {
     const currentModList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
-    for (const mod of this.#modules) {
-      currentModList[mod.id] = true;
+    for (const modID in this.#data.modules) {
+      if (this.#data.modules[modID].originallyActive) currentModList[modID] = true;
     }
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, currentModList);
     await this.#resetSetting();
@@ -618,10 +730,11 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async #renderFinalDialog(culprit) {
-    const template = `modules/${MODULE_ID}/templates/foundTheCulprit.hbs`;
+    const template = `modules/${MODULE_ID}/templates/foundTheCulprit3.hbs`;
     const content = await renderTemplate(template, {
       culprit,
-      pinned: this.#modules.filter((m) => m.pinned)
+      pinned: this.#modules.filter((m) => m.pinned),
+      icons: this.#icons.module,
     });
     DialogV2.prompt({
       classes: ["ftc-dialog", "find-the-culprit-app3"],
@@ -640,5 +753,40 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
         width: 450,
       },
     });
+  }
+
+  async #errorDialog(message) {
+    if (message === undefined) {
+      message = this.#error;
+    } else {
+      this.#error = message;
+      await game.settings.set(MODULE_ID, "error", message);
+    }
+    if (!message) return;
+
+    const source = this.#data.toObject();
+    // for (const id in source.modules) source.modules[id] = source.modules[id].toObject();
+
+    console.error("Find The Culprit | Error encountered, dumping source.", source);
+    const content = await renderTemplate(`modules/${MODULE_ID}/templates/errorDialog.hbs`, {
+      message,
+    });
+    DialogV2.prompt({
+      window: {
+        title: this.title + ` - ` + game.i18n.localize("Error"),
+        icon: this.options.window.icon,
+      },
+      content,
+      ok: {
+        icon: "fa-solid fa-list-check",
+        label: "FindTheCulprit.ReactivateAllModules",
+        callback: this.reactivateOriginals.bind(this),
+      },
+      close: this.reactivateOriginals.bind(this),
+      position: {
+        width: 450,
+      },
+    });
+    throw new Error(message);
   }
 }

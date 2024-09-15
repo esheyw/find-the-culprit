@@ -17,6 +17,16 @@ export const SETTINGS = {
     scope: "world",
     default: new FtCSettingsModel2().toObject(),
   },
+  error: {
+    type: new foundry.data.fields.StringField({
+      nullable: true,
+      required: true,
+      blank: false,
+      initial: null,
+    }),
+    config: false,
+    scope: "world"
+  }
 };
 export function registerSettings() {
   for (const [key, data] of Object.entries(SETTINGS)) {
