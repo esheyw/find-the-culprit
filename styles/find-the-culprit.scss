@@ -1,198 +1,25 @@
 .find-the-culprit-app {
-  &.ftc-dialog .standard-form {
-    footer.form-footer button {
-      min-width: 130px;
-    }
-  }
-
   .standard-form,
   &.standard-form {
-    row-gap: 0;
-  }
-  .window-content {
-    padding-top: 0.5rem;
-  }
-  div.button-row {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    button {
-      min-width: fit-content;
-      flex-grow: 3;
-      flex-shrink: 1;
-      padding: 0.5rem;
-    }
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: unset;
-    border: none;
-    text-align: center;
-  }
-
-  .ftc-module-list {
-    margin: 0.25rem 0;
-    background: rgba(0, 0, 0, 0.05);
-    border: 2px inset #6666;
-    .theme-dark & {
-      border-color: var(--color-light-4);
-    }
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    height: 300px;
-    overflow-x: hidden;
-    overflow-y: scroll;
-    list-style-type: none;
-
-    li {
-      display: grid;
-      grid-template-columns: clamp(10px, 1.2rem, 40px) clamp(12px, 1.6rem, 56px) auto;
-      column-gap: clamp(1px, 0.1rem, 10px);
-      vertical-align: middle;
-
-      .module-active {
-        color: var(--color-level-success);
-      }
-
-      .module-inactive {
-        color: var(--color-level-warning);
-      }
-
-      .module-selected {
-        color: var(--color-dark-4);
-      }
-      .module-culprit {
-        color: var(--color-level-error);
-      }
-
-      &:not(:first-child) {
-        border-top: 1px dashed #6666;
-      }
-
-      span {
-        display: flex;
-        justify-content: center;
-      }
-
-      label {
-        display: inline-block;
-        margin-top: auto;
-        margin-bottom: auto;
-        &.checkboxless {
-          grid-column: span 2;
-        }
-        &.ftc-lock-container {
-          text-align: center;
-          font-size: 80%;
-          &:has(input[disabled]) i {
-            transform: rotate(180deg);
-          }
-        }
-      }
-
-      input.ftc-checkbox {
-        // &:checked {
-        //   background-image: radial-gradient(
-        //     circle at 50% 50%,
-        //     var(--checkbox-disabled-color) 0%,
-        //     var(--checkbox-disabled-color) 54%,
-        //     transparent 55%
-        //   );
-        //   &:disabled {
-        //     background-image: radial-gradient(
-        //       circle at 50% 50%,
-        //       var(--checkbox-checked-color) 0%,
-        //       var(--checkbox-checked-color) 50%,
-        //       transparent 51%
-        //     );
-        //   }
-        // }
-        .theme-light &:checked {
-          filter: drop-shadow(var(--checkbox-disabled-color) 0.1em 0.1em 0.1em);
-        }
-        .theme-dark & {
-          filter: drop-shadow(var(--color-cool-3) 0.1em 0.1em 0.1em);
-        }
-      }
-    }
-
-    .hidden {
-      display: none;
-    }
-  }
-
-  footer.form-footer {
-    gap: clamp(3px, 0.1rem, 20px);
-  }
-}
-
-aside#tooltip.ftc-module-tooltip {
-  text-align: left;
-}
-
-.find-the-culprit-app3 {
-  &.ftc-dialog .standard-form {
-    h2 {
-      text-align: center;
-      border-bottom: none;
-      margin-top: 1rem;
-      color: var(--color-text-primary);
-      text-shadow: none;
-      // font-weight: bold;
-      font-family: var(--font-primary)
-    }
-    footer.form-footer {
-      width: 100%;
-      overflow: hidden;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 0.2rem;
-      button {
-        flex: 1 1 fit-content;
-      }
-    }
-    li {
-      &:has([data-state="culprit"]) {
-        font-size: 1.25rem;
-
-        // border-bottom: 1px solid var(--color-level-error);
-        button {
-          font-size: 1rem;
-          height: 1.5rem;
-        }
-        label {
-          border-bottom: 1px dashed var(--color-level-error);
-        }
-      }
-      button {
-        background: none;
-        height: 1.25rem;
-      }
-    }
-  }
-
-  .standard-form,
-  &.standard-form {
+    // eliminate infuriating whitespace
     row-gap: 0;
   }
 
   .window-content {
-    padding-top: 0rem;
+    padding: 0 0.75rem 0.5rem;
   }
 
-  div.button-row {
+  div.button-row,
+  footer.form-footer,
+  &.ftc-dialog .standard-form footer.form-footer {
     width: 100%;
-    overflow: hidden;
     display: flex;
     flex-flow: row wrap;
-    gap: 0.2rem;
+    gap: 0.25rem;
     margin-bottom: 0.2rem;
-
     button {
-      flex: 1 0 fit-content;
+      min-width: fit-content;
+      flex: 1 1 fit-content;
     }
   }
 
@@ -201,9 +28,10 @@ aside#tooltip.ftc-module-tooltip {
     width: 100%;
     text-align: center;
     font-size: 140%;
-    // margin-top: 0.5rem;
+    margin-top: 0.5rem;
     margin-bottom: 0.75rem;
   }
+
   .ftc-module-list {
     margin: 0.25rem 0;
     background: rgba(0, 0, 0, 0.05);
@@ -213,7 +41,7 @@ aside#tooltip.ftc-module-tooltip {
     }
     border-radius: 0.3rem;
     padding: 0.5rem;
-    height: 300px;
+    height: 25vh;
     overflow-x: hidden;
     overflow-y: scroll;
     list-style-type: none;
@@ -226,8 +54,25 @@ aside#tooltip.ftc-module-tooltip {
       column-gap: 0.3rem;
       align-items: center;
 
-      [data-state="pinned"],
-      [data-state="forced"] {
+      // adjustments for non-main
+      &:not([data-module]) {
+        &:has([data-state="culprit"]) {
+          font-size: 1.25rem;
+          button {
+            font-size: 1rem;
+            height: 1.5rem;
+          }
+          label {
+            border-bottom: 1px dashed var(--color-level-error);
+          }
+        }
+        button {
+          background: none;
+          height: 1.25rem;
+        }
+      }
+
+      [data-state="pinned"] {
         color: var(--color-level-warning);
       }
       [data-state="excluded"],
@@ -238,18 +83,23 @@ aside#tooltip.ftc-module-tooltip {
       [data-state="active"] {
         color: var(--color-level-info);
       }
-      [data-state="exonerated"] {
+      [data-state="exonerated"],
+      [data-state="exoneratedButActive"] {
         color: var(--color-level-success);
       }
       [data-state="inactive"] {
         color: var(--color-light-5);
       }
 
+      label {
+        padding-left: 0.2rem;
+      }
       button {
         aspect-ratio: 1/1;
         height: 1.75rem;
         width: fit-content;
         padding: 0;
+        position: relative;
 
         .theme-light & {
           text-shadow: 0px 0px 3px var(--color-text-primary), 0px 0px 3px var(--color-text-primary);
@@ -257,6 +107,13 @@ aside#tooltip.ftc-module-tooltip {
 
         i {
           margin-right: 0;
+          &.corner-icon {
+            color: var(--color-level-warning);
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            font-size: 50%;
+          }
         }
       }
 
@@ -267,11 +124,20 @@ aside#tooltip.ftc-module-tooltip {
     }
   }
 
+  &.ftc-dialog h2 {
+    text-align: center;
+    border-bottom: none;
+    margin-top: 1rem;
+    color: var(--color-text-primary);
+    text-shadow: none;
+    font-family: var(--font-primary);
+  }
+
   .ftc-hidden {
     display: none;
   }
+}
 
-  footer.form-footer {
-    gap: 0.2rem;
-  }
+aside#tooltip.ftc-module-tooltip {
+  text-align: left;
 }

@@ -1,21 +1,13 @@
 import { MODULE_ID } from "./constants.mjs";
-import { FtCSettingsModel, FtCSettingsModel2 } from "./data/models.mjs";
-export const SETTINGS = {
+import { FtCSettings } from "./data/models.mjs";
+export const SETTINGS = {  
   data: {
-    type: FtCSettingsModel,
+    type: FtCSettings,
     config: false,
     name: "FTC.Setting.Data.Name",
     hint: "FTC.Setting.Data.Hint",
     scope: "world",
-    default: new FtCSettingsModel2().toObject(),
-  },
-  data2: {
-    type: FtCSettingsModel2,
-    config: false,
-    name: "FTC.Setting.Data.Name",
-    hint: "FTC.Setting.Data.Hint",
-    scope: "world",
-    default: new FtCSettingsModel2().toObject(),
+    default: new FtCSettings().toObject(),
   },
   error: {
     type: new foundry.data.fields.StringField({

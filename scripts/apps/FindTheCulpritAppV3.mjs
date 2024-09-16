@@ -1,30 +1,31 @@
-import { fu, MODULE, MODULE_ID } from "../constants.mjs";
-import { FtCModuleModel } from "../data/models.mjs";
-import { actionLabel, actionTooltip, debug, getDependencies, oxfordList, shuffleArray } from "../helpers.mjs";
+import { MODULE, MODULE_ID } from "../constants.mjs";
+import { FtCModule } from "../data/models.mjs";
+import { debug, oxfordList, shuffleArray } from "../helpers.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
-
-export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV2) {
+const standardWidth = 425;
+export class FindTheCulpritApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     tag: "form",
     form: {
-      handler: FindTheCulpritAppV3.#startRun,
+      handler: FindTheCulpritApp.#startRun,
       closeOnSubmit: true,
       submitOnChange: false,
     },
-    classes: ["find-the-culprit-app3", "standard-form"],
+    classes: ["find-the-culprit-app", "standard-form"],
     id: "find-the-culprit",
     position: {
-      width: 450,
+      width: standardWidth,
     },
     actions: {
-      clearAll: FindTheCulpritAppV3.#clearAll,
-      lockLibraries: FindTheCulpritAppV3.#toggleButton,
-      mute: FindTheCulpritAppV3.#toggleMute,
-      reloadAll: FindTheCulpritAppV3.#toggleButton,
-      zeroMods: FindTheCulpritAppV3.#zeroMods,
+      clearAll: FindTheCulpritApp.#clearAll,
+      lockLibraries: FindTheCulpritApp.#toggleButton,
+      deterministic: FindTheCulpritApp.#toggleButton,
+      mute: FindTheCulpritApp.#toggleButton,
+      reloadAll: FindTheCulpritApp.#toggleButton,
+      zeroMods: FindTheCulpritApp.#zeroMods,
       cycle: {
         buttons: [0, 2],
-        handler: FindTheCulpritAppV3.#cycle,
+        handler: FindTheCulpritApp.#cycle,
       },
     },
     window: {
@@ -32,12 +33,15 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       icon: "fa-solid fa-search",
       controls: [
         {
-          action: "mute", // the rest is handled in initializeToggleControls()
-        },
-        {
           action: "zeroMods",
           icon: "fa-solid fa-table-list",
           label: "FindTheCulprit.SelectMods.Action.zeroMods.Label",
+        },
+        {
+          action: "mute", // the rest is handled in initializeToggleControls()
+        },
+        {
+          action: "deterministic",
         },
       ],
     },
@@ -46,38 +50,36 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   static PARTS = {
     form: {
       id: "form",
-      template: `modules/${MODULE_ID}/templates/main3.hbs`,
+      template: `modules/${MODULE_ID}/templates/main.hbs`,
       scrollable: [".ftc-module-list"],
     },
   };
 
   #icons = {
-    lockLibraries: ["fa-solid fa-lock-open", "fa-solid fa-lock"],
-    mute: ["fa-solid fa-volume-high", "fa-solid fa-volume-xmark"],
-    reloadAll: ["fa-solid fa-user", "fa-solid fa-users"],
+    deterministic: ["fa-shuffle", "fa-bars"],
+    lockLibraries: ["fa-lock-open", "fa-lock"],
+    mute: ["fa-volume-high", "fa-volume-xmark"],
+    reloadAll: ["fa-user", "fa-users"],
     module: {
-      active: "fa-solid fa-magnifying-glass-plus",
-      culprit: "fa-solid fa-handcuffs",
-      excluded: "fa-solid fa-ban",
-      exonerated: "fa-solid fa-thumbs-up",
-      exoneratedButActive: "fa-solid fa-check",
-      forced: "fa-solid fa-lock",
-      inactive: "fa-solid fa-magnifying-glass-minus",
-      pinned: "fa-solid fa-thumbtack",
-      suspect: "fa-solid fa-search",
+      active: "fa-magnifying-glass-plus",
+      culprit: "fa-handcuffs",
+      excluded: "fa-ban",
+      exonerated: "fa-thumbs-up",
+      exoneratedButActive: "fa-check",
+      inactive: "fa-magnifying-glass-minus",
+      pinned: "fa-thumbtack",
+      suspect: "fa-search",
     },
   };
   #search;
   #data;
   #error;
-
-  #debouncedPlayLock = fu.debounce(this.#playLock.bind(this), 50);
+  #dialog;
 
   constructor() {
-    if (MODULE().app2 instanceof FindTheCulpritAppV3)
-      throw new Error("Only one FindTheCulprit app is allowed to exist.");
+    if (MODULE().app instanceof FindTheCulpritApp) throw new Error("Only one FindTheCulprit app is allowed to exist.");
     super();
-    this.#data = game.settings.get(MODULE_ID, "data2");
+    this.#data = game.settings.get(MODULE_ID, "data");
 
     this.#initializeToggleHeaderControls();
 
@@ -100,7 +102,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const modules = this.#data.modules;
     //add all new modules and reset non-persistent properties
     for (const id of activeModIDs) {
-      modules[id] ??= new FtCModuleModel({ id });
+      modules[id] ??= new FtCModule({ id });
       modules[id].updateSource({
         originallyActive: true,
         dependencyOf: [],
@@ -155,7 +157,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       const action = control.action;
       if (action in this.#icons) {
         const value = this.#data[action];
-        control.label = actionLabel(action, value);
+        control.label = `FindTheCulprit.SelectMods.Action.${action}.Label.${value ? "Enabled" : "Disabled"}`;
         control.icon = `fa-solid ${this.#icons[action][value ? 1 : 0]}`;
       }
     }
@@ -194,7 +196,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const footer = html.querySelector("footer");
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.innerHTML = `<i class="fa-solid fa-search"></i> ${game.i18n.localize("FindTheCulprit.FindTheCulprit")}*`;
+    btn.innerHTML = `<i class="fa-solid fa-search"></i> ${game.i18n.localize("FindTheCulprit.FindTheCulprit")}`;
     btn.addEventListener("click", () => {
       if (this.rendered) {
         this.bringToFront();
@@ -206,7 +208,10 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async render(options = {}, _options = {}) {
-    if (this.#data.currentStep !== null) return this.doStep();
+    if (this.#data.currentStep !== null) {
+      this.doStep();
+      return this;
+    }
     return super.render(options, _options);
   }
 
@@ -223,70 +228,60 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     this.search.bind(this.element);
   }
 
-  async #update(changes, { render = true, recursive = true } = {}) {
-    changes ??= this.#data.toObject(false);
+  async #update(changes = {}, { render = true } = {}) {
     try {
-      this.#data.updateSource(changes, { recursive });
+      this.#data.updateSource(changes);
       if (render) this.render();
-      return game.settings.set(MODULE_ID, "data2", this.#data);
+      return game.settings.set(MODULE_ID, "data", this.#data);
     } catch (error) {
-      console.error("FindTheCulpritApp#update | ", error, { changes });
+      console.error("FindTheCulpritApp#update | Encountered an error, logging", { changes, render });
+      throw error;
     }
   }
 
   /**
-   * @this {FindTheCulpritAppV3}
+   * @this {FindTheCulpritApp}
    */
   static async #toggleButton(event, target) {
     const action = target.dataset.action;
     const newValue = !this.#data[action];
     await this.#update({ [action]: newValue });
-    if (action === "mute" || (newValue && action === "lockLibraries")) this.#debouncedPlayLock();
+    if (action === "lockLibraries") this.#playLock(newValue);
+    if (action === "mute") this.#playLock(true);
+    if (target.nodeName === "LI") this.#toggleButtonDOM(target);
     return newValue;
-  }
-
-  /**
-   * @this {FindTheCulpritAppV3}
-   */
-  static async #toggleMute(event, target) {
-    await this.#update({ mute: !this.#data.mute });
-    this.#debouncedPlayLock();
-    console.warn(target);
-    this.#toggleButtonDOM(target);
   }
 
   #toggleButtonDOM(target) {
     const action = target.dataset.action;
     const value = this.#data[action];
-    this.#toggleButtonIcon(target);
 
-    // buttons hold the tooltips
+    const iconElement = target.querySelector("i:not(.corner-icon)");
+    iconElement.classList.value = this.#icons[action][value ? 1 : 0];
+
+    // buttons hold the tooltips, header controls return the whole <li>
     const button = target.nodeName === "BUTTON" ? target : target.querySelector("button");
     if (button && button.dataset.tooltip) {
       const wasTooltip = game.tooltip.element === button;
       if (wasTooltip) game.tooltip.deactivate();
-      button.dataset.tooltip = game.i18n.localize(actionTooltip(action, value));
+      button.dataset.tooltip = game.i18n.localize(
+        `FindTheCulprit.SelectMods.Action.${action}.Tooltip.${value ? "Enabled" : "Disabled"}`
+      );
       if (wasTooltip) game.tooltip.activate(button);
     }
 
     // spans hold the label text
     const labelSpan = target.querySelector("button span");
     if (labelSpan) {
-      labelSpan.innerText = game.i18n.localize(actionLabel(action, value));
+      labelSpan.innerText = game.i18n.localize(
+        `FindTheCulprit.SelectMods.Action.${action}.Label.${value ? "Enabled" : "Disabled"}`
+      );
     }
     return target;
   }
 
-  #toggleButtonIcon(target, icons, value) {
-    const action = target.dataset.action;
-    value ??= this.#data[action];
-    icons ??= this.#icons[action];
-    const iconElement = target.querySelector("i");
-    iconElement.classList.value = icons[value ? 1 : 0];
-  }
-
   /**
-   * @this {FindTheCulpritAppV3}
+   * @this {FindTheCulpritApp}
    */
   static async #clearAll() {
     const update = {
@@ -302,7 +297,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   /**
-   * @this {FindTheCulpritAppV3}
+   * @this {FindTheCulpritApp}
    */
   static async #cycle(event, target) {
     const modID = target.closest("[data-module]").dataset.module;
@@ -315,7 +310,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     });
   }
 
-  async _prepareContext(options = {}) {
+  async _prepareContext() {
     const context = {
       lockLibraries: {
         icon: this.#icons.lockLibraries[this.#data.lockLibraries ? 1 : 0],
@@ -327,56 +322,96 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       },
       modules: this.#modules
         .map((data) => {
-          const mod = game.modules.get(data.id);
-          const pinnedDependants = data.dependencyOf.filter((modID) => this.#data.modules[modID].pinned);
-          const isLockedLibrary = mod.library && this.#data.lockLibraries;
-          const state =
-            pinnedDependants.size > 0 || isLockedLibrary
-              ? "forced"
-              : data.pinned === null
-              ? "excluded"
-              : data.pinned
-              ? "pinned"
-              : "suspect";
+          const { library, title } = game.modules.get(data.id);
+          const pinnedDependants = data.dependencyOf.filter((id) => this.#data.modules[id].pinned);
+          const excludedDependencies = data.requires.filter((id) => this.#data.modules[id].pinned === null);
+          const isLockedLibrary = library && this.#data.lockLibraries;
+          let state;
+          let forced = false;
+          if (pinnedDependants.size > 0 || isLockedLibrary) {
+            state = "pinned";
+            forced = true;
+          } else if (excludedDependencies.size > 0) {
+            state = "excluded";
+            forced = true;
+          } else {
+            switch (data.pinned) {
+              case null:
+                state = "excluded";
+                break;
+              case true:
+                state = "pinned";
+                break;
+              case false:
+              default:
+                state = "suspect";
+            }
+          }
 
           return {
             id: data.id,
-            title: mod.title,
+            title,
             icon: this.#icons.module[state],
             state,
-            pinnedDependants:
+            forced,
+            excludedDependencies,
+            excludedDependenciesFormatted:
+              excludedDependencies.size > 0
+                ? oxfordList([...excludedDependencies.map((id) => game.modules.get(id).title)], { and: "&" })
+                : null,
+            pinnedDependants,
+            pinnedDependantsFormatted:
               pinnedDependants.size > 0
-                ? oxfordList([...pinnedDependants.map((d) => game.modules.get(d).title)], { and: "&" })
+                ? oxfordList([...pinnedDependants.map((id) => game.modules.get(id).title)], { and: "&" })
                 : null,
             isLockedLibrary,
           };
         })
         .sort((a, b) => a.title.localeCompare(b.title)),
     };
+    // account for 'excluded' dependencies being force pinned because library or pinned dependant
+    const mightNeedUpdating = context.modules.filter(
+      (m) => m.forced && m.state === "excluded" && m.excludedDependencies.size > 0
+    );
+    for (const mod of mightNeedUpdating) {
+      const stillExcluded = mod.excludedDependencies.filter(
+        (id) => context.modules.find((m) => m.id === id).state === "excluded"
+      );
+      if (stillExcluded.size === 0) {
+        // previous state couldn't be pinned, logistically
+        mod.state = this.#data.modules[mod.id].pinned === null ? "excluded" : "suspect";
+        mod.forced = false;
+      }
+    }
     return context;
   }
   /**
-   * @this {FindTheCulpritAppV3}
+   * @this {FindTheCulpritApp}
    */
   static async #zeroMods() {
     await this.#update({ zero: true }, { render: false });
-    FindTheCulpritAppV3.#startRun.call(this);
+    FindTheCulpritApp.#startRun.call(this);
   }
 
   /**
-   * @this {FindTheCulpritAppV3}
+   * @this {FindTheCulpritApp}
    */
   static async #startRun(event, form, formData) {
-    const forcedList = Array.from(this.element.querySelectorAll(`button[data-state="forced"]`)).map(
-      (n) => n.closest("[data-module]").dataset.module
-    );
     const modUpdate = {};
-    for (const id of forcedList) {
-      // updateSource so searchablesCount is accurate
-      modUpdate[id] = this.#data.modules[id].updateSource({
-        pinned: true,
-        priorPinned: this.#data.modules[id].pinned,
-      });
+    if (this.rendered) {
+      const forcedList = Array.from(this.element.querySelectorAll(`button[disabled]`)).map((n) => ({
+        id: n.closest("[data-module]").dataset.module,
+        state: n.dataset.state,
+      }));
+
+      for (const mod of forcedList) {
+        // updateSource so searchablesCount is accurate
+        modUpdate[mod.id] = this.#data.modules[mod.id].updateSource({
+          // forced will only be pinned or excluded, there's no 'forced suspect'
+          pinned: mod.state === "pinned" ? true : null,
+          priorPinned: this.#data.modules[id].pinned,
+        });
+      }
     }
     // searchables aren't pinned (true) or excluded (null) and aren't exonerated
     const searchablesCount = this.#modules.filter((m) => m.pinned === false && m.active !== null).length;
@@ -402,7 +437,10 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const active = this.#modules.filter((m) => m.pinned === false && m.active === true);
     const inactive = this.#modules.filter((m) => m.pinned === false && m.active === false);
     const [newlyExonerated, remainingSearchables] = culpritInActiveHalf ? [inactive, active] : [active, inactive];
-    if (remainingSearchables.length === 1) return this.#renderFinalDialog(remainingSearchables[0].id);
+    if (remainingSearchables.length === 1) {
+      this.#dialog = null;
+      return this.#foundTheCulprit(remainingSearchables[0]);
+    }
 
     const coreModuleList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
     // Disable every module that isn't pinned. If zero is passed, disable those too.
@@ -455,7 +493,6 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       const exoneratedModulesRequired = new Set();
       // divide the remaining searchables, attempting to keep dependency chains together as long as possible
       // and cutting from the top when impossible
-      debugger;
       do {
         if (
           !this.#data.deterministic &&
@@ -484,7 +521,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
           } else if (newInactive.find((m) => m.id === id)) {
             // this should never happen
             //TODO: error dialog
-            debugger;
+            if (MODULE().debug) debugger;
           } else {
             unpickedDependencyIDs.push(id);
             effectiveSize++;
@@ -522,16 +559,21 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       }
       const modIDsToEnable = newActive.map((m) => m.id).concat([...exoneratedModulesRequired]);
       for (const id of modIDsToEnable) coreModuleList[id] = true;
-      debugger;
+      if (MODULE().debug) debugger;
     }
     await this.#update({ modules: afterSplitUpdate }, { render: false });
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, coreModuleList);
     this.#reload();
   }
 
-  doStep() {
+  async doStep() {
     if (typeof this.#data.currentStep !== "number") return;
     if (this.#error !== null) return void this.#errorDialog();
+    if (this.#dialog) {
+      await this.#dialog.render({ force: true });
+      this.#dialog.bringToFront();
+      return;
+    }
     if (this.#data.currentStep === 0) {
       if (this.#data.zero) this.#zeroModsDialog();
       else this.#onlySelectedMods();
@@ -541,94 +583,104 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
   }
 
   async #zeroModsDialog() {
-    DialogV2.prompt({
-      classes: ["ftc-dialog", "find-the-culprit-app3"],
+    if (this.#dialog) return this.#dialog.render({ force: true });
+    this.#dialog ??= new DialogV2({
+      classes: ["ftc-dialog", "find-the-culprit-app"],
       window: {
         title: `${this.title} - ${game.i18n.localize("FindTheCulprit.ZeroModules.Title")}`,
         icon: this.options.window.icon,
       },
       content: `<p>${game.i18n.localize("FindTheCulprit.StartOfRun.AllModulesDeactivated")}</p>`,
-      ok: {
-        icon: "fa-solid fa-list-check",
-        label: "FindTheCulprit.ReactivateAllModules",
-        callback: this.reactivateOriginals.bind(this),
-      },
-      rejectClose: false,
+      buttons: [
+        {
+          action: "reset",
+          icon: "fa-solid fa-rotate-left",
+          label: "Reset",
+          callback: this.reactivateOriginals.bind(this),
+        },
+      ],
+      close: () => null,
       position: {
-        width: 450,
+        width: standardWidth,
       },
-    });
+    }).render({ force: true });
   }
+
   async #onlySelectedMods() {
-    const template = `modules/${MODULE_ID}/templates/onlySelectedActive3.hbs`;
+    if (this.#dialog) return this.#dialog.render({ force: true });
+    const template = `modules/${MODULE_ID}/templates/onlySelectedActive.hbs`;
     const anyPinned = this.#modules.filter((m) => m.pinned).length > 0;
     const content = await renderTemplate(template, {
       anyPinned, // we only care about some or none pinned
       maxSteps: this.#data.maxSteps,
     });
     const titleKey = "FindTheCulprit.StartOfRun." + (anyPinned ? "Some" : "None") + "PinnedTitle";
-    const persists = await DialogV2.confirm({
+    this.#dialog = await new DialogV2({
       window: {
         title: `${this.title} - ${game.i18n.localize(titleKey)}`,
         icon: this.options.window.icon,
       },
       content,
-      no: {
-        label: game.i18n.localize("No") + " - " + game.i18n.localize("FILES.Search"),
-        icon: "fa-solid fa-search",
-      },
-      classes: ["ftc-dialog", "find-the-culprit-app3"],
-      rejectClose: false,
+      buttons: [
+        {
+          action: "yes",
+          label: "Yes",
+          icon: "fas fa-check",
+          callback: () => {
+            this.#dialog = null;
+            this.#issuePeristsWithOnlyPinned();
+          },
+        },
+        {
+          action: "no",
+          label: game.i18n.localize("No") + " - " + game.i18n.localize("FILES.Search"),
+          icon: "fa-solid fa-search",
+          callback: () => {
+            this.#dialog = null;
+            this.#updateModListAndReload();
+          },
+        },
+      ],
+      classes: ["ftc-dialog", "find-the-culprit-app"],
+      close: () => null,
       position: {
-        width: 450,
+        width: standardWidth,
       },
-    });
-
-    switch (persists) {
-      case true:
-        this.#issuePeristsWithOnlySelected();
-        break;
-      case false:
-        this.#updateModListAndReload();
-        break;
-      case null:
-      default:
-        // allow closing the dialog without making a choice; it'll return on page refresh
-        return;
-    }
+    }).render({ force: true });
   }
 
-  async #issuePeristsWithOnlySelected() {
-    const template = `modules/${MODULE_ID}/templates/issuePersistsWithOnlySelected3.hbs`;
+  async #issuePeristsWithOnlyPinned() {
+    if (this.#dialog) return this.#dialog.render({ force: true });
+    const template = `modules/${MODULE_ID}/templates/issuePersistsWithOnlyPinned.hbs`;
     const content = await renderTemplate(template, {
-      pinned: this.#modules
-        .filter((m) => m.pinned)
-        .map((m) => ({
-          id: m.id,
-          icon: m.priorPinned === undefined ? "fa-thumbtack" : "fa-lock",
-        })),
+      icon: this.#icons.module.pinned,
+      pinned: this.#modules.filter((m) => m.pinned).map((m) => game.modules.get(m.id).title),
     });
-    DialogV2.prompt({
-      classes: ["ftc-dialog", "find-the-culprit-app3"],
+    this.#dialog = await new DialogV2({
+      classes: ["ftc-dialog", "find-the-culprit-app"],
       window: {
         title: this.title,
         icon: this.options.window.icon,
       },
       content,
-      ok: {
-        icon: "fa-solid fa-list-check",
-        label: "FindTheCulprit.ReactivateAllModules",
-        callback: this.reactivateOriginals.bind(this),
-      },
-      rejectClose: false,
+      buttons: [
+        {
+          action: "reset",
+          icon: "fa-solid fa-rotate-left",
+          label: "Reset",
+          callback: this.reactivateOriginals.bind(this),
+        },
+      ],
+      close: () => null,
       position: {
-        width: 450,
+        width: standardWidth,
       },
-    });
+    }).render({ force: true });
   }
 
   async #binarySearchStep() {
-    const template = `modules/${MODULE_ID}/templates/binarySearchStep3.hbs`;
+    if (this.#dialog) return this.#dialog.render({ force: true });
+    const template = `modules/${MODULE_ID}/templates/binarySearchStep.hbs`;
     const templateData = {
       numRemaining: this.#modules.filter((m) => m.pinned === false && m.active !== null).length,
       currentStep: this.#data.currentStep,
@@ -636,6 +688,7 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       icons: this.#icons.module,
       groups: this.#modules.reduce(
         (groups, mod) => {
+          mod.title = game.modules.get(mod.id).title;
           if (mod.pinned === null) {
             groups.excluded.push(mod);
           } else if (mod.pinned === true) {
@@ -666,39 +719,39 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
       );
     }
     const content = await renderTemplate(template, templateData);
-    const response = await DialogV2.confirm({
-      classes: ["ftc-dialog", "find-the-culprit-app3"],
+    this.#dialog = await new DialogV2({
+      classes: ["ftc-dialog", "find-the-culprit-app"],
       window: {
-        title: this.title,
+        title: this.title + " - " + game.i18n.localize("FindTheCulprit.BinarySearchStep.Title"),
         icon: this.options.window.icon,
       },
       content,
       buttons: [
         {
+          action: "yes",
+          label: "Yes",
+          icon: "fas fa-check",
+          callback: this.#updateModListAndReload.bind(this, true),
+        },
+        {
+          action: "no",
+          label: "No",
+          icon: "fas fa-xmark",
+          default: true,
+          callback: this.#updateModListAndReload.bind(this, false),
+        },
+        {
           action: "reset",
-          icon: "fa-solid fa-list-check",
-          label: "FindTheCulprit.ReactivateAllModules",
-          callback: () => "reset",
+          icon: "fa-solid fa-rotate-left",
+          label: "Reset",
+          callback: this.reactivateOriginals.bind(this),
         },
       ],
-      rejectClose: false,
+      close: () => null,
       position: {
-        width: 450,
+        width: standardWidth,
       },
-    });
-    switch (response) {
-      case "reset":
-        this.reactivateOriginals();
-        break;
-      case true:
-      case false:
-        this.#updateModListAndReload(response);
-        break;
-      case null:
-      default:
-        // allow closing the dialog without making a choice; it'll return on page refresh
-        break;
-    }
+    }).render({ force: true });
   }
 
   async #resetSetting() {
@@ -729,30 +782,55 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     this.#reload();
   }
 
-  async #renderFinalDialog(culprit) {
-    const template = `modules/${MODULE_ID}/templates/foundTheCulprit3.hbs`;
+  async #rerunWithoutCulprit(culprit) {
+    const update = {
+      modules: this.#modules.reduce((mods, mod) => {
+        mods[mod.id] = { active: true };
+        if (mod.id === culprit.id) {
+          mods[mod.id].priorPinned = false;
+          mods[mod.id].pinned = null;
+        }
+        return mods;
+      }, {}),
+    };
+    await this.#update(update);
+    FindTheCulpritApp.#startRun.call(this);
+  }
+
+  async #foundTheCulprit(culprit) {
+    if (this.#dialog) return this.#dialog.render({ force: true });
+    const template = `modules/${MODULE_ID}/templates/foundTheCulprit.hbs`;
     const content = await renderTemplate(template, {
-      culprit,
-      pinned: this.#modules.filter((m) => m.pinned),
+      culprit: game.modules.get(culprit.id).title,
+      pinned: this.#modules.filter((m) => m.pinned).map((m) => game.modules.get(m.id).title),
       icons: this.#icons.module,
     });
-    DialogV2.prompt({
-      classes: ["ftc-dialog", "find-the-culprit-app3"],
+    this.#dialog = await new DialogV2({
+      classes: ["ftc-dialog", "find-the-culprit-app"],
       window: {
         title: "FindTheCulprit.FindTheCulprit",
         icon: this.options.window.icon,
       },
       content,
-      ok: {
-        icon: "fa-solid fa-list-check",
-        label: "FindTheCulprit.ReactivateAllModules",
-        callback: this.reactivateOriginals.bind(this),
-      },
-      rejectClose: false,
+      buttons: [
+        {
+          action: "reset",
+          icon: "fa-solid fa-rotate-left",
+          label: "Reset",
+          callback: this.reactivateOriginals.bind(this),
+        },
+        {
+          action: "rerun",
+          icon: "fa-solid fa-power-off",
+          label: "Rerun Without Culprit",
+          callback: this.#rerunWithoutCulprit.bind(this, culprit),
+        },
+      ],
+      close: () => null,
       position: {
-        width: 450,
+        width: standardWidth,
       },
-    });
+    }).render(true);
   }
 
   async #errorDialog(message) {
@@ -771,22 +849,25 @@ export class FindTheCulpritAppV3 extends HandlebarsApplicationMixin(ApplicationV
     const content = await renderTemplate(`modules/${MODULE_ID}/templates/errorDialog.hbs`, {
       message,
     });
-    DialogV2.prompt({
+    this.#dialog = await new DialogV2({
       window: {
         title: this.title + ` - ` + game.i18n.localize("Error"),
         icon: this.options.window.icon,
       },
       content,
-      ok: {
-        icon: "fa-solid fa-list-check",
-        label: "FindTheCulprit.ReactivateAllModules",
-        callback: this.reactivateOriginals.bind(this),
-      },
+      buttons: [
+        {
+          action: "reset",
+          icon: "fa-solid fa-rotate-left",
+          label: "Reset",
+          callback: this.reactivateOriginals.bind(this),
+        },
+      ],
       close: this.reactivateOriginals.bind(this),
       position: {
-        width: 450,
+        width: standardWidth,
       },
-    });
+    }).render({ force: true });
     throw new Error(message);
   }
 }

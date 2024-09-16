@@ -7,23 +7,19 @@
   }}
 </p>
 <ul class="ftc-module-list">
-  {{#each active}}
-    <li data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
-      <i class="fa-solid fa-check module-active"></i>
-      <label class="checkboxless">{{ftc-modTitle this}}</label>
+  {{log this}}
+  {{#each groups as |list group|}}
+    {{#each list}}
+    <li>
+      <div class="tooltip-wrapper" data-tooltip="{{localize (concat "FindTheCulprit.StateTooltip." @../key)}}" data-tooltip-direction="LEFT">
+        <button type="button" data-state="{{@../key}}" disabled>
+          <i class="fa-solid {{lookup @root.icons @../key}}"></i>
+        </button>
+      </div>
+      <label>{{title}}</label>
     </li>
+    {{/each}}
   {{/each}}
-  {{#each inactive}}
-    <li data-tooltip="{{localize 'FindTheCulprit.CurrentlyInactive'}}">
-      <i class="fa-regular fa-square module-inactive"></i>
-      <label class="checkboxless">{{ftc-modTitle this}}</label>
-    </li>
-  {{/each}}
-  {{#each selected}}
-    <li data-tooltip="{{localize 'FindTheCulprit.SelectedModuleTooltip'}}">
-      <i class="fa-solid fa-lock module-selected"></i>
-      <label class="checkboxless">{{ftc-modTitle this}}</label>
-    </li>
-  {{/each}}
+  
 </ul>
-<p>{{localize "FindTheCulprit.StartOfRun.DoesIssuePersist"}}</p>
+<span class="ftc-prompt">{{localize "FindTheCulprit.StartOfRun.DoesIssuePersist"}}</span>

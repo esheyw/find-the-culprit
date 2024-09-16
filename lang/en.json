@@ -3,18 +3,9 @@
     "FindTheCulprit": "Find the Culprit!",
     "Start": "Start",
     "ClearAll": "Clear All",
-    "ReactivateAllModules": "Reactivate All Modules",
-    "MissingDependency": "{module} requires a module with ID {dependency} as a dependency, which is not installed!",
-    "DisabledDependency": "{module} requires {dependency} as a dependency, which is not enabled!",
     "BinarySearchStep": {
-      "CurrentStatistics": "Current Statistics",
-      "StatsData": "Step {currentStep}: {numRemaining} modules still suspect. {stepsLeft} or fewer step(s) remain.",
-      "Tooltip": {
-        "Pinned": "Pinned: Activated at all times during the search",
-        "Excluded": "Excluded: Disabled for the duration of the search",
-        "Exonerated": "Exonerated: You have indicated that the issue did not persist while this module was active",
-        "ExoneratedButActive": "Exonerated (Active): Despite being exonerated, this module is active because a non-exonerated active module requires it as a dependency"
-      }
+      "Title": "Search Step",
+      "StatsData": "Step {currentStep}: {numRemaining} modules still suspect. {stepsLeft} or fewer step(s) remain."
     },
     "StateTooltip": {
       "active": "Active: Currently active for this test step",
@@ -29,17 +20,10 @@
     "Error": {
       "Singleton": "Only one FindTheCulprit app is allowed to exist."
     },
-    "CurrentlyActive": "Currently Active",
-    "CurrentlyInactive": "Currently Inactive",
-    "SelectedModuleTooltip": "Selected Module - Locked",
     "FoundTheCulprit": {
       "Header": "We found the culprit!",
       "HeaderUncertain": "We (might have) found the culprit!",
-      "HasSelected": "You have {count} modules selected, any of which may be your true culprit.",
       "HasPinned": "You have {count} modules pinned, any of which may be your true culprit."
-    },
-    "Dependency": {
-      "RequiredToEnable": "{module} requires the following dependencies: "
     },
     "ErrorDialog": {
       "EncounteredError": "Find the Culprit encountered an error:",
@@ -51,10 +35,16 @@
     },
     "SelectMods": {
       "Action": {
+        "deterministic":{
+          "Label": {
+            "Enabled": "Deterministic Suspect Splitting",
+            "Disabled": "Somewhat Shuffled Suspect Splitting"
+          }
+        },
         "mute": {
           "Label": {
-            "Enabled": "Sounds muted",
-            "Disabled": "Sounds unmuted"
+            "Enabled": "Sounds Muted",
+            "Disabled": "Sounds Unmuted"
           }
         },
         "lockLibraries": {
@@ -63,8 +53,8 @@
             "Disabled": "Libraries Unlocked"
           },
           "Tooltip": {
-            "Enabled": "All modules marked as libraries are force locked.",
-            "Disabled": "Library modules are being treated normally."
+            "Enabled": "All modules marked as libraries are force pinned",
+            "Disabled": "Library modules are being treated normally"
           }
         },
         "reloadAll": {
@@ -82,40 +72,19 @@
         },
         "clearAll": {
           "Label": "Clear All",
-          "Tooltip": "Sets every module to unlocked and unselected"
+          "Tooltip": "Sets all modules to Suspect"
         }
       },
-      "ModuleTooltip": {
-        "Preamble": "This module is force pinned because:",
-        "LockedLibrary": "It is a library and the Lock Libraries toggle is enabled",
-        "DependencyOf": "It is a dependency of pinned module(s) {pinnedDependants}",
-        "Pinned": "Pinned: will be enabled at all times during the search",
-        "Excluded": "Excluded: will be disabled for the duration of the search",
-        "Search": "Search: This module is in the pool of potential culprits"
+      "ForcedTooltip": {
+        "Preamble": "This state is forced because:",
+        "LockedLibrary": "Module is a library and the Lock Libraries toggle is enabled",
+        "DependencyOf": "Module is a dependency of pinned module(s) {pinnedDependants}",
+        "ExcludedDependencies": "Module depends on excluded module(s) {excludedDependencies}"
       },
-      "Lock": {
-        "Tooltip": {
-          "Locked": "This module is locked. Click to unlock it.",
-          "Unlocked": "This module is unlocked. Click to lock it. Locked status is remembered.",
-          "Forced": "This module cannot be unlocked while the Lock Libraries toggle is enabled."
-        }
-      },
-      "DisabledBecauseLocked": "To deselect this module, unlock it first.",
-      "ForceLockedBecauseLibraryTooltip": "This module cannot be unlocked while the Lock Libraries toggle is enabled.",
-      "Prompt": "Choose modules to keep active:",
-      "LockedTooltip": "This module is locked. Click to unlock it.",
-      "LibrariesLocked": "Libraries Locked",
-      "LibrariesLockedTooltip": "All modules marked as libraries are force locked.",
-      "LibrariesUnlocked": "Libraries Unlocked",
-      "LibrariesUnlockedTooltip": "Library modules are being treated normally.",
-      "DoReloadAllClientsTooltip": "All connected clients will reload along with the GM",
-      "DontReloadAllClientsTooltip": "Only the GM client will reload",
-      "MutedTooltip": "Lock sounds muted.",
-      "UnmutedTooltip": "Lock sounds unmuted.",
-      "UnlockedTooltip": "This module is unlocked. Click to lock it. Locked status is remembered.",
+      "FilterModules": "Filter Modules",
       "Usage": {
-        "P1": "After clicking Start, the page will refresh and you will be prompted to check whether your issue still exists. This may repeat multiple times until the culprit was found.",
-        "P2": "After the culprit was found you will be able to choose whether you want to return your active modules list to its pre-run state.",
+        "P1": "After clicking Start, the page will refresh and you will be prompted to check whether your issue persists. This may repeat multiple times until the culprit is found.",
+        "P2": "After the culprit is found you will be able to return to the pre-run state.",
         "P3": "Don't worry if you accidently close one of the popups, just refresh the page manually and it will reappear."
       }
     },

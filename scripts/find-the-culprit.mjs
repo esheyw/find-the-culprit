@@ -1,12 +1,9 @@
-import { FindTheCulpritAppV2 } from "./apps/FindTheCulpritAppV2.mjs";
 import { registerSettings } from "./settings.mjs";
 import { MODULE } from "./constants.mjs";
-import { helpers } from "./handlebars.mjs";
-import { FindTheCulpritAppV3 } from "./apps/FindTheCulpritAppV3.mjs";
+import { FindTheCulpritApp } from "./apps/FindTheCulpritAppV3.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
-  Handlebars.registerHelper(helpers);
   MODULE().debug = true;
 });
 
@@ -17,11 +14,9 @@ Hooks.once("setup", () => {
 });
 Hooks.once("ready", () => {
   if (game.user !== activeRealGM()) return;
-  MODULE().app = new FindTheCulpritAppV2();
-  MODULE().app2 = new FindTheCulpritAppV3();
+  MODULE().app = new FindTheCulpritApp();
   MODULE().app.doStep();
-  MODULE().app2.doStep();
-  globalThis.ftc2 = MODULE().app2;
+  if (MODULE().debug) globalThis.ftc = MODULE().app;
 });
 
 function activeRealGM() {

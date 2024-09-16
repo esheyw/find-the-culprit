@@ -1,45 +1,7 @@
-import { fu, MODULE, MODULE_ID } from "./constants.mjs";
+import { fu, MODULE } from "./constants.mjs";
 
 export function debug(...args) {
   if (MODULE().debug) console.warn(...args.map((a) => fu.deepClone(a)));
-}
-
-export function actionLabel(name, value) {
-  let out = `FindTheCulprit.SelectMods.Action.${name}.Label`;
-  if (value !== undefined && typeof value !== "object") out += `.${value ? "Enabled" : "Disabled"}`;
-  return out;
-}
-
-export function actionTooltip(name, value) {
-  let out = `FindTheCulprit.SelectMods.Action.${name}.Tooltip`;
-  if (value !== undefined && typeof value !== "object") out += `.${value ? "Enabled" : "Disabled"}`;
-  return out;
-}
-
-export function lockTooltip(locked, lockLibraries, library) {
-  let out = "FindTheCulprit.SelectMods.Lock.Tooltip.";
-  if (lockLibraries && library) {
-    out += "Forced";
-  } else {
-    out += locked ? "Locked" : "Unlocked";
-  }
-  return out;
-}
-
-export function modTitle(modID) {
-  return game.modules.get(modID)?.title || "";
-}
-
-export function getDependencies(mod, { inner = false, pinned = new Set() } = {}) {
-  mod = mod instanceof foundry.packages.BaseModule ? mod : game.modules.get(mod);
-  pinned = pinned instanceof Set ? pinned : new Set(pinned);
-  const modDeps = [...mod.relationships.requires].filter((r) => r.type === "module");
-  const requires = [];
-  if (inner) requires.push(mod.id);
-  requires.push(...modDeps.flatMap((d) => getDependencies(d.id, { inner: true, pinned })));
-  const out = [...new Set(requires)];
-  console.warn({ name: mod.title, modDeps, out, filtered: out.filter((r) => !pinned.has(r)) });
-  return inner ? out : out.filter((r) => !pinned.has(r));
 }
 
 export function shuffleArray(array) {

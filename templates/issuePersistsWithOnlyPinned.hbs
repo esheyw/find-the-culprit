@@ -6,9 +6,9 @@
     {{#each pinned}}
       <li>
         <button data-state="pinned" disabled>
-          <i class="fa-solid {{icon}}"></i>
+          <i class="fa-solid {{@root.icon}}"></i>
         </button>
-        <label>{{ftc-modTitle id}}</label>
+        <label>{{this}}</label>
       </li>
     {{/each}}
   </ul>
