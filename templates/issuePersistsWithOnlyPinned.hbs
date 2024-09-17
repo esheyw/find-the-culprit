@@ -1,17 +1,19 @@
 
-<p>{{~localize "FindTheCulprit.IPWOS.BlameCoreOrSystem"~}} 
+<p>{{~localize "FindTheCulprit.IPWOP.BlameCoreOrSystem"~}} 
 {{~#if pinned.length~}}
-  {{~localize "FindTheCulprit.IPWOS.BlameModules"~}}</p>  
-  <ul class="ftc-module-list">
-    {{#each pinned}}
-      <li>
-        <button data-state="pinned" disabled>
-          <i class="fa-solid {{@root.icon}}"></i>
-        </button>
-        <label>{{this}}</label>
-      </li>
-    {{/each}}
-  </ul>
+{{~localize "FindTheCulprit.IPWOP.BlameModules"~}}</p>  
+<ul class="ftc-module-list">
+  {{#each pinned}}
+  <li>
+    <div class="tooltip-wrapper" data-tooltip="<p>{{localize "FindTheCulprit.StateTooltip.pinned"}}</p>" data-tooltip-class="ftc-module-tooltip" data-tooltip-direction="LEFT">
+      <button data-state="pinned" disabled>
+        <i class="fa-solid {{@root.icon}}"></i>
+      </button>
+    </div>
+    <label>{{this}}</label>    
+  </li>
+  {{/each}}
+</ul>
 {{~else~}}
-  .</p>
+</p>
 {{~/if~}}

@@ -1,4 +1,4 @@
-<h2>{{localize (concat "FindTheCulprit.FoundTheCulprit.Header" (ifThen pinned.length "Uncertain" ""))}}</h2>
+<h2 class="culprit-header">{{localize (concat "FindTheCulprit.FoundTheCulprit.Header" (ifThen pinned.length "Uncertain" ""))}}</h2>
 {{#if pinned.length}}
   <p>{{localize "FindTheCulprit.FoundTheCulprit.HasPinned" count=pinned.length}}</p>
 {{/if}}

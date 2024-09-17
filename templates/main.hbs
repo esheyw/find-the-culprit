@@ -1,17 +1,26 @@
 <div class="specificity">
-  <p>Pin any modules that you want to stay active throughout the search.<br>
-  Any modules set to <em>excluded</em> will be deactivated for the entire search (they will be reactivated after).</p>
+  {{log this}}
+  {{!-- <p>
+    <button type="button" class="ftc-state-button" data-state="pinned" disabled>
+      <i class="fa-solid {{lookup icons.module "pinned"}}"></i>
+    </button>
+    Pin any modules that you want to stay active throughout the search.<br>
+    <button type="button" class="ftc-state-button" data-state="excluded" disabled>
+      <i class="fa-solid {{lookup icons.module "excluded"}}"></i>
+    </button>
+    Exclude any modules you want to disable for the search
+  </p>     --}}
   <input type="text" name="search" placeholder="{{localize "FindTheCulprit.SelectMods.FilterModules"}}" value="">
   <ul class="ftc-module-list">
     {{#each modules}}
       <li data-module="{{id}}"{{#if hidden}} class="ftc-hidden"{{/if}}>
         <div class="tooltip-wrapper" data-tooltip="{{> moduleTooltip this~}}" data-tooltip-class="ftc-module-tooltip" data-tooltip-direction="LEFT">
-          <button type="button" id="find-the-culprit-toggle-{{id}}" data-action="cycle" data-state="{{state}}" {{disabled forced}}>
-            <i class="fa-solid {{icon}}"></i>
+          <button class="ftc-state-button" type="button" id="find-the-culprit-cycle-{{id}}" data-action="cycle" data-state="{{state}}" {{disabled forced}}>
+            <i class="fa-solid {{lookup @root.icons.module state}}"></i>
             {{#if forced}}<i class="fa-solid fa-lock corner-icon"></i>{{/if}}
           </button>
         </div>
-        <label class="module-title" {{#unless forced}}for="find-the-culprit-toggle-{{id}}"{{/unless}}>
+        <label class="module-title" {{#unless forced}}for="find-the-culprit-cycle-{{id}}"{{/unless}}>
           {{~title~}}
         </label>
       </li>
@@ -43,6 +52,15 @@
       <span>{{localize (concat "FindTheCulprit.SelectMods.Action.reloadAll.Label." (ifThen reloadAll.value "Enabled" "Disabled"))}}</span>
     </button>
   </div>
+  <p>
+    {{{localize "FindTheCulprit.SelectMods.Usage.Usage"}}}
+  </p>
+  <p>
+    {{{localize "FindTheCulprit.SelectMods.Usage.Disclaimer"}}}
+  </p>
+  <p>
+    {{{localize "FindTheCulprit.SelectMods.Usage.Reassurance"}}}
+  </p>
   <footer class="form-footer">
     <button type="submit" data-action="start">
       <i class="fa-solid fa-check"></i>
@@ -56,8 +74,9 @@
 </div>
 
 {{~#*inline "moduleTooltip"~}}
-  <p>{{localize (concat "FindTheCulprit.StateTooltip." state)}}</p>
+  {{localize (concat "FindTheCulprit.StateTooltip." state)}}
   {{~#if forced~}}
+  <div>
     {{!-- <br> --}}
     {{~localize "FindTheCulprit.SelectMods.ForcedTooltip.Preamble"~}}
     <ul>
@@ -68,5 +87,6 @@
       <li>{{localize "FindTheCulprit.SelectMods.ForcedTooltip.ExcludedDependencies" excludedDependencies=excludedDependenciesFormatted}}</li>
     {{~/if~}} 
     </ul> 
+  </div>
   {{~/if~}}
 {{~/inline~}}
