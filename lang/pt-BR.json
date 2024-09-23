@@ -1,51 +1,129 @@
 {
   "FindTheCulprit": {
-    "FindTheCulprit": "Find the Culprit!",
-    "Start": "Começar",
-    "ClearAll": "Limpar Todos",
-    "ClearAllTooltip": "Define todos os módulos como desbloqueados e desmarcados",
-    "LockSelected": "Bloquear Selecionado",
-    "ReactivateAllModules": "Reativar Todos os Módulos",
-    "MissingDependency": "{module} exige um módulo com ID {dependency}, que não está instalado!",
-    "DisabledDependency": "{module} exige {dependency}, que não está habilitado!",
-    "BinarySearchStep": {
-      "CurrentStatistics": "Estatísticas Atuais",
-      "StatsData": "{numRemaining} módulos ainda estão na lista. {stepsLeft} ou menos passos restantes."
-    },
-    "Error": {
-      "SelectModsSingleton": "Apenas um aplicativo SelectMods pode existir."
-    },
-    "CurrentlyActive": "Atualmente Ativos",
-    "FoundTheCulprit": {
-      "Header": "Encontramos o culpado!"
-    },
-    "IPWOS": {
-      "BlameModules": "Parece que o problema é um bug na sua lista de módulos escolhidos:",
-      "BlameCoreOrSystem": "Parece que o problema é um bug no sistema do jogo ou no software principal."
-    },
-    "SelectMods": {
-      "DisabledBecauseLocked": "Para desmarcar este módulo, desbloqueie-o primeiro.",
-      "ForceLockedBecauseLibraryTooltip": "Este módulo não pode ser desbloqueado enquanto a opção Bloquear Bibliotecas estiver marcada acima",
-      "Prompt": "Escolha módulos para manter ativos:",
-      "LockedTooltip": "Este módulo está bloqueado. Clique para desbloqueá-lo",
-      "LibrariesLocked": "Bibliotecas Bloqueadas",
-      "LibrariesLockedTooltip": "Todos os módulos marcados como bibliotecas são bloqueados à força",
-      "LibrariesUnlocked": "Bibliotecas Desbloqueadas",
-      "LibrariesUnlockedTooltip": "Módulos de biblioteca serão tratados normalmente",
-      "DoReloadAllClientsTooltip":"Todos os clientes conectados serão recarregados junto com o MJ",
-      "DontReloadAllClientsTooltip":"Somente o cliente MJ irá recarregar",
-      "MutedTooltip": "Bloquear Sons Mutado",
-      "UnmutedTooltip": "Bloquear Sons Desmutado",
-      "UnlockedTooltip": "Este módulo está desbloqueado. Clique para bloqueá-lo. O status bloqueado é lembrado",
-      "Usage": {
-        "P1": "Após clicar em Iniciar, a página será atualizada e você será solicitado a verificar se o problema ainda existe. Isso pode se repetir várias vezes até que o culpado seja encontrado.",
-        "P2": "Depois que o culpado for encontrado, você poderá escolher se deseja retornar sua lista de módulos ativos ao estado anterior à execução.",
-        "P3": "Não se preocupe se você fechar acidentalmente uma das janelas, basta atualizar a página e ela irá aparecer novamente."
+    "Action": {
+      "acknowledge": {
+        "Label": {
+          "Enabled": "Mostrar Sempre",
+          "Disabled": "Não Mostrar Novamente"
+        }
+      },
+      "deterministic": {
+        "Label": {
+          "Enabled": "Determinístico",
+          "Disabled": "Embaralhar"
+        },
+        "Tooltip": {
+          "Enabled": "A etapa de embaralhamento da divisão do módulo ativo/inativo será ignorada",
+          "Disabled": "Módulos que não são restritos pelas dependências deles ou de outros serão embaralhados durante a divisão do módulo entre etapas"
+        }
+      },
+      "instructions": {
+        "Label": "Instruções",
+        "Tooltip": "Clique para renderizar a caixa de diálogo Instruções"
+      },
+      "mute": {
+        "Tooltip": {
+          "Enabled": "Sons Mutados",
+          "Disabled": "Sons Desmutados"
+        }
+      },
+      "lockLibraries": {
+        "Label": {
+          "Enabled": "Bibliotecas Bloqueadas",
+          "Disabled": "Bibliotecas Desbloqueadas"
+        },
+        "Tooltip": {
+          "Enabled": "Todos os módulos marcados como bibliotecas são fixados à força",
+          "Disabled": "Os módulos da biblioteca estão sendo tratados normalmente"
+        }
+      },
+      "reloadAll": {
+        "Label": {
+          "Enabled": "Recarregar Tudo",
+          "Disabled": "Recarregar Apenas MJ"
+        },
+        "Tooltip": {
+          "Enabled": "Todos os clientes conectados serão recarregados junto com o MJ",
+          "Disabled": "Somente o cliente do MJ irá recarregar"
+        }
+      },
+      "zeroMods": {
+        "Label": "Zero Módulos",
+        "Tooltip": "Recarregue sem nenhum módulo ativo além do Find the Culprit. Não inicia uma pesquisa completa"
+      },
+      "clearAll": {
+        "Label": "Limpar Tudo",
+        "Tooltip": "Define todos os módulos como Suspeitos"
+      },
+      "startRun": {
+        "Label": "Iniciar Busca",
+        "Tooltip": "Inicie o processo de busca"
       }
     },
+    "BinarySearchStep": {
+      "Title": "Etapa de Busca",
+      "ConfirmStepTitle": "Confirmar Etapa",
+      "StatsData": "Etapa {currentStep}: {numRemaining} módulos ainda suspeitos. {remainingSteps} ou menos etapa(s) restantes.",
+      "ConfirmStep": "Confirmar Etapa: os únicos módulos ativos são o culpado identificado \"{culprit}\", suas dependências (se houver) e seus módulos fixados (se houver).",
+      "WrongCulprit": "Wrong Culprit - Restart Run"
+    },
+    "ClearAll": "Limpar Tudo",
+    "Continue": "Continuar",
+    "ErrorDialog": {
+      "EncounteredError": "Find the Culprit encontrou um erro:",
+      "Direction": "Os dados do módulo podem ser encontrados no console como um erro para auxiliar no relatório de bugs. Clicar no botão abaixo ou fechar esta caixa de diálogo retornará seu mundo ao estado anterior à execução do Find the Culprit."
+    },
+    "FindTheCulprit": "Encontrar o Culpado!",
+    "FoundTheCulprit": {
+      "Title": "Sentença",
+      "Header": "Encontramos o culpado!",
+      "HasPinned": "Você tem {count} módulos fixados, qualquer um dos quais pode ser o seu verdadeiro culpado. Porém, se você confiar neles, o culpado listado é uma provável fonte do seu problema.",
+      "OfferConfirmStep": "O culpado indicado não estava ativo no veredicto. Clique no botão Confirmar abaixo para realizar mais uma etapa com o culpado ativo.",
+      "CulpritConfirmed": "Você confirmou que o culpado encontrado está causando um problema."
+    },
+    "IPWOP": {
+      "SomePinnedTitle": "Problema na Base, Sistema ou Fixado",
+      "NonePinnedTitle": "Problema na Base ou Sistema",
+      "BlameModules": ", ou em um de seus módulos fixados:",
+      "BlameCoreOrSystem": "Parece que o problema é um bug no sistema do jogo ou no software principal"
+    },
+    "Instructions": {
+      "Controls": "Os estados do módulo podem ser alternados clicando no título do módulo ou no botão próximo a ele, a menos que o estado desse módulo tenha sido forçado. Clicar com o botão direito no botão irá retroceder. Por padrão, todos os módulos são Suspeitos, exceto aqueles marcados como bibliotecas por seus autores, porque o padrão de alternância Bloquear Bibliotecas é ativado.",
+      "Tooltips": "A maioria dos elementos interativos tem dicas que explicam sua função e/ou estado de alternância atual.",
+      "Usage": "Quando a busca for iniciada, a página será atualizada e você será solicitado a indicar se o problema persiste. Siga as instruções durante as etapas da busca, que restringirão a lista de suspeitos até que um único culpado seja encontrado, após o qual você poderá retornar à lista de módulos ativos no momento.",
+      "Disclaimer": "Embora isso seja preciso para muitos tipos de problemas, esse processo não garante que o culpado encontrado seja o único módulo &ndash; ou mesmo que <em>um módulo</em> &ndash; esteja causando problemas, pois não pode explicar todas as interações módulo-módulo. O algoritmo de divisão da lista de módulos evita que um módulo seja habilitado sem suas dependências, mas nem todos os relacionamentos de módulos são definidos bem o suficiente para serem contabilizados desta forma.",
+      "Reassurance": "Qualquer caixa de diálogo fechada da etapa de busca pode ser recuperada recarregando a página ou clicando no botão Encontrar o Culpado no Gerenciamento de Módulos."
+    },
+    "SelectMods": {
+      "ForcedTooltip": {
+        "Preamble": "Este estado é forçado porque:",
+        "LockedLibrary": "O módulo é uma biblioteca e a alternância Bloquear Bibliotecas está habilitada",
+        "DependencyOf": "O módulo é uma dependência do(s) módulo(s) fixado(s) {pinnedDependants}",
+        "ExcludedDependencies": "O módulo depende do(s) módulo(s) excluído(s) {excludedDependencies}"
+      },
+      "FilterModules": "Filtrar Módulos"
+    },
+    "Start": "Começar",
     "StartOfRun": {
-      "AllModulesDeactivated": "Todos os módulos, exceto os escolhidos, estão desativados.",
+      "SomePinnedTitle": "Apenas Módulos Fixados Ativos",
+      "NonePinnedTitle": "Nenhum Módulo Ativo",
+      "AllModulesDeactivated": "Todos os módulos, exceto Find the Culprit, estão desativados.",
+      "AllButPinnedDeactivated": "Todos os módulos, exceto aqueles fixados e o próprio Find the Culprit, estão desativados.",
+      "MaxSteps": "A pesquisa levará no máximo {maxSteps} passos.",
       "DoesIssuePersist": "Seu problema persiste?"
+    },
+    "StateTooltip": {
+      "active": "<strong>Ativo:</strong> Atualmente ativo para esta etapa de teste",
+      "culprit": "<strong>Culpado:</strong> O módulo que está causando (um dos) seus problemas",
+      "excluded": "<strong>Excluído:</strong> Desativado durante a busca",
+      "exonerated": "<strong>Exonerado:</strong> Você indicou que o problema não persistiu enquanto este módulo estava ativo",
+      "exoneratedButActive": "<strong>Exonerado (Ativo):</strong> Apesar de ser exonerado, este módulo está ativo porque um ou mais módulos suspeitos ativos o exigem como dependência",
+      "inactive": "<strong>Inativo:</strong> Ainda suspeito, mas não ativo nesta etapa",
+      "pinned": "<strong>Fixado:</strong> Ativo em todos os momentos durante a busca",
+      "suspect": "<strong>Suspeito:</strong> Um potencial culpado, ativado e desativado normalmente"
+    },
+    "ZeroModules": {
+      "Title": "Zero Módulos"
     }
   }
 }
