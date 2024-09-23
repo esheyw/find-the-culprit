@@ -1,21 +1,31 @@
-<form>
-  <h2>{{localize "FindTheCulprit.BinarySearchStep.CurrentStatistics"}}</h2>
-  <p>
-    {{localize "FindTheCulprit.BinarySearchStep.StatsData" numRemaining=numRemaining stepsLeft=stepsLeft}}
-  </p>
-  <ul class="ftc-module-list">
-    {{#each active}}
-      <li data-active="true" data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
-        <i class="fa-solid fa-check"></i>
-        {{title}}
-      </li>
+{{#if (gt remainingSteps 0)}}
+<p>
+  {{~localize
+    "FindTheCulprit.BinarySearchStep.StatsData"
+    currentStep=currentStep
+    numRemaining=numRemaining
+    remainingSteps=remainingSteps
+  ~}}
+</p>
+{{else}}
+<p class="confirm-step">
+  {{~localize "FindTheCulprit.BinarySearchStep.ConfirmStep" culprit=groups.active.[0].title~}}
+</p>
+{{/if}}
+<ul class="ftc-module-list">
+  {{log this}}
+  {{#each groups}}
+    {{#each this}}
+    <li>
+      <div class="tooltip-wrapper" data-tooltip="{{localize (concat "FindTheCulprit.StateTooltip." @../key)}}" data-tooltip-direction="LEFT">
+        <button class="ftc-state-button" type="button" data-state="{{@../key}}" disabled>
+          <i class="fa-solid {{lookup @root.icons.module @../key}}"></i>
+        </button>
+      </div>
+      <label>{{title}}</label>
+    </li>
     {{/each}}
-    {{#each inactive}}
-      <li data-active="false" data-tooltip="{{localize 'FindTheCulprit.CurrentlyActive'}}">
-        <i class="fa-solid fa-xmark"></i>
-        {{title}}
-      </li>
-    {{/each}}
-  </ul>
-  <h2 class="persist-prompt">{{localize "FindTheCulprit.StartOfRun.DoesIssuePersist"}}</h2>
-</form>
+  {{/each}}
+  
+</ul>
+<span class="ftc-prompt">{{localize "FindTheCulprit.StartOfRun.DoesIssuePersist"}}</span>

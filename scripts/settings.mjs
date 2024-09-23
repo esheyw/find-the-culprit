@@ -1,33 +1,27 @@
-import { MODULE_ID } from "./find-the-culprit.mjs";
+import { MODULE_ID } from "./constants.mjs";
+import { FtCSettings } from "./data/models.mjs";
+export const SETTINGS = {  
+  data: {
+    type: FtCSettings,
+    config: false,
+    name: "FTC.Setting.Data.Name",
+    hint: "FTC.Setting.Data.Hint",
+    scope: "world",
+    default: new FtCSettings().toObject(),
+  },
+  error: {
+    type: new foundry.data.fields.StringField({
+      nullable: true,
+      required: true,
+      blank: false,
+      initial: null,
+    }),
+    config: false,
+    scope: "world"
+  }
+};
 export function registerSettings() {
-  game.settings.register(MODULE_ID, "locks", {
-    default: {},
-    type: Object,
-    config: false,
-  });
-  game.settings.register(MODULE_ID, "stepData", {
-    default: {
-      step: null,
-      original: null,
-      active: null,
-      inactive: null,
-    },
-    type: Object,
-    config: false,
-  });
-  game.settings.register(MODULE_ID, "lockLibraries", {
-    default: true,
-    type: Boolean,
-    config: false,
-  });
-  game.settings.register(MODULE_ID, "mute", {
-    default: true,
-    type: Boolean,
-    config: false,
-  });
-  game.settings.register(MODULE_ID, "reloadAll", {
-    default: false,
-    type: Boolean,
-    config: false,
-  });
+  for (const [key, data] of Object.entries(SETTINGS)) {
+    game.settings.register(MODULE_ID, key, data);
+  }
 }
