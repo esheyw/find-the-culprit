@@ -1,4 +1,4 @@
-## Version 3.0
+## Version 3.0.0
 
 - Foundry v12+ only release
 - Converted the mod to ApplicationV2 exclusively
