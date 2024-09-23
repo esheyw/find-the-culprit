@@ -1,14 +1,24 @@
-## Version 2.5.0
+## Version 3.0
 
 - Foundry v12+ only release
 - Converted the mod to ApplicationV2 exclusively
-  - New styles are still slightly TBD. Should work for anywhere between font size 3 and 7 without jankiness, though.
-  - Moved the mute toggle to the header controls dropdown
-  - Added a header controls button for 'Quick Zero Mods Test' for when you want _actually_ no modules but FtC active but don't want to mess with your lock settings
-  - Switched over to change listeners on form elements instead of submitOnChange - the module list will no longer flicker on state change if filtered
-- Debounced the lock sound - toggling Lock Libraries should sound better now
+  - Rewrote the whole module more or less
+  - Medium confidence in new CSS. Should work with all font sizes
+  - Should be at least as accessible as the old UI, post an issue if you have advice on this front
+  - Modules now have three possible states
+    - Suspect, equivalent to unlocked & unchecked, enabled and disabled as normal
+    - Pinned, equivalent to locked or checked, always active during the search
+    - Excluded, new option to remove a module from the search (useful for pure asset modules etc)
+  - Left click cycles up the state list, right click down
+  - Usage instructions have been moved to their own dialog, along with caveats and disclaimers
+    - Dialog will appear the first time you open the main FtC app each page refresh
+    - Has an option to disable the above behaviour
+    - Can be rendered via the Instructions button in the main app
+  - Added button to restart with "Zero Modules" (other than FtC) enabled, for quick sanity checks  
 - Implemented new algorithm for splitting mods in half between steps
-  - Attempts to keep dependency chains together when possible, should reduce false positives.
+  - Attempts to keep dependency chains together when possible, should reduce false positives
+  - By default will shuffle the members of the list once dependencies are accounted for
+    - This behaviour is toggleable via the Shuffle/Deterministic toggle button
 
 ## v2.1.3
 

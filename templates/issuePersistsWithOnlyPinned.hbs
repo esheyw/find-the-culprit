@@ -6,7 +6,7 @@
   {{#each pinned}}
   <li>
     <div class="tooltip-wrapper" data-tooltip="<p>{{localize "FindTheCulprit.StateTooltip.pinned"}}</p>" data-tooltip-class="ftc-module-tooltip" data-tooltip-direction="LEFT">
-      <button data-state="pinned" disabled>
+      <button class="ftc-state-button" data-state="pinned" disabled>
         <i class="fa-solid {{@root.icon}}"></i>
       </button>
     </div>
@@ -15,5 +15,5 @@
   {{/each}}
 </ul>
 {{~else~}}
-</p>
+.</p>
 {{~/if~}}

@@ -1,26 +1,23 @@
 import { registerSettings } from "./settings.mjs";
-import { MODULE } from "./constants.mjs";
-import { FindTheCulpritApp } from "./apps/FindTheCulpritAppV3.mjs";
+import { MODULE, MODULE_ID } from "./constants.mjs";
+import { FindTheCulprit } from "./apps/FindTheCulprit.mjs";
+import { activeRealGM } from "./helpers.mjs";
 
 Hooks.once("init", () => {
   registerSettings();
-  MODULE().debug = true;
+  const templates = [
+    "binarySearchStep.hbs",
+    "errorDialog.hbs",
+    "foundTheCulprit.hbs",
+    "instructions.hbs",
+    "issuePersistsWithOnlyPinned.hbs",
+    "main.hbs",
+    "onlySelectedActive.hbs",
+  ];
+  loadTemplates(templates.map((t) => `modules/${MODULE_ID}/templates/${t}`));
+  MODULE().debug = MODULE().flags?.debug ?? 0;
 });
 
-Hooks.once("setup", () => {
-  if (game.user !== activeRealGM()) return;
-
-  // if (!MODULE().debug) cleanOldSettings();
-});
 Hooks.once("ready", () => {
-  if (game.user !== activeRealGM()) return;
-  MODULE().app = new FindTheCulpritApp();
-  MODULE().app.doStep();
-  if (MODULE().debug) globalThis.ftc = MODULE().app;
+  if (activeRealGM()?.isSelf) new FindTheCulprit();
 });
-
-function activeRealGM() {
-  const activeRealGMs = game.users.filter((u) => u.active && u.role === CONST.USER_ROLES.GAMEMASTER);
-  activeRealGMs.sort((a, b) => (a.id > b.id ? 1 : -1));
-  return activeRealGMs[0] || null;
-}

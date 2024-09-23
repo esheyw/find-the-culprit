@@ -1,19 +1,25 @@
+{{#if (gt remainingSteps 0)}}
 <p>
-  {{localize
+  {{~localize
     "FindTheCulprit.BinarySearchStep.StatsData"
     currentStep=currentStep
     numRemaining=numRemaining
-    stepsLeft=stepsLeft
-  }}
+    remainingSteps=remainingSteps
+  ~}}
 </p>
+{{else}}
+<p class="confirm-step">
+  {{~localize "FindTheCulprit.BinarySearchStep.ConfirmStep" culprit=groups.active.[0].title~}}
+</p>
+{{/if}}
 <ul class="ftc-module-list">
   {{log this}}
-  {{#each groups as |list group|}}
-    {{#each list}}
+  {{#each groups}}
+    {{#each this}}
     <li>
       <div class="tooltip-wrapper" data-tooltip="{{localize (concat "FindTheCulprit.StateTooltip." @../key)}}" data-tooltip-direction="LEFT">
-        <button type="button" data-state="{{@../key}}" disabled>
-          <i class="fa-solid {{lookup @root.icons @../key}}"></i>
+        <button class="ftc-state-button" type="button" data-state="{{@../key}}" disabled>
+          <i class="fa-solid {{lookup @root.icons.module @../key}}"></i>
         </button>
       </div>
       <label>{{title}}</label>

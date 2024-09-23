@@ -2,18 +2,40 @@ import { MappingField } from "./fields.mjs";
 const fields = foundry.data.fields;
 
 export class FtCSettings extends foundry.abstract.DataModel {
+  get originalSearchablesCount() {
+    return Object.values(this.modules).filter((m) => m.pinned === false && m.originallyActive).length;
+  }
+
+  get maxSteps() {
+    // const searchablesCount = Object.values(this.modules).filter((m) => m.pinned === false && m.originallyActive).length;
+    return Math.ceil(Math.log2(this.originalSearchablesCount)) + 1;
+  }
+
+  get searchablesCount() {
+    return Object.values(this.modules).filter((m) => m.pinned === false && m.originallyActive && m.active !== null)
+      .length;
+  }
+
+  get remainingSteps() {
+    const count = this.searchablesCount;
+    //return 0 for single searchable for the confirm step
+    return count > 1 ?Math.ceil(Math.log2(this.searchablesCount)) : 0;
+  }
+
   static defineSchema() {
     return {
       modules: new MappingField(new fields.EmbeddedDataField(FtCModule)),
       currentStep: new fields.NumberField({ nullable: true, required: false, integer: true }),
-      maxSteps: new fields.NumberField({ nullable: true, required: false, min: 0, integer: true }),
       mute: new fields.BooleanField(),
       lockLibraries: new fields.BooleanField({
         initial: true,
       }),
-      reloadAll: new fields.BooleanField(),
+      reloadAll: new fields.BooleanField({
+        initial: true,
+      }),
       zero: new fields.BooleanField(),
       deterministic: new fields.BooleanField(),
+      instructionsAcknowledged: new fields.BooleanField(),
     };
   }
 }

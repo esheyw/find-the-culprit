@@ -1,19 +1,21 @@
 <div class="specificity">
-  {{log this}}
-  {{!-- <p>
-    <button type="button" class="ftc-state-button" data-state="pinned" disabled>
-      <i class="fa-solid {{lookup icons.module "pinned"}}"></i>
+  <div class="button-row">
+    <button type="button" data-action="instructions" data-tooltip="{{ftcActionTooltip "instructions"}}">
+      <i class="fa-solid {{icons.instructions}}"></i>
+      <span>{{ftcActionLabel "instructions"}}</span>
     </button>
-    Pin any modules that you want to stay active throughout the search.<br>
-    <button type="button" class="ftc-state-button" data-state="excluded" disabled>
-      <i class="fa-solid {{lookup icons.module "excluded"}}"></i>
+    <button class="minimal" type="button" data-action="deterministic" data-tooltip="{{ftcActionTooltip "deterministic"}}">
+      <i class="fa-solid {{lookup icons.deterministic deterministic}}"></i>
+      <span>{{ftcActionLabel "deterministic"}}</span>
     </button>
-    Exclude any modules you want to disable for the search
-  </p>     --}}
+    <button type="button" data-action="mute" data-tooltip="{{ftcActionTooltip "mute"}}">
+      <i class="fa-solid {{lookup icons.mute mute}}"></i>
+    </button>
+  </div>
   <input type="text" name="search" placeholder="{{localize "FindTheCulprit.SelectMods.FilterModules"}}" value="">
   <ul class="ftc-module-list">
     {{#each modules}}
-      <li data-module="{{id}}"{{#if hidden}} class="ftc-hidden"{{/if}}>
+      <li data-module="{{id}}"{{#if hidden}} class="hidden"{{/if}}>
         <div class="tooltip-wrapper" data-tooltip="{{> moduleTooltip this~}}" data-tooltip-class="ftc-module-tooltip" data-tooltip-direction="LEFT">
           <button class="ftc-state-button" type="button" id="find-the-culprit-cycle-{{id}}" data-action="cycle" data-state="{{state}}" {{disabled forced}}>
             <i class="fa-solid {{lookup @root.icons.module state}}"></i>
@@ -27,54 +29,34 @@
     {{/each}}
   </ul>
   <div class="button-row">
-    <button
-      type="button"
-      data-action="clearAll"      
-      data-tooltip="{{localize 'FindTheCulprit.SelectMods.Action.clearAll.Tooltip'}}"
-    >
-      <i class="fa-solid fa-arrow-rotate-left"></i>
-      <span>{{localize "FindTheCulprit.SelectMods.Action.clearAll.Label"}}</span>
+    <button type="button" data-action="clearAll" data-tooltip="{{ftcActionTooltip "clearAll"}}">
+      <i class="fa-solid {{icons.clearAll}}"></i>
+      <span>{{ftcActionLabel "clearAll"}}</span>
     </button>
-    <button
-      type="button"
-      data-action="lockLibraries"
-      data-tooltip="{{localize (concat "FindTheCulprit.SelectMods.Action.lockLibraries.Tooltip." (ifThen lockLibraries.value "Enabled" "Disabled"))}}"
-    >
-      <i class="fa-solid {{lockLibraries.icon}}"></i>
-      <span>{{localize (concat "FindTheCulprit.SelectMods.Action.lockLibraries.Label." (ifThen lockLibraries.value "Enabled" "Disabled"))}}</span>
+    {{log actionTooltip}}
+    <button type="button" data-action="lockLibraries" data-tooltip="{{ftcActionTooltip "lockLibraries"}}">
+      <i class="fa-solid {{lookup icons.lockLibraries lockLibraries}}"></i>
+      <span>{{ftcActionLabel "lockLibraries"}}</span>
     </button>
-    <button
-      type="button"
-      data-action="reloadAll"
-      data-tooltip="{{localize (concat "FindTheCulprit.SelectMods.Action.reloadAll.Tooltip." (ifThen reloadAll.value "Enabled" "Disabled"))}}"
-    >
-      <i class="fa-solid {{reloadAll.icon}}"></i>
-      <span>{{localize (concat "FindTheCulprit.SelectMods.Action.reloadAll.Label." (ifThen reloadAll.value "Enabled" "Disabled"))}}</span>
+    <button type="button" data-action="reloadAll" data-tooltip="{{ftcActionTooltip "reloadAll"}}">
+      <i class="fa-solid {{lookup icons.reloadAll reloadAll}}"></i>
+      <span>{{ftcActionLabel "reloadAll"}}</span>
     </button>
   </div>
-  <p>
-    {{{localize "FindTheCulprit.SelectMods.Usage.Usage"}}}
-  </p>
-  <p>
-    {{{localize "FindTheCulprit.SelectMods.Usage.Disclaimer"}}}
-  </p>
-  <p>
-    {{{localize "FindTheCulprit.SelectMods.Usage.Reassurance"}}}
-  </p>
   <footer class="form-footer">
-    <button type="submit" data-action="start">
-      <i class="fa-solid fa-check"></i>
-      <span>{{localize "FindTheCulprit.Start"}}</span>
+    <button type="button" data-action="startRun" data-tooltip="{{ftcActionTooltip "startRun"}}">
+      <i class="fa-solid {{icons.startRun}}"></i>
+      <span>{{ftcActionLabel "startRun"}}</span>
     </button>
-    <button type="button" data-action="close">
-      <i class="fa-solid fa-xmark"></i>
-      <span>{{localize "Cancel"}}</span>
+    <button type="button" data-action="zeroMods" data-tooltip="{{ftcActionTooltip "zeroMods"}}">
+      <i class="fa-solid {{icons.zeroMods}}"></i>
+      <span>{{ftcActionLabel "zeroMods"}}</span>
     </button>
   </footer>
 </div>
 
 {{~#*inline "moduleTooltip"~}}
-  {{localize (concat "FindTheCulprit.StateTooltip." state)}}
+  {{{localize (concat "FindTheCulprit.StateTooltip." state)}}}
   {{~#if forced~}}
   <div>
     {{!-- <br> --}}

@@ -1,4 +1,10 @@
-<h2 class="culprit-header">{{localize (concat "FindTheCulprit.FoundTheCulprit.Header" (ifThen pinned.length "Uncertain" ""))}}</h2>
+<h2 class="culprit-header">{{localize "FindTheCulprit.FoundTheCulprit.Header"}}</h2>
+{{#if confirmStep}}
+  <p>{{localize "FindTheCulprit.FoundTheCulprit.CulpritConfirmed"}}</p>
+{{else if (not culprit.active)}}
+  <p>{{localize "FindTheCulprit.FoundTheCulprit.OfferConfirmStep"}}</p>
+{{/if}}
+
 {{#if pinned.length}}
   <p>{{localize "FindTheCulprit.FoundTheCulprit.HasPinned" count=pinned.length}}</p>
 {{/if}}
@@ -9,11 +15,11 @@
       data-tooltip="{{localize 'FindTheCulprit.StateTooltip.culprit'}}"
       data-tooltip-direction="LEFT"
     >
-      <button type="button" data-state="culprit" disabled>
-        <i class="fa-solid {{lookup @root.icons 'culprit'}}"></i>
+      <button class="ftc-state-button" type="button" data-state="culprit" disabled>
+        <i class="fa-solid {{icons.module.culprit}}"></i>
       </button>
     </div>
-    <label>{{culprit}}</label>
+    <label>{{culprit.title}}</label>
   </li>
   {{#each pinned}}
     <li>
@@ -22,8 +28,8 @@
         data-tooltip="{{localize 'FindTheCulprit.StateTooltip.pinned'}}"
         data-tooltip-direction="LEFT"
       >
-        <button type="button" data-state="pinned" disabled>
-          <i class="fa-solid {{lookup @root.icons 'pinned'}}"></i>
+        <button class="ftc-state-button" type="button" data-state="pinned" disabled>
+          <i class="fa-solid {{@root.icons.module.pinned}}"></i>
         </button>
       </div>
       <label>{{this}}</label>

@@ -19,7 +19,7 @@
   "readme": "https://github.com/esheyw/find-the-culprit#find-the-culprit",
   "bugs": "https://github.com/esheyw/find-the-culprit/issues",
   "changelog": "https://github.com/esheyw/find-the-culprit/blob/main/CHANGELOG.md",
-  "version": "1.8.0",
+  "version": "3.0.0",
   "compatibility": {
     "minimum": "12",
     "verified": "12.330"
@@ -40,6 +40,7 @@
   "flags": {
     "hotReload": {
       "extensions": ["css", "hbs", "json"]
-    }
+    },
+    "debug": 2
   }
 }
