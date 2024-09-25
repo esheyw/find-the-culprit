@@ -1,3 +1,8 @@
+## Version 3.0.1
+
+- Add pt-BR translation (thanks @Kharmans !)
+- Initial DorakoUI compatibility
+
 ## Version 3.0.0
 
 - Foundry v12+ only release
