@@ -1,4 +1,4 @@
-:is(div, dialog).find-the-culprit-app {
+:is(div, dialog).find-the-culprit-app.application {
   .standard-form,
   &.standard-form {
     // eliminate infuriating whitespace
@@ -15,6 +15,7 @@
     div {
       display: grid;
       grid-template-columns: 2rem auto;
+      column-gap: 0.2rem;
       align-items: center;
     }
     padding: 0.5rem;
@@ -64,24 +65,46 @@
   }
 
   [data-state="pinned"] {
+    &:disabled {
+      --dui-button-text-color: var(--color-level-warning);
+      color: var(--color-level-warning);
+    }
+    --dui-button-text-color: var(--color-level-warning);
     color: var(--color-level-warning);
   }
   [data-state="excluded"],
   [data-state="culprit"] {
+    &:disabled {
+      --dui-button-text-color: var(--color-level-error);
+      color: var(--color-level-error);
+    }
+    --dui-button-text-color: var(--color-level-error);
     color: var(--color-level-error);
   }
   [data-state="suspect"],
   [data-state="active"] {
+    &:disabled {
+      --dui-button-text-color: var(--color-level-info);
+      color: var(--color-level-info);
+    }
+    --dui-button-text-color: var(--color-level-info);
     color: var(--color-level-info);
   }
   [data-state="exonerated"],
   [data-state="exoneratedButActive"] {
+    --dui-button-text-color: var(--color-level-success);
     color: var(--color-level-success);
   }
   [data-state="inactive"] {
+    --dui-button-text-color: var(--color-light-5);
     color: var(--color-light-5);
   }
-  
+
+  &[data-color-scheme="light"] {
+    button.ftc-state-button {
+      text-shadow: 0px 0px 3px var(--color-text-primary), 0px 0px 3px var(--color-text-primary);
+    }
+  }
   button.ftc-state-button {
     display: inline-flex;
     aspect-ratio: 1/1;
@@ -103,8 +126,7 @@
       }
     }
   }
-  
-  
+
   .ftc-module-list {
     margin: 0.25rem 0;
     background: rgba(0, 0, 0, 0.05);
@@ -114,7 +136,7 @@
     }
     border-radius: 0.3rem;
     padding: 0.5rem;
-    max-height: 25vh;    
+    max-height: 25vh;
     overflow-x: hidden;
     overflow-y: scroll;
     list-style-type: none;
