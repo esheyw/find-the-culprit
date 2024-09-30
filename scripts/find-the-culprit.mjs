@@ -15,9 +15,8 @@ Hooks.once("init", () => {
     "onlyPinnedActive.hbs",
   ];
   loadTemplates(templates.map((t) => `modules/${MODULE_ID}/templates/${t}`));
-  MODULE().debug = MODULE().flags?.debug ?? 0;
+  MODULE().debug = game.settings.get(MODULE_ID, "debugLevel");
 });
-
 Hooks.once("ready", () => {
   if (activeRealGM()?.isSelf) new FindTheCulprit();
 });

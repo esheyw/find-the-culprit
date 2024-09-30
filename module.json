@@ -46,7 +46,6 @@
   "flags": {
     "hotReload": {
       "extensions": ["css", "hbs", "json"]
-    },
-    "debug": 2
+    }
   }
 }

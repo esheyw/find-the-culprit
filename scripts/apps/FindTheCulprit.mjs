@@ -146,6 +146,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     // process dependencies and originallyActive status
     // has to be its own loop to guarantee all modules have models associated already
+    const dependencyFailures = {};
     for (const modID in modules) {
       // keep uninstalled modules state
       const mod = game.modules.get(modID);
@@ -159,14 +160,20 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       });
       for (const reqID of modules[modID].requires) {
         if (!activeModIDs.includes(reqID)) {
-          this.#errorDialog(
-            `#prepareModules | Active module "${mod.title}" requires module ID "${reqID}" which is not active.`
-          );
+          dependencyFailures[modID] ??= [];
+          dependencyFailures[modID].push(reqID);
+          continue;
+          // this.#errorDialog(
+          //   `#prepareModules | Active module "${mod.title}" requires module ID "${reqID}" which is not active.`
+          // );
         }
         modules[reqID].updateSource({
           dependencyOf: modules[reqID].dependencyOf.add(modID),
         });
       }
+    }
+    if (Object.keys(dependencyFailures).length) {
+      //TODO
     }
     // process inner datamodels so we don't pollute the source with complex objects
     for (const modID in modules) {

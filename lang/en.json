@@ -104,6 +104,17 @@
       },
       "FilterModules": "Filter Modules"
     },
+    "Setting": {
+      "debugLevel": {
+        "Name": "Debug Level",
+        "Hint": "The degree to which debugging features are enabled for Find the Culprit",
+        "Choices": {
+          "None": "None",
+          "Logging": "Logging Only",
+          "Debugger": "Breakpoints Enabled"
+        }
+      }
+    },
     "Start": "Start",
     "StartOfRun": {
       "SomePinnedTitle": "Only Pinned Modules Active",
