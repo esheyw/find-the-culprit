@@ -27,7 +27,7 @@ body {
     --ftc-state-button-text-shadow: none;
   }
 
-  .find-the-culprit-app.application[data-color-scheme="light"] {
+  .find-the-culprit-app.application[data-color-scheme] {
     --ftc-module-list-border-color: var(--window-app-border-color);
     button:disabled {
       &:not(.display-only) {
@@ -36,6 +36,9 @@ body {
       box-shadow: none;
       border: none;
     }
+  }
+
+  .find-the-culprit-app.application[data-color-scheme="light"] {
     &[data-theme="crb"] {
       --ftc-module-list-border-color: var(--color-light-5);
       --ftc-app-gap: 0.5rem;
@@ -46,9 +49,9 @@ body {
       }
     }
   }
+
   .find-the-culprit-app.application[data-color-scheme="dark"] {
-    --ftc-state-button-text-shadow: none;
-    --ftc-module-list-border-color: var(--window-app-border-color);
+    --ftc-state-button-text-shadow: none;    
     &[data-theme="crb"] {
       --ftc-button-gap: 0.35rem;
       --ftc-app-gap: 0.35rem;
@@ -59,16 +62,6 @@ body {
         --fieldset-background-color: transparent;
         --fieldset-legend-color: var(--color-text-primary);
       }
-    }
-    &[data-theme="bg3"] {
-      --fieldset-border-color: var(--window-app-border-color);
-    }
-    button:disabled {
-      &:not(.display-only) {
-        background-color: rgba(0, 0, 0, 0.2);
-      }
-      box-shadow: none;
-      border: none;
     }
   }
 }
