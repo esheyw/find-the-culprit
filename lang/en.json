@@ -78,7 +78,7 @@
       "Title": "Sentencing",
       "Header": "We found the culprit!",
       "HasPinned": "You have {count} modules pinned, any of which might be your true culprit. If you trust them, though, the listed culprit is a likely source of your issue.",
-      "OfferConfirmStep": "The indicated culprit was not active at the verdict. Click the Confirm button below to do one more step with the culprit active.",
+      "OfferConfirmStep": "The culprit was not active when indicated, so its status is currently only inferred. Click the Confirm button below to do one more step with the culprit active.",
       "CulpritConfirmed": "You have confirmed that the found culprit is causing an issue."
     },
     "IPWOP": {
@@ -88,6 +88,7 @@
       "BlameCoreOrSystem": "Seems like the issue is a bug in the game system or the core software"
     },
     "Instructions": {
+      "ModuleStates": "Module States",
       "Controls": "Module states can be cycled through by clicking the module title or the button next to it, unless that module's state has been forced. Right clicking the button will cycle backwards. By default all modules are Suspect, except for those marked library by their authors, because the Lock Libraries toggle defaults to on.",
       "Tooltips": "Most interactive elements have tooltips explaining their function and/or current toggle state.",
       "Usage": "When the search starts, the page will refresh and you will be prompted to indicate if your issue persists. Follow the prompts through the steps of the search, which will narrow down the list of suspects until a single Culprit is found, after which you can return to the current active module list.",
@@ -113,7 +114,7 @@
       "DoesIssuePersist": "Does your issue persist?"
     },
     "StateTooltip": {
-      "active": "<strong>Active:</strong> Currently active for this test step",
+      "active": "<strong>Active:</strong> Currently active for this search step",
       "culprit": "<strong>Culprit:</strong> The module causing (one of) your issue(s)",
       "excluded": "<strong>Excluded:</strong> Disabled for the duration of the search",
       "exonerated": "<strong>Exonerated:</strong> You indicated that the issue did not persist while this module was active",

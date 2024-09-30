@@ -5,7 +5,7 @@ const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applicat
 const standardWidth = 425;
 export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
-    classes: ["find-the-culprit-app", "standard-form"],
+    classes: ["find-the-culprit-app"],
     id: "find-the-culprit",
     position: {
       width: standardWidth,
@@ -27,6 +27,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     window: {
       title: "FindTheCulprit.FindTheCulprit",
       icon: "fa-solid fa-search",
+      contentClasses: ["ftc-main"],
     },
   };
 
@@ -51,14 +52,14 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     instructions: "fa-list-ol",
     lockLibraries: ["fa-lock-open", "fa-lock"],
     module: {
-      active: "fa-magnifying-glass-plus",
-      culprit: "fa-handcuffs",
+      suspect: "fa-search",
+      pinned: "fa-thumbtack",
       excluded: "fa-ban",
+      active: "fa-magnifying-glass-plus",
+      inactive: "fa-magnifying-glass-minus",
       exonerated: "fa-thumbs-up",
       exoneratedButActive: "fa-check",
-      inactive: "fa-magnifying-glass-minus",
-      pinned: "fa-thumbtack",
-      suspect: "fa-search",
+      culprit: "fa-handcuffs",
     },
     mute: ["fa-volume-high", "fa-volume-xmark"],
     reloadAll: ["fa-user", "fa-users"],
@@ -246,8 +247,8 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     const modLabels = this.element.querySelectorAll("label.module-title[for]");
     for (const label of modLabels) {
       const button = document.getElementById(label.getAttribute("for"));
-      label.addEventListener("contextmenu", (event) => {        
-        FindTheCulprit.#cycle.call(this, event, button)
+      label.addEventListener("contextmenu", (event) => {
+        FindTheCulprit.#cycle.call(this, event, button);
       });
     }
   }
@@ -366,7 +367,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
    */
   static async #cycle(event, target) {
     const modID = target.closest("[data-module]").dataset.module;
-    const state = target.dataset.state;
+    const state = target.dataset.ftcState;
     const states = ["suspect", "pinned", "excluded"];
     const newState =
       states[(states.indexOf(state) + (event.type === "contextmenu" ? -1 : 1) + states.length) % states.length];
@@ -400,7 +401,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     };
     const content = await renderTemplate(template, templateContext);
     const dialogOptions = {
-      classes: ["ftc-dialog", "find-the-culprit-app"],
+      classes: ["find-the-culprit-app"],
       id,
       window: {
         title: this.title + " - " + game.i18n.localize("FindTheCulprit.Action.instructions.Label"),
@@ -433,7 +434,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       },
       rejectClose: false,
       position: {
-        width: standardWidth,
+        width: standardWidth * 1.5,
         ...(this.rendered && { left: this.position.left + standardWidth }),
       },
     };
@@ -449,7 +450,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     if (this.rendered) {
       const forcedList = Array.from(this.element.querySelectorAll(`button[disabled]`)).map((n) => ({
         id: n.closest("[data-module]").dataset.module,
-        state: n.dataset.state,
+        state: n.dataset.ftcState,
       }));
 
       for (const mod of forcedList) {
@@ -563,7 +564,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
               `#updateModListAndReload | Module "${game.modules.get(pick.id).title}" requires module "${
                 game.modules.get(id).title
               }" which has been Excluded this run somehow.`
-            );            
+            );
           } else {
             unpickedDependencyIDs.push(id);
             effectiveSize++;
@@ -626,7 +627,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       return existing.bringToFront();
     }
     new DialogV2({
-      classes: ["ftc-dialog", "find-the-culprit-app"],
+      classes: ["find-the-culprit-app"],
       window: {
         title: `${this.title} - ${game.i18n.localize("FindTheCulprit.ZeroModules.Title")}`,
         icon: this.options.window.icon,
@@ -655,7 +656,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       await existing.render({ force: true });
       return existing.bringToFront();
     }
-    const template = `modules/${MODULE_ID}/templates/onlySelectedActive.hbs`;
+    const template = `modules/${MODULE_ID}/templates/onlyPinnedActive.hbs`;
     const anyPinned = this.#modules.filter((m) => m.pinned).length > 0;
     const content = await renderTemplate(template, {
       anyPinned, // we only care about some or none pinned
@@ -684,7 +685,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
           callback: this.#updateModListAndReload.bind(this),
         },
       ],
-      classes: ["ftc-dialog", "find-the-culprit-app"],
+      classes: ["find-the-culprit-app"],
       close: () => null,
       position: {
         width: standardWidth,
@@ -702,7 +703,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     const titleKey = `FindTheCulprit.IPWOP.${templateContext.pinned.length > 0 ? "Some" : "None"}PinnedTitle`;
     // secondary dialog doesn't get registered for rerendering if closed
     new DialogV2({
-      classes: ["ftc-dialog", "find-the-culprit-app"],
+      classes: ["find-the-culprit-app"],
       window: {
         title: this.title + " - " + game.i18n.localize(titleKey),
         icon: this.options.window.icon,
@@ -773,7 +774,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     const content = await renderTemplate(template, templateData);
     const titleKey = `FindTheCulprit.BinarySearchStep.${isConfirmStep ? "ConfirmStep" : ""}Title`;
     new DialogV2({
-      classes: ["ftc-dialog", "find-the-culprit-app"],
+      classes: ["find-the-culprit-app"],
       window: {
         title: this.title + " - " + game.i18n.localize(titleKey),
         icon: this.options.window.icon,
@@ -828,7 +829,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       icons: this.#icons,
     });
     const dialogOptions = {
-      classes: ["ftc-dialog", "find-the-culprit-app"],
+      classes: ["find-the-culprit-app"],
       window: {
         title: this.title + " - " + game.i18n.localize("FindTheCulprit.FoundTheCulprit.Title"),
         icon: this.options.window.icon,
@@ -915,6 +916,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       message,
     });
     await new DialogV2({
+      classes: ["find-the-culprit-app"],
       window: {
         title: this.title + ` - ` + game.i18n.localize("Error"),
         icon: this.options.window.icon,

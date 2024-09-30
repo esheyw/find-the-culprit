@@ -1,5 +1,5 @@
 <h2 class="culprit-header">{{localize "FindTheCulprit.FoundTheCulprit.Header"}}</h2>
-{{#if confirmStep}}
+{{#if (or confirmStep culprit.active)}}
   <p>{{localize "FindTheCulprit.FoundTheCulprit.CulpritConfirmed"}}</p>
 {{else if (not culprit.active)}}
   <p>{{localize "FindTheCulprit.FoundTheCulprit.OfferConfirmStep"}}</p>
@@ -15,7 +15,7 @@
       data-tooltip="{{localize 'FindTheCulprit.StateTooltip.culprit'}}"
       data-tooltip-direction="LEFT"
     >
-      <button class="ftc-state-button" type="button" data-state="culprit" disabled>
+      <button class="ftc-state-button display-only" type="button" data-ftc-state="culprit" disabled>
         <i class="fa-solid {{icons.module.culprit}}"></i>
       </button>
     </div>
@@ -28,7 +28,7 @@
         data-tooltip="{{localize 'FindTheCulprit.StateTooltip.pinned'}}"
         data-tooltip-direction="LEFT"
       >
-        <button class="ftc-state-button" type="button" data-state="pinned" disabled>
+        <button class="ftc-state-button display-only" type="button" data-ftc-state="pinned" disabled>
           <i class="fa-solid {{@root.icons.module.pinned}}"></i>
         </button>
       </div>

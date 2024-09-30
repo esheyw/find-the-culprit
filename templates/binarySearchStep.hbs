@@ -13,12 +13,11 @@
 </p>
 {{/if}}
 <ul class="ftc-module-list">
-  {{log this}}
   {{#each groups}}
     {{#each this}}
     <li>
       <div class="tooltip-wrapper" data-tooltip="{{localize (concat "FindTheCulprit.StateTooltip." @../key)}}" data-tooltip-direction="LEFT">
-        <button class="ftc-state-button" type="button" data-state="{{@../key}}" disabled>
+        <button class="ftc-state-button display-only" type="button" data-ftc-state="{{@../key}}" disabled>
           <i class="fa-solid {{lookup @root.icons.module @../key}}"></i>
         </button>
       </div>

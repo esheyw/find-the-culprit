@@ -17,7 +17,7 @@
     {{#each modules}}
       <li data-module="{{id}}"{{#if hidden}} class="hidden"{{/if}}>
         <div class="tooltip-wrapper" data-tooltip="{{> moduleTooltip this~}}" data-tooltip-class="ftc-module-tooltip" data-tooltip-direction="LEFT">
-          <button class="ftc-state-button" type="button" id="find-the-culprit-cycle-{{id}}" data-action="cycle" data-state="{{state}}" {{disabled forced}}>
+          <button class="ftc-state-button" type="button" id="find-the-culprit-cycle-{{id}}" data-action="cycle" data-ftc-state="{{state}}" {{disabled forced}}>
             <i class="fa-solid {{lookup @root.icons.module state}}"></i>
             {{#if forced}}<i class="fa-solid fa-lock corner-icon"></i>{{/if}}
           </button>

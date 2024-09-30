@@ -1,0 +1,8 @@
+@mixin state-button-color($color) {
+  &:disabled {
+    --dui-button-text-color: #{$color};
+    color: $color;
+  }
+  --dui-button-text-color: #{$color};
+  color: $color;
+}

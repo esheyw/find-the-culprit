@@ -12,7 +12,7 @@ Hooks.once("init", () => {
     "instructions.hbs",
     "issuePersistsWithOnlyPinned.hbs",
     "main.hbs",
-    "onlySelectedActive.hbs",
+    "onlyPinnedActive.hbs",
   ];
   loadTemplates(templates.map((t) => `modules/${MODULE_ID}/templates/${t}`));
   MODULE().debug = MODULE().flags?.debug ?? 0;

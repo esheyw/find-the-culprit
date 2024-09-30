@@ -1,24 +1,67 @@
-<fieldset class="module-states">
-  <legend>Module States</legend>
-  <div>
-    <button type="button" class="ftc-state-button" data-state="suspect" disabled>
-      <i class="fa-solid {{icons.module.suspect}}"></i>
-    </button>
-    <label>{{{localize "FindTheCulprit.StateTooltip.suspect"}}}</label>
-  </div>
-  <div>
-    <button type="button" class="ftc-state-button" data-state="pinned" disabled>
-      <i class="fa-solid {{icons.module.pinned}}"></i>
-    </button>
-    <label>{{{localize "FindTheCulprit.StateTooltip.pinned"}}}</label>
-  </div>
-  <div>
-    <button type="button" class="ftc-state-button" data-state="excluded" disabled>
-      <i class="fa-solid {{icons.module.excluded}}"></i>
-    </button>
-    <label>{{{localize "FindTheCulprit.StateTooltip.excluded"}}}</label>
-  </div>
-</fieldset>
+<div class="flexrow">
+  <fieldset class="module-states">
+    <legend>{{localize "FindTheCulprit.Instructions.ModuleStates"}}</legend>
+    {{#each icons.module as |icon state|}}
+    <div>
+      <button type="button" class="ftc-state-button display-only" data-ftc-state="{{state}}" disabled>
+        <i class="fa-solid {{icon}}"></i>
+      </button>
+      <label>{{{localize (concat "FindTheCulprit.StateTooltip." state)}}}</label>
+    </div>
+    {{/each}}
+    {{!-- <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="suspect" disabled>
+        <i class="fa-solid {{icons.module.suspect}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.suspect"}}}</label>
+    </div>
+    <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="pinned" disabled>
+        <i class="fa-solid {{icons.module.pinned}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.pinned"}}}</label>
+    </div>
+    <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="excluded" disabled>
+        <i class="fa-solid {{icons.module.excluded}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.excluded"}}}</label>
+    </div>
+  </fieldset>
+  <fieldset class="module-states">
+    <legend>{{localize "FindTheCulprit.Instructions.SearchStates"}}</legend>
+    <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="active" disabled>
+        <i class="fa-solid {{icons.module.active}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.active"}}}</label>
+    </div>
+    <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="inactive" disabled>
+        <i class="fa-solid {{icons.module.inactive}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.inactive"}}}</label>
+    </div>
+    <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="exonerated" disabled>
+        <i class="fa-solid {{icons.module.exonerated}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.exonerated"}}}</label>
+    </div>
+    <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="exoneratedButActive" disabled>
+        <i class="fa-solid {{icons.module.exoneratedButActive}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.exoneratedButActive"}}}</label>
+    </div>
+    <div>
+      <button type="button" class="ftc-state-button" data-ftc-state="culprit" disabled>
+        <i class="fa-solid {{icons.module.culprit}}"></i>
+      </button>
+      <label>{{{localize "FindTheCulprit.StateTooltip.culprit"}}}</label>
+    </div> --}}
+  </fieldset>
+</div>
 <ul class="instructions">
   <li>
     {{localize "FindTheCulprit.Instructions.Controls"}}
