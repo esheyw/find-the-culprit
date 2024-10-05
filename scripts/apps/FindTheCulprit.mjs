@@ -92,7 +92,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
 
   get currentStep() {
     return this.#data.currentStep;
-  }  
+  }
 
   get hasMissingDependencies() {
     const { notInstalled, notActive } = this.#missingDependencies;
@@ -135,11 +135,13 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async #update(changes = {}, { render = false } = {}) {
+    debug("update", changes);
     try {
       this.#data.updateSource(changes);
       if (render && this.rendered) this.render();
       return game.settings.set(MODULE_ID, "data", this.#data);
     } catch (error) {
+      //TODO: work into errorDialog framework
       console.error("FindTheCulpritApp#update | Encountered an error, logging", { changes, render });
       throw error;
     }
@@ -169,10 +171,6 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         // only modules that aren't current installed get skipped entirely
         if (!mod) continue;
       }
-      // if (!mod || !mod.active) {
-      //   modules[modID].updateSource({ originallyActive: false });
-      //   continue;
-      // }
       const { requires, notInstalled, notActive } = this.#getAllDependencies(modID);
       if (notInstalled.size || notActive.size) {
         for (const mod of notInstalled) {
@@ -197,6 +195,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       }
     }
     if (this.hasMissingDependencies) {
+      debug("missingDependencies", this.#missingDependencies);
       return this.#missingDependenciesDialog();
     }
     // process inner datamodels so we don't pollute the source with complex objects
@@ -385,6 +384,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         mod.forced = false;
       }
     }
+    debug("_prepareContext", context);
     return context;
   }
 
@@ -450,11 +450,10 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     const templateContext = {
       icons: this.#icons,
     };
-    const content = await renderTemplate(template, templateContext);
     const dialogOptions = this.#defaultDialogOptions({
       title: game.i18n.localize("FindTheCulprit.Action.instructions.Label"),
       id,
-      content,
+      content: await renderTemplate(template, templateContext),
       buttons: [
         {
           action: "acknowledge",
@@ -478,7 +477,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         ...(this.rendered && { left: this.position.left + standardWidth }),
       },
     });
-    debug("instructions", dialogOptions);
+    debug("instructions", { dialogOptions, templateContext });
     const dialog = new DialogV2(dialogOptions);
     dialog.addEventListener("close", () => {
       this.#instructionsSession = true;
@@ -507,12 +506,10 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       }
       this.close();
     }
-    await this.#update(
-      {
-        modules: modules,
-        currentStep: -1,
-      }
-    );
+    await this.#update({
+      modules: modules,
+      currentStep: -1,
+    });
     this.#updateModListAndReload();
   }
 
@@ -647,12 +644,14 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       const modIDsToEnable = newActive.map((m) => m.id).concat([...exoneratedModulesRequired]);
       for (const id of modIDsToEnable) coreModuleList[id] = true;
     }
+    if (MODULE().debug > 1) debugger;
     await this.#update(update);
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, coreModuleList);
     this.#reload();
   }
 
   async doStep() {
+    debug("doing step");
     if (this.#error) return this.#errorDialog();
     if (this.hasMissingDependencies) return this.#missingDependenciesDialog();
     if (typeof this.#data.currentStep !== "number") return this.#prepareModules();
@@ -684,17 +683,19 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         },
       ],
     });
+    debug("zeroModsDialog", { dialogOptions });
     new DialogV2(dialogOptions).render({ force: true });
   }
 
   async #missingDependenciesDialog() {
-    if (!this.hasMissingDependencies) return;
     const id = "find-the-culprit-dependency-failures";
     const existing = foundry.applications.instances.get(id);
     if (existing) {
       await existing.render({ force: true });
       return existing.bringToFront();
     }
+
+    if (!this.hasMissingDependencies) return;
 
     const template = `modules/${MODULE_ID}/templates/missingDependencies.hbs`;
     const templateContext = Object.entries(this.#missingDependencies).reduce(
@@ -707,10 +708,9 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         }),
       {}
     );
-    const content = await renderTemplate(template, templateContext);
     const dialogOptions = this.#defaultDialogOptions({
       id,
-      content,
+      content: await renderTemplate(template, templateContext),
       title: game.i18n.localize("FindTheCulprit.MissingDependencies.Title"),
       actions: {
         copyList: FindTheCulprit.#copyModuleList,
@@ -747,6 +747,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         },
       });
     }
+    debug("missingDependenciesDialog", { dialogOptions, templateContext });
     new DialogV2(dialogOptions).render({ force: true });
   }
 
@@ -754,8 +755,8 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     const tbody = target.closest("table").querySelector("tbody");
     const modList = Array.from(tbody.querySelectorAll("tr td:first-child")).map((n) => n.innerText);
     await navigator.clipboard.writeText(modList.join("\n"));
-    debug(tbody, modList);
   }
+
   async #onlyPinnedMods() {
     const id = "find-the-culprit-only-pinned-mods";
     const existing = foundry.applications.instances.get(id);
@@ -765,15 +766,15 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     const template = `modules/${MODULE_ID}/templates/onlyPinnedActive.hbs`;
     const anyPinned = this.#modules.filter((m) => m.pinned).length > 0;
-    const content = await renderTemplate(template, {
+    const templateContext = {
       anyPinned, // we only care about some or none pinned
       maxSteps: this.#data.maxSteps,
-    });
+    };
     const titleKey = "FindTheCulprit.StartOfRun." + (anyPinned ? "Some" : "None") + "PinnedTitle";
     const dialogOptions = this.#defaultDialogOptions({
       title: game.i18n.localize(titleKey),
       id,
-      content,
+      content: await renderTemplate(template, templateContext),
       buttons: [
         {
           action: "yes",
@@ -790,6 +791,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         },
       ],
     });
+    debug("onlyPinnedMods", { dialogOptions, templateContext });
     new DialogV2(dialogOptions).render({ force: true });
   }
 
@@ -805,12 +807,11 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       icon: this.#icons.module.pinned,
       pinned: this.#modules.filter((m) => m.pinned).map((m) => game.modules.get(m.id).title),
     };
-    const content = await renderTemplate(template, templateContext);
     const titleKey = `FindTheCulprit.IPWOP.${templateContext.pinned.length > 0 ? "Some" : "None"}PinnedTitle`;
     const dialogOptions = this.#defaultDialogOptions({
       title: game.i18n.localize(titleKey),
       id,
-      content,
+      content: await renderTemplate(template, templateContext),
       buttons: [
         {
           action: "reset",
@@ -821,6 +822,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         },
       ],
     });
+    debug("IPWOP", { dialogOptions, templateContext });
     new DialogV2(dialogOptions).render({ force: true });
   }
 
@@ -870,12 +872,11 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         game.modules.get(a.id).title.localeCompare(game.modules.get(b.id).title)
       );
     }
-    const content = await renderTemplate(template, templateContext);
     const titleKey = `FindTheCulprit.BinarySearchStep.${isConfirmStep ? "ConfirmStep" : ""}Title`;
     const dialogOptions = this.#defaultDialogOptions({
       title: game.i18n.localize(titleKey),
       id,
-      content,
+      content: await renderTemplate(template, templateContext),
       buttons: [
         {
           action: "yes",
@@ -898,6 +899,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         },
       ],
     });
+    debug("binarySearchStep", dialogOptions, templateContext);
     new DialogV2(dialogOptions).render({ force: true });
   }
 
@@ -910,7 +912,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     }
     const confirmStep = this.#data.remainingSteps === 0;
     const template = `modules/${MODULE_ID}/templates/foundTheCulprit.hbs`;
-    const content = await renderTemplate(template, {
+    const templateContext = {
       culprit: {
         active: culprit.active,
         title: game.modules.get(culprit.id).title,
@@ -918,11 +920,11 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       confirmStep,
       pinned: this.#modules.filter((m) => m.pinned).map((m) => game.modules.get(m.id).title),
       icons: this.#icons,
-    });
+    };
     const dialogOptions = this.#defaultDialogOptions({
       title: game.i18n.localize("FindTheCulprit.FoundTheCulprit.Title"),
       id,
-      content,
+      content: await renderTemplate(template, templateContext),
       buttons: [
         {
           action: "reset",
@@ -942,7 +944,68 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         callback: this.#updateModListAndReload.bind(this, false, { confirmStep: true }),
       });
     }
+    debug("foundTheCulprit", { dialogOptions, templateContext });
     new DialogV2(dialogOptions).render(true);
+  }
+
+  async #errorDialog(message) {
+    const id = "find-the-culprit-error-dialog";
+    const existing = foundry.applications.instances.get(id);
+    if (existing) {
+      await existing.render({ force: true });
+      return existing.bringToFront();
+    }
+
+    if (message === undefined) {
+      message = this.#error;
+    } else {
+      this.#error = message;
+      await game.settings.set(MODULE_ID, "error", message);
+    }
+    if (!message) return;
+
+    const source = this.#data.toObject();
+    console.error("Find The Culprit | Error encountered, dumping source.", source);
+
+    const template = `modules/${MODULE_ID}/templates/errorDialog.hbs`;
+    const templateContext = { message };
+    const dialogOptions = this.#defaultDialogOptions({
+      title: game.i18n.localize("Error"),
+      id,
+      content: await renderTemplate(template, templateContext),
+      buttons: [
+        {
+          action: "reset",
+          default: true,
+          icon: "fa-solid fa-rotate-left",
+          label: "Reset",
+          callback: this.reactivateOriginals.bind(this),
+        },
+      ],
+      close: this.reactivateOriginals.bind(this),
+    });
+    debug("errorDialog", { dialogOptions, templateContext });
+    await new DialogV2(dialogOptions).render({ force: true });
+    if (MODULE().debug > 1) debugger;
+    throw new Error(message);
+  }
+
+  #defaultDialogOptions(overrides = {}) {
+    const { title, ...rest } = overrides;
+    return foundry.utils.mergeObject(
+      {
+        window: {
+          title: `${this.title} - ${title}`,
+          icon: this.options.window.icon,
+        },
+        classes: ["find-the-culprit-app"],
+        close: () => null,
+        position: {
+          width: standardWidth,
+        },
+      },
+      rest
+    );
   }
 
   async #resetSetting() {
@@ -984,71 +1047,13 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, newModList);
   }
 
-  async #errorDialog(message) {
-    const id = "find-the-culprit-error-dialog";
-    const existing = foundry.applications.instances.get(id);
-    if (existing) {
-      await existing.render({ force: true });
-      return existing.bringToFront();
-    }
-    if (message === undefined) {
-      message = this.#error;
-    } else {
-      this.#error = message;
-      await game.settings.set(MODULE_ID, "error", message);
-    }
-    if (!message) return;
-
-    const source = this.#data.toObject();
-
-    console.error("Find The Culprit | Error encountered, dumping source.", source);
-    const content = await renderTemplate(`modules/${MODULE_ID}/templates/errorDialog.hbs`, {
-      message,
-    });
-    const dialogOptions = this.#defaultDialogOptions({
-      title: game.i18n.localize("Error"),
-      id,
-      content,
-      buttons: [
-        {
-          action: "reset",
-          default: true,
-          icon: "fa-solid fa-rotate-left",
-          label: "Reset",
-          callback: this.reactivateOriginals.bind(this),
-        },
-      ],
-      close: this.reactivateOriginals.bind(this),
-    });
-    await new DialogV2(dialogOptions).render({ force: true });
-    if (MODULE().debug > 1) debugger;
-    throw new Error(message);
-  }
-
-  #defaultDialogOptions(overrides = {}) {
-    const { title, ...rest } = overrides;
-    return foundry.utils.mergeObject(
-      {
-        window: {
-          title: `${this.title} - ${title}`,
-          icon: this.options.window.icon,
-        },
-        classes: ["find-the-culprit-app"],
-        close: () => null,
-        position: {
-          width: standardWidth,
-        },
-      },
-      rest
-    );
-  }
-
   #reload(reloadAll = this.#data.reloadAll) {
+    if (MODULE().debug > 1) debugger;
     if (reloadAll) game.socket.emit("reload");
     foundry.utils.debouncedReload();
   }
 
-  async forceModule(id, on = false) {
+  async #forceModule(id, on = false) {
     const newModList = Object.assign(game.settings.get("core", ModuleManagement.CONFIG_SETTING), { [id]: on });
     return await game.settings.set("core", ModuleManagement.CONFIG_SETTING, newModList);
   }

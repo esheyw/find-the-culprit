@@ -1,3 +1,17 @@
+## Version 3.1.0
+
+- New Missing Dependencies handling
+  - If you have an active module with one or more dependencies that are not active/not installed, you'll get a prompt on world load to fix your list
+  - Replaces old behaviour of essentially 'Kernel Panic'
+- Added Debug Level setting
+  - Ideally no user will ever have to change this
+- Full DorakoUI Compatibility
+  - As far as I can tell, anyway. If you feel like your theme isn't being catered to, reach out.
+- Partial PathfinderUI v3 Compatilibity
+  - Pending their next release with the css class on body to key off of
+- Actually enable pt-BR translation
+
+
 ## Version 3.0.1
 
 - Add pt-BR translation (thanks @Kharmans !)

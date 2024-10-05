@@ -40,6 +40,7 @@ export const SETTINGS = {
     onChange: (value) => (MODULE().debug = value),
   },
 };
+
 export function registerSettings() {
   for (const [key, data] of Object.entries(SETTINGS)) {
     game.settings.register(MODULE_ID, key, data);

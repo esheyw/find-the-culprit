@@ -126,7 +126,7 @@
         "Hint": "The degree to which debugging features are enabled for Find the Culprit",
         "Choices": {
           "None": "None",
-          "Logging": "Logging Only",
+          "Logging": "Logging & globalThis.ftc",
           "Debugger": "Breakpoints Enabled"
         }
       }

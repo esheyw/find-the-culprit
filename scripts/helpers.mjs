@@ -1,7 +1,7 @@
 import { fu, MODULE } from "./constants.mjs";
 
 export function debug(...args) {
-  if (MODULE().debug) console.warn(...args.map((a) => fu.deepClone(a)));
+  if (MODULE().debug) console.warn("Find The Culprit | ", ...args.map((a) => fu.deepClone(a)));
 }
 
 export function shuffleArray(array) {
