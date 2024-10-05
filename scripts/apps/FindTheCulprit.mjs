@@ -165,11 +165,9 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     for (const modID in modules) {
       // keep uninstalled modules state
       const mod = game.modules.get(modID);
-      if (!mod?.active) {
-        // all inactive mods get marked not originallyActive
+      if (!mod || !mod.active) {
         modules[modID].updateSource({ originallyActive: false });
-        // only modules that aren't current installed get skipped entirely
-        if (!mod) continue;
+        continue;
       }
       const { requires, notInstalled, notActive } = this.#getAllDependencies(modID);
       if (notInstalled.size || notActive.size) {
@@ -568,6 +566,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       const exoneratedModulesRequired = new Set();
       // divide the remaining searchables, attempting to keep dependency chains together as long as possible
       // and cutting from the top when impossible
+      if (MODULE().debug > 1) debugger;
       do {
         if (
           !this.#data.deterministic &&
@@ -644,7 +643,6 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       const modIDsToEnable = newActive.map((m) => m.id).concat([...exoneratedModulesRequired]);
       for (const id of modIDsToEnable) coreModuleList[id] = true;
     }
-    if (MODULE().debug > 1) debugger;
     await this.#update(update);
     await game.settings.set("core", ModuleManagement.CONFIG_SETTING, coreModuleList);
     this.#reload();
