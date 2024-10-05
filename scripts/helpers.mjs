@@ -11,8 +11,10 @@ export function shuffleArray(array) {
   }
 }
 
-export function oxfordList(list, { and = "and" } = {}) {
+export function oxfordList(list, { and = "FindTheCulprit.and" } = {}) {
+  if (list instanceof Set) list = Array.from(list);
   list = (Array.isArray(list) ? list : [list]).filter((e) => !!e).map((e) => String(e));
+  and = game.i18n.localize(and);
   if (list.length <= 1) return list?.[0] ?? "";
   if (list.length === 2) return list.join(` ${and} `);
   const last = list.at(-1);

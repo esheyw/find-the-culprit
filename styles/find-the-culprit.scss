@@ -1,4 +1,11 @@
-@use "mixins" as m;
+@mixin state-button-color($color) {
+  &:disabled {
+    --dui-button-text-color: #{$color};
+    color: $color;
+  }
+  --dui-button-text-color: #{$color};
+  color: $color;
+}
 
 $states: "suspect", "pinned", "excluded", "active", "inactive", "exonerated", "exoneratedButActive", "culprit";
 
@@ -6,6 +13,7 @@ body {
   .find-the-culprit-app.application {
     --ftc-button-gap: 0.25rem;
     --ftc-app-gap: 0.25rem;
+
     --ftc-state-pinned-color: var(--color-level-warning);
     --ftc-state-excluded-color: var(--color-level-error);
     --ftc-state-culprit-color: var(--color-level-error);
@@ -14,16 +22,20 @@ body {
     --ftc-state-exonerated-color: var(--color-level-success);
     --ftc-state-exoneratedButActive-color: var(--color-level-success);
     --ftc-state-inactive-color: var(--color-light-5);
+
     --ftc-module-list-border-color: var(--color-light-4);
     --ftc-module-list-li-separator-color: var(--color-dark-5);
     --ftc-state-button-text-shadow: 0px 0px 3px var(--color-text-primary), 0px 0px 3px var(--color-text-primary);
+    --ftc-tr-border: none;
+    --ftc-table-header-button-color: var(--color-light-1);
   }
 
-  &.theme-light .find-the-culprit-app.application:not([data-color-scheme]) {
+  &.theme-light:not(.pathfinderui-v3) .find-the-culprit-app.application:not([data-color-scheme]) {
     --ftc-module-list-border-color: var(--color-dark-5);
+    --ftc-tr-border: 1px solid var(--color-text-primary);
   }
 
-  &.theme-dark .find-the-culprit-app.application:not([data-color-scheme]) {
+  &.theme-dark:not(.pathfinderui-v3) .find-the-culprit-app.application:not([data-color-scheme]) {
     --ftc-state-button-text-shadow: none;
   }
 
@@ -36,31 +48,60 @@ body {
       box-shadow: none;
       border: none;
     }
+    fieldset {
+      --fieldset-border-color: var(--window-app-border-color);
+      --fieldset-background-color: transparent;
+      --fieldset-legend-color: var(--color-text-primary);
+    }
+    &[data-theme^="discord"] {
+      --ftc-tr-border: 1px solid var(--window-app-border-color);
+    }
   }
 
   .find-the-culprit-app.application[data-color-scheme="light"] {
+    --ftc-table-header-button-color: var(--color-text-dark-primary);
     &[data-theme="crb"] {
       --ftc-module-list-border-color: var(--color-light-5);
       --ftc-app-gap: 0.5rem;
       --ftc-button-gap: 0.5rem;
+
       .ftc-module-list li {
         padding-top: 0.35rem;
         margin-bottom: 0.35rem;
       }
     }
+    &[data-theme="discord-light"] {
+      //TODO: should be fixed on dorako's end eventually
+      &,
+      h2 {
+        color: var(--color-text-dark-primary);
+      }
+      fieldset {
+        --fieldset-legend-color: var(--color-text-dark-primary);
+      }
+    }
+    &[data-theme="dnd5e2"] {
+      --ftc-tr-border: 1px solid var(--window-app-border-color);
+    }
   }
 
   .find-the-culprit-app.application[data-color-scheme="dark"] {
-    --ftc-state-button-text-shadow: none;    
+    --ftc-state-button-text-shadow: none;
     &[data-theme="crb"] {
       --ftc-button-gap: 0.35rem;
       --ftc-app-gap: 0.35rem;
     }
-    &[data-theme="discord-dark"] {
-      fieldset.module-states {
-        --fieldset-border-color: var(--window-app-border-color);
-        --fieldset-background-color: transparent;
-        --fieldset-legend-color: var(--color-text-primary);
+  }
+
+  &.pathfinderui-v3 .find-the-culprit-app.application {
+    --ftc-state-button-text-shadow: none;
+    button.ftc-state-button {
+      &.display-only {
+        box-shadow: none;
+        border: none;
+      }
+      &:not(.display-only):disabled {
+        background-color: color-mix(in srgb, var(--color-warm-3), black 40%);
       }
     }
   }
@@ -68,6 +109,7 @@ body {
 
 :is(div, dialog).find-the-culprit-app.application {
   gap: 0;
+
   div.specificity {
     display: contents;
   }
@@ -77,6 +119,10 @@ body {
   .dialog-form {
     gap: var(--ftc-app-gap); // eliminate infuriating whitespace
   }
+  .dialog-content {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
 
   .window-content {
     padding: 0.5rem 0.75rem;
@@ -84,6 +130,9 @@ body {
       padding-top: 0.25rem;
     }
     p {
+      // &.vpadded {
+      padding: 0.25rem;
+      // }
       margin: 0;
     }
 
@@ -101,19 +150,66 @@ body {
       }
     }
   }
-
-  fieldset.module-states {
-    gap: 0.25rem;
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: repeat(4, auto);
-    div {
-      display: grid;
-      grid-template-columns: 1.5rem auto;
-      column-gap: 0.25rem;
-      align-items: center;
+  table {
+    td {
+      &:first-child {
+        width: 10rem;
+      }
+      ul {
+        margin: 0;
+      }
     }
+  }
+  fieldset {
+    gap: 0.25rem;
     padding: 0.5rem;
+
+    table {
+      margin: 0;
+      padding: 0.25rem 0.5rem;
+      tr {
+        border-bottom: var(--ftc-tr-border);
+      }
+      th:first-child {
+        width: 40%;
+        div.copy-button-wrapper {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          float: right;
+          height: 100%;
+          button.ftc-copy-button {
+            color: var(--ftc-table-header-button-color);
+            box-shadow: none;
+            font-size: 0.5rem;
+            height: 1rem;
+          }
+        }
+      }
+      td {
+        &:first-child {
+          width: 40%;
+        }
+        ul {
+          max-height: 9rem;
+          overflow-y: auto;
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+        }
+      }
+    }
+    &.module-states {
+      display: grid;
+      grid-template-columns: 50% 50%;
+      grid-template-rows: repeat(4, auto);
+      div {
+        display: grid;
+        grid-template-columns: 1.5rem auto;
+        column-gap: 0.25rem;
+        align-items: center;
+      }
+    }
   }
 
   ul.instructions {
@@ -157,7 +253,7 @@ body {
       }
       @each $state in $states {
         &[data-ftc-state="#{$state}"] {
-          @include m.state-button-color(var(--ftc-state-#{$state}-color));
+          @include state-button-color(var(--ftc-state-#{$state}-color));
         }
       }
     }
@@ -201,13 +297,17 @@ body {
     }
   }
 
-  h2.culprit-header {
+  h2 {
     border-bottom: none;
     text-shadow: none;
     font-family: var(--font-primary);
     color: var(--color-text-primary);
     text-align: center;
     margin: 0;
+    &.error-heading i {
+      margin-right: 0.25rem;
+      color: var(--color-level-error);
+    }
   }
 }
 

@@ -1,7 +1,7 @@
 import { MappingField } from "./fields.mjs";
 const fields = foundry.data.fields;
 
-export class FtCSettings extends foundry.abstract.DataModel {
+export class FindTheCulpritData extends foundry.abstract.DataModel {
   get originalSearchablesCount() {
     return Object.values(this.modules).filter((m) => m.pinned === false && m.originallyActive).length;
   }
@@ -24,7 +24,7 @@ export class FtCSettings extends foundry.abstract.DataModel {
 
   static defineSchema() {
     return {
-      modules: new MappingField(new fields.EmbeddedDataField(FtCModule)),
+      modules: new MappingField(new fields.EmbeddedDataField(FindTheCulpritModuleData)),
       currentStep: new fields.NumberField({ nullable: true, required: false, integer: true }),
       mute: new fields.BooleanField(),
       lockLibraries: new fields.BooleanField({
@@ -39,7 +39,7 @@ export class FtCSettings extends foundry.abstract.DataModel {
     };
   }
 }
-export class FtCModule extends foundry.abstract.DataModel {
+export class FindTheCulpritModuleData extends foundry.abstract.DataModel {
   static defineSchema() {
     return {
       id: new fields.StringField({

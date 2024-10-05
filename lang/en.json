@@ -1,5 +1,6 @@
 {
   "FindTheCulprit": {
+    "and":"and",
     "Action": {
       "acknowledge": {
         "Label": {
@@ -60,6 +61,8 @@
         "Tooltip": "Start the search process"
       }
     },
+    "NotInstalled":"Not Installed",
+    "NotActive":"Not Active",
     "BinarySearchStep": {
       "Title": "Search Step",
       "ConfirmStepTitle": "Confirm Step",
@@ -69,6 +72,19 @@
     },
     "ClearAll": "Clear All",
     "Continue": "Continue",
+    "ModuleID": "Module ID",
+    "ModuleTitle": "Module Title",
+    "DependencyOf": "Dependency Of",
+    "MissingDependencies":{
+      "Title": "Missing Dependencies",
+      "Header": "Invalid Module State",
+      "Unavailable": "Find the Culprit is unavailable due to missing dependencies of active modules.",
+      "NotInstalledDescription":"One or more modules depend on each of the following modules which are not installed. Click Log Out below to go back to setup where you can install them.",
+      "NotActiveDescription":"One or more modules depend on each of the following inactive modules.",
+      "NotActiveOnlyClickInstruction":"Click Enable All below to enable these modules and reload.",
+      "NotActiveNotInstalledClickInstruction":"Clicking Log Out will enable these prior to logging out."
+      
+    },
     "ErrorDialog": {
       "EncounteredError": "Find the Culprit encountered an error:",
       "Direction": "The module's data can be found in the console as an Error to assist with bug reporting. Clicking the button below or closing this dialog will return your world to it's pre-FtC-run state."

@@ -1,13 +1,16 @@
-import { MODULE_ID } from "./constants.mjs";
-import { FtCSettings } from "./data/models.mjs";
+import { MODULE, MODULE_ID } from "./constants.mjs";
+import { FindTheCulpritData } from "./data/models.mjs";
 export const SETTINGS = {
   data: {
-    type: FtCSettings,
+    type: FindTheCulpritData,
     config: false,
-    name: "FTC.Setting.Data.Name",
-    hint: "FTC.Setting.Data.Hint",
     scope: "world",
-    default: new FtCSettings().toObject(),
+    default: new FindTheCulpritData().toObject(),
+    onChange: () => {
+      const app = MODULE().app;
+      if (!app || app.currentStep !== null || !app.rendered) return;
+      app.render();
+    },
   },
   error: {
     type: new foundry.data.fields.StringField({
@@ -24,16 +27,17 @@ export const SETTINGS = {
       required: true,
       nullable: false,
       choices: {
-        0: "FindTheCulprit.Setting.degbugLevel.Choices.None",
-        1: "FindTheCulprit.Setting.degbugLevel.Choices.Logging",
-        2: "FindTheCulprit.Setting.degbugLevel.Choices.Debugger",
+        0: "FindTheCulprit.Setting.debugLevel.Choices.None",
+        1: "FindTheCulprit.Setting.debugLevel.Choices.Logging",
+        2: "FindTheCulprit.Setting.debugLevel.Choices.Debugger",
       },
       initial: 0,
     }),
     config: true,
-    name: "FindTheCulprit.Setting.degbugLevel.Name",
-    hint: "FindTheCulprit.Setting.degbugLevel.Hint",
+    name: "FindTheCulprit.Setting.debugLevel.Name",
+    hint: "FindTheCulprit.Setting.debugLevel.Hint",
     scope: "client",
+    onChange: (value) => (MODULE().debug = value),
   },
 };
 export function registerSettings() {

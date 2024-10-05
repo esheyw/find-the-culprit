@@ -1,0 +1,77 @@
+<h2 class="error-heading"><i class="fa-solid fa-triangle-exclamation"></i> {{localize "FindTheCulprit.MissingDependencies.Header"}}</h2>
+<p>
+  {{localize "FindTheCulprit.MissingDependencies.Unavailable"}}
+</p>
+{{#if notInstalled.length}}
+  <fieldset class="missing-dependencies">
+    <legend>{{localize "FindTheCulprit.NotInstalled"}}</legend>
+    <p>      
+      {{localize "FindTheCulprit.MissingDependencies.NotInstalledDescription"}}
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>{{localize "FindTheCulprit.ModuleID"}} {{> ftcCopyButton}}</th>
+          <th>{{localize "FindTheCulprit.DependencyOf"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each notInstalled}}
+          <tr>
+            <td>{{title}}</td>
+            <td>
+              <ul>
+                {{#each dependencyOf}}
+                  <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </fieldset>
+{{/if}}
+{{#if notActive.length}}
+  <fieldset class="missing-dependencies">
+    <legend>{{localize "FindTheCulprit.NotActive"}}</legend>
+    <p>
+      {{localize "FindTheCulprit.MissingDependencies.NotActiveDescription"}}
+      {{#unless notInstalled.length}}
+        {{localize "FindTheCulprit.MissingDependencies.NotActiveOnlyClickInstruction"}}
+      {{else}}
+        {{localize "FindTheCulprit.MissingDependencies.NotActiveNotInstalledClickInstruction"}}
+      {{/unless}}
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>{{localize "FindTheCulprit.ModuleTitle"}} {{> ftcCopyButton}}</th>
+          <th>{{localize "FindTheCulprit.DependencyOf"}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each notActive}}
+          <tr>
+            <td>{{title}}</td>
+            <td>
+              <ul>
+                {{#each dependencyOf}}
+                  <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </fieldset>
+{{/if}}
+
+{{#*inline "ftcCopyButton"}}
+<div class="copy-button-wrapper">
+  <button type="button" class="ftc-copy-button" data-action="copyList" data-tooltip="Copy Module List">
+    <i class="fa-solid fa-copy"></i>
+  </button>
+</div>
+{{/inline}}

@@ -7,6 +7,7 @@ Hooks.once("init", () => {
   registerSettings();
   const templates = [
     "binarySearchStep.hbs",
+    "missingDependencies.hbs",
     "errorDialog.hbs",
     "foundTheCulprit.hbs",
     "instructions.hbs",
