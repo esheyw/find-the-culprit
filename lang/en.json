@@ -1,145 +1,143 @@
 {
   "FindTheCulprit": {
-    "and":"and",
     "Action": {
       "acknowledge": {
         "Label": {
-          "Enabled": "Show Every Time",
-          "Disabled": "Don't Show Again"
+          "Disabled": "Don't Show Again",
+          "Enabled": "Show Every Time"
         }
+      },
+      "clearAll": {
+        "Label": "Clear All",
+        "Tooltip": "Set all modules to Suspect"
       },
       "deterministic": {
         "Label": {
-          "Enabled": "Deterministic",
-          "Disabled": "Shuffle"
+          "Disabled": "Shuffle",
+          "Enabled": "Deterministic"
         },
         "Tooltip": {
-          "Enabled": "The shuffle step of module active/inactive splitting will be skipped",
-          "Disabled": "Modules that are not restricted by their or others' dependencies will be shuffled during inter-step module splitting"
+          "Disabled": "Modules that are not restricted by their or others' dependencies will be shuffled during inter-step module splitting",
+          "Enabled": "The shuffle step of module active/inactive splitting will be skipped"
         }
       },
       "instructions": {
         "Label": "Instructions",
         "Tooltip": "Click to render the Instructions dialog"
       },
-      "mute": {
-        "Tooltip": {
-          "Enabled": "Sounds Muted",
-          "Disabled": "Sounds Unmuted"
-        }
-      },
       "lockLibraries": {
         "Label": {
-          "Enabled": "Libraries Locked",
-          "Disabled": "Libraries Unlocked"
+          "Disabled": "Libraries Unlocked",
+          "Enabled": "Libraries Locked"
         },
         "Tooltip": {
-          "Enabled": "All modules marked as libraries are force pinned",
-          "Disabled": "Library modules are being treated normally"
+          "Disabled": "Library modules are being treated normally",
+          "Enabled": "All modules marked as libraries are force pinned"
+        }
+      },
+      "mute": {
+        "Tooltip": {
+          "Disabled": "Sounds Unmuted",
+          "Enabled": "Sounds Muted"
         }
       },
       "reloadAll": {
         "Label": {
-          "Enabled": "Reload All",
-          "Disabled": "Reload GM Only"
+          "Disabled": "Reload GM Only",
+          "Enabled": "Reload All"
         },
         "Tooltip": {
-          "Enabled": "All connected clients will reload along with the GM",
-          "Disabled": "Only the GM client will reload"
+          "Disabled": "Only the GM client will reload",
+          "Enabled": "All connected clients will reload along with the GM"
         }
-      },
-      "zeroMods": {
-        "Label": "Zero Modules",
-        "Tooltip": "Reload with no modules active other than Find the Culprit. Does not start a full search"
-      },
-      "clearAll": {
-        "Label": "Clear All",
-        "Tooltip": "Set all modules to Suspect"
       },
       "startRun": {
         "Label": "Start Run",
         "Tooltip": "Start the search process"
+      },
+      "zeroMods": {
+        "Label": "Zero Modules",
+        "Tooltip": "Reload with no modules active other than Find the Culprit. Does not start a full search"
       }
     },
-    "NotInstalled":"Not Installed",
-    "NotActive":"Not Active",
     "BinarySearchStep": {
-      "Title": "Search Step",
+      "ConfirmStep": "Confirm Step: the only active modules are the identified culprit \"{culprit}\", its dependencies (if any), and your pinned modules (if any).",
       "ConfirmStepTitle": "Confirm Step",
       "StatsData": "Step {currentStep}: {numRemaining} modules still suspect. {remainingSteps} or fewer step(s) remain.",
-      "ConfirmStep": "Confirm Step: the only active modules are the identified culprit \"{culprit}\", its dependencies (if any), and your pinned modules (if any).",
+      "Title": "Search Step",
       "WrongCulprit": "Wrong Culprit - Restart Run"
     },
     "ClearAll": "Clear All",
     "Continue": "Continue",
-    "ModuleID": "Module ID",
-    "ModuleTitle": "Module Title",
-    "DependencyOf": "Dependency Of",
     "CopyModuleList": "Copy Module List",
-    "MissingDependencies":{
-      "Title": "Missing Dependencies",
-      "Header": "Invalid Module State",
-      "Unavailable": "Find the Culprit is unavailable due to missing dependencies of active modules.",
-      "NotInstalledDescription":"The modules below are not installed, despite being required dependencies of the listed active modules. Click Log Out below to go back to setup where you can install them.",
-      "NotActiveDescription":"The modules below are not active, despite being required dependencies of the listed active modules.",
-      "NotActiveOnlyClickInstruction":"Click Enable All below to enable these modules and reload.",
-      "NotActiveNotInstalledClickInstruction":"Clicking Log Out will enable these prior to logging out."
-      
-    },
+    "DependencyOf": "Dependency Of",
     "ErrorDialog": {
-      "EncounteredError": "Find the Culprit encountered an error:",
-      "Direction": "The module's data can be found in the console as an Error to assist with bug reporting. Clicking the button below or closing this dialog will return your world to it's pre-FtC-run state."
+      "Direction": "The module's data can be found in the console as an Error to assist with bug reporting. Clicking the button below or closing this dialog will return your world to it's pre-FtC-run state.",
+      "EncounteredError": "Find the Culprit encountered an error:"
     },
     "FindTheCulprit": "Find the Culprit!",
     "FoundTheCulprit": {
-      "Title": "Sentencing",
-      "Header": "We found the culprit!",
+      "CulpritConfirmed": "You have confirmed that the found culprit is causing an issue.",
       "HasPinned": "You have {count} modules pinned, any of which might be your true culprit. If you trust them, though, the listed culprit is a likely source of your issue.",
-      "OfferConfirmStep": "The culprit was not active when indicated, so its status is currently only inferred. Click the Confirm button below to do one more step with the culprit active.",
-      "CulpritConfirmed": "You have confirmed that the found culprit is causing an issue."
-    },
-    "IPWOP": {
-      "SomePinnedTitle": "Issue in Core, System, or Pinned",
-      "NonePinnedTitle": "Issue in Core or System",
-      "BlameModules": ", or in one of your pinned modules:",
-      "BlameCoreOrSystem": "Seems like the issue is a bug in the game system or the core software"
+      "Header": "We found the culprit!",
+      "OfferConfirmStep": "The culprit was not active this step, so its status is currently only inferred. Click the Confirm button below to do one more step with the culprit active.",
+      "Title": "Sentencing"
     },
     "Instructions": {
-      "ModuleStates": "Module States",
       "Controls": "Module states can be cycled through by clicking the module title or the button next to it, unless that module's state has been forced. Right clicking the button will cycle backwards. By default all modules are Suspect, except for those marked library by their authors, because the Lock Libraries toggle defaults to on.",
-      "Tooltips": "Most interactive elements have tooltips explaining their function and/or current toggle state.",
-      "Usage": "When the search starts, the page will refresh and you will be prompted to indicate if your issue persists. Follow the prompts through the steps of the search, which will narrow down the list of suspects until a single Culprit is found, after which you can return to the current active module list.",
       "Disclaimer": "While this will be accurate for many types of issue, this process does not guarantee that the found culprit is the only module &ndash; or indeed <em>a module</em> &ndash; causing problems, as it cannot account for all module-module interactions. The module list splitting algorithm prevent a module from being enabled without its depdendencies, but not all module relationships are defined well enough to be accounted for this way.",
-      "Reassurance": "Any closed search step dialogs can be retrieved by reloading the page or clicking the Find the Culprit button in Module Management."
+      "ModuleStates": "Module States",
+      "Reassurance": "Any closed search step dialogs can be retrieved by reloading the page or clicking the Find the Culprit button in Module Management.",
+      "Tooltips": "Most interactive elements have tooltips explaining their function and/or current toggle state.",
+      "Usage": "When the search starts, the page will refresh and you will be prompted to indicate if your issue persists. Follow the prompts through the steps of the search, which will narrow down the list of suspects until a single Culprit is found, after which you can return to the current active module list."
     },
+    "IPWOP": {
+      "BlameCoreOrSystem": "Seems like the issue is a bug in the game system or the core software",
+      "BlameModules": ", or in one of your pinned modules:",
+      "NonePinnedTitle": "Issue in Core or System",
+      "SomePinnedTitle": "Issue in Core, System, or Pinned"
+    },
+    "MissingDependencies": {
+      "Header": "Invalid Module State",
+      "NotActiveDescription": "The modules below are not active, despite being required dependencies of the listed active modules.",
+      "NotActiveNotInstalledClickInstruction": "Clicking Log Out will enable these prior to logging out.",
+      "NotActiveOnlyClickInstruction": "Click Enable All below to enable these modules and reload.",
+      "NotInstalledDescription": "The modules below are not installed, despite being required dependencies of the listed active modules. Click Log Out below to go back to setup where you can install them.",
+      "Title": "Missing Dependencies",
+      "Unavailable": "Find the Culprit is unavailable due to missing dependencies of active modules."
+    },
+    "ModuleID": "Module ID",
+    "ModuleTitle": "Module Title",
+    "NotActive": "Not Active",
+    "NotInstalled": "Not Installed",
     "SelectMods": {
+      "FilterModules": "Filter Modules",
       "ForcedTooltip": {
-        "Preamble": "This state is forced because:",
-        "LockedLibrary": "Module is a library and the Lock Libraries toggle is enabled",
         "DependencyOf": "Module is a dependency of pinned module(s) {pinnedDependants}",
-        "ExcludedDependencies": "Module depends on excluded module(s) {excludedDependencies}"
-      },
-      "FilterModules": "Filter Modules"
+        "ExcludedDependencies": "Module depends on excluded module(s) {excludedDependencies}",
+        "LockedLibrary": "Module is a library and the Lock Libraries toggle is enabled",
+        "Preamble": "This state is forced because:"
+      }
     },
     "Setting": {
       "debugLevel": {
-        "Name": "Debug Level",
-        "Hint": "The degree to which debugging features are enabled for Find the Culprit",
         "Choices": {
-          "None": "None",
+          "Debugger": "Breakpoints Enabled",
           "Logging": "Logging & globalThis.ftc",
-          "Debugger": "Breakpoints Enabled"
-        }
+          "None": "None"
+        },
+        "Hint": "The degree to which debugging features are enabled for Find the Culprit",
+        "Name": "Debug Level"
       }
     },
     "Start": "Start",
     "StartOfRun": {
-      "SomePinnedTitle": "Only Pinned Modules Active",
-      "NonePinnedTitle": "No Modules Active",
-      "AllModulesDeactivated": "All modules except Find the Culprit are deactivated.",
       "AllButPinnedDeactivated": "All modules, except those pinned and Find the Culprit itself, are deactivated.",
+      "AllModulesDeactivated": "All modules except Find the Culprit are deactivated.",
+      "DoesIssuePersist": "Does your issue persist?",
       "MaxSteps": "Searching will take at most {maxSteps} steps.",
-      "DoesIssuePersist": "Does your issue persist?"
+      "NonePinnedTitle": "No Modules Active",
+      "SomePinnedTitle": "Only Pinned Modules Active"
     },
     "StateTooltip": {
       "active": "<strong>Active:</strong> Currently active for this search step",

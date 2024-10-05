@@ -2,7 +2,7 @@
   "id": "find-the-culprit",
   "name": "find-the-culprit",
   "title": "Find the Culprit",
-  "description": "This module helps you to find a module causing issues, by automating the process of deactivating and reactivating modules.<br>Just click the 'Find the culprit' button inside Module Management.",
+  "description": "Automates the process of finding modules causing issues, by deactivating and reactivating modules in a binary search. Click the \"Find the Culprit\" button inside Module Management to begin.",
   "authors": [
     {
       "name": "Moerill"
@@ -19,10 +19,10 @@
   "readme": "https://github.com/esheyw/find-the-culprit#find-the-culprit",
   "bugs": "https://github.com/esheyw/find-the-culprit/issues",
   "changelog": "https://github.com/esheyw/find-the-culprit/blob/main/CHANGELOG.md",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "compatibility": {
     "minimum": "12",
-    "verified": "12.330"
+    "verified": "12.331"
   },
   "esmodules": ["scripts/find-the-culprit.mjs"],
   "styles": ["styles/find-the-culprit.css"],

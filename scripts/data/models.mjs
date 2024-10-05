@@ -7,7 +7,6 @@ export class FindTheCulpritData extends foundry.abstract.DataModel {
   }
 
   get maxSteps() {
-    // const searchablesCount = Object.values(this.modules).filter((m) => m.pinned === false && m.originallyActive).length;
     return Math.ceil(Math.log2(this.originalSearchablesCount)) + 1;
   }
 

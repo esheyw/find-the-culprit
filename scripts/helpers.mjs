@@ -11,7 +11,7 @@ export function shuffleArray(array) {
   }
 }
 
-export function oxfordList(list, { and = "FindTheCulprit.and" } = {}) {
+export function oxfordList(list, { and = "and" } = {}) {
   if (list instanceof Set) list = Array.from(list);
   list = (Array.isArray(list) ? list : [list]).filter((e) => !!e).map((e) => String(e));
   and = game.i18n.localize(and);
