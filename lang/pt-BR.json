@@ -3,114 +3,141 @@
     "Action": {
       "acknowledge": {
         "Label": {
-          "Enabled": "Mostrar Sempre",
-          "Disabled": "Não Mostrar Novamente"
+          "Disabled": "Não Mostrar Novamente",
+          "Enabled": "Mostrar Sempre"
         }
+      },
+      "clearAll": {
+        "Label": "Limpar Tudo",
+        "Tooltip": "Define todos os módulos como Suspeitos"
       },
       "deterministic": {
         "Label": {
-          "Enabled": "Determinístico",
-          "Disabled": "Embaralhar"
+          "Disabled": "Embaralhar",
+          "Enabled": "Determinístico"
         },
         "Tooltip": {
-          "Enabled": "A etapa de embaralhamento da divisão do módulo ativo/inativo será ignorada",
-          "Disabled": "Módulos que não são restritos pelas dependências deles ou de outros serão embaralhados durante a divisão do módulo entre etapas"
+          "Disabled": "Módulos que não são restritos pelas dependências deles ou de outros serão embaralhados durante a divisão do módulo entre etapas",
+          "Enabled": "A etapa de embaralhamento da divisão do módulo ativo/inativo será ignorada"
         }
       },
       "instructions": {
         "Label": "Instruções",
         "Tooltip": "Clique para renderizar a caixa de diálogo Instruções"
       },
-      "mute": {
-        "Tooltip": {
-          "Enabled": "Sons Mutados",
-          "Disabled": "Sons Desmutados"
-        }
-      },
       "lockLibraries": {
         "Label": {
-          "Enabled": "Bibliotecas Bloqueadas",
-          "Disabled": "Bibliotecas Desbloqueadas"
+          "Disabled": "Bibliotecas Desbloqueadas",
+          "Enabled": "Bibliotecas Bloqueadas"
         },
         "Tooltip": {
-          "Enabled": "Todos os módulos marcados como bibliotecas são fixados à força",
-          "Disabled": "Os módulos da biblioteca estão sendo tratados normalmente"
+          "Disabled": "Os módulos da biblioteca estão sendo tratados normalmente",
+          "Enabled": "Todos os módulos marcados como bibliotecas são fixados à força"
+        }
+      },
+      "mute": {
+        "Tooltip": {
+          "Disabled": "Sons Desmutados",
+          "Enabled": "Sons Mutados"
         }
       },
       "reloadAll": {
         "Label": {
-          "Enabled": "Recarregar Tudo",
-          "Disabled": "Recarregar Apenas MJ"
+          "Disabled": "Recarregar Apenas MJ",
+          "Enabled": "Recarregar Tudo"
         },
         "Tooltip": {
-          "Enabled": "Todos os clientes conectados serão recarregados junto com o MJ",
-          "Disabled": "Somente o cliente do MJ irá recarregar"
+          "Disabled": "Somente o cliente do MJ irá recarregar",
+          "Enabled": "Todos os clientes conectados serão recarregados junto com o MJ"
         }
-      },
-      "zeroMods": {
-        "Label": "Zero Módulos",
-        "Tooltip": "Recarregue sem nenhum módulo ativo além do Find the Culprit. Não inicia uma pesquisa completa"
-      },
-      "clearAll": {
-        "Label": "Limpar Tudo",
-        "Tooltip": "Define todos os módulos como Suspeitos"
       },
       "startRun": {
         "Label": "Iniciar Busca",
         "Tooltip": "Inicie o processo de busca"
+      },
+      "zeroMods": {
+        "Label": "Zero Módulos",
+        "Tooltip": "Recarregue sem nenhum módulo ativo além do Find the Culprit. Não inicia uma pesquisa completa"
       }
     },
     "BinarySearchStep": {
-      "Title": "Etapa de Busca",
+      "ConfirmStep": "Confirmar Etapa: os únicos módulos ativos são o culpado identificado \"{culprit}\", suas dependências (se houver) e seus módulos fixados (se houver).",
       "ConfirmStepTitle": "Confirmar Etapa",
       "StatsData": "Etapa {currentStep}: {numRemaining} módulos ainda suspeitos. {remainingSteps} ou menos etapa(s) restantes.",
-      "ConfirmStep": "Confirmar Etapa: os únicos módulos ativos são o culpado identificado \"{culprit}\", suas dependências (se houver) e seus módulos fixados (se houver).",
-      "WrongCulprit": "Wrong Culprit - Restart Run"
+      "Title": "Etapa de Busca",
+      "WrongCulprit": "Culpado Errado - Reiniciar a Busca"
     },
     "ClearAll": "Limpar Tudo",
     "Continue": "Continuar",
+    "CopyModuleList": "Copiar Lista de Módulos",
+    "DependencyOf": "Dependência de",
     "ErrorDialog": {
       "EncounteredError": "Find the Culprit encontrou um erro:",
       "Direction": "Os dados do módulo podem ser encontrados no console como um erro para auxiliar no relatório de bugs. Clicar no botão abaixo ou fechar esta caixa de diálogo retornará seu mundo ao estado anterior à execução do Find the Culprit."
     },
     "FindTheCulprit": "Encontrar o Culpado!",
     "FoundTheCulprit": {
-      "Title": "Sentença",
-      "Header": "Encontramos o culpado!",
+      "CulpritConfirmed": "Você confirmou que o culpado encontrado está causando um problema.",
       "HasPinned": "Você tem {count} módulos fixados, qualquer um dos quais pode ser o seu verdadeiro culpado. Porém, se você confiar neles, o culpado listado é uma provável fonte do seu problema.",
+      "Header": "Encontramos o culpado!",
       "OfferConfirmStep": "O culpado indicado não estava ativo no veredicto. Clique no botão Confirmar abaixo para realizar mais uma etapa com o culpado ativo.",
-      "CulpritConfirmed": "Você confirmou que o culpado encontrado está causando um problema."
-    },
-    "IPWOP": {
-      "SomePinnedTitle": "Problema na Base, Sistema ou Fixado",
-      "NonePinnedTitle": "Problema na Base ou Sistema",
-      "BlameModules": ", ou em um de seus módulos fixados:",
-      "BlameCoreOrSystem": "Parece que o problema é um bug no sistema do jogo ou no software principal"
+      "Title": "Sentença"
     },
     "Instructions": {
       "Controls": "Os estados do módulo podem ser alternados clicando no título do módulo ou no botão próximo a ele, a menos que o estado desse módulo tenha sido forçado. Clicar com o botão direito no botão irá retroceder. Por padrão, todos os módulos são Suspeitos, exceto aqueles marcados como bibliotecas por seus autores, porque o padrão de alternância Bloquear Bibliotecas é ativado.",
-      "Tooltips": "A maioria dos elementos interativos tem dicas que explicam sua função e/ou estado de alternância atual.",
-      "Usage": "Quando a busca for iniciada, a página será atualizada e você será solicitado a indicar se o problema persiste. Siga as instruções durante as etapas da busca, que restringirão a lista de suspeitos até que um único culpado seja encontrado, após o qual você poderá retornar à lista de módulos ativos no momento.",
       "Disclaimer": "Embora isso seja preciso para muitos tipos de problemas, esse processo não garante que o culpado encontrado seja o único módulo &ndash; ou mesmo que <em>um módulo</em> &ndash; esteja causando problemas, pois não pode explicar todas as interações módulo-módulo. O algoritmo de divisão da lista de módulos evita que um módulo seja habilitado sem suas dependências, mas nem todos os relacionamentos de módulos são definidos bem o suficiente para serem contabilizados desta forma.",
-      "Reassurance": "Qualquer caixa de diálogo fechada da etapa de busca pode ser recuperada recarregando a página ou clicando no botão Encontrar o Culpado no Gerenciamento de Módulos."
+      "ModuleStates": "Estados do Módulo",
+      "Reassurance": "Qualquer caixa de diálogo fechada da etapa de busca pode ser recuperada recarregando a página ou clicando no botão Encontrar o Culpado no Gerenciamento de Módulos.",
+      "Tooltips": "A maioria dos elementos interativos tem dicas que explicam sua função e/ou estado de alternância atual.",
+      "Usage": "Quando a busca for iniciada, a página será atualizada e você será solicitado a indicar se o problema persiste. Siga as instruções durante as etapas da busca, que restringirão a lista de suspeitos até que um único culpado seja encontrado, após o qual você poderá retornar à lista de módulos ativos no momento."
     },
+    "IPWOP": {
+      "BlameCoreOrSystem": "Parece que o problema é um bug no sistema do jogo ou no software principal",
+      "BlameModules": ", ou em um de seus módulos fixados:",
+      "NonePinnedTitle": "Problema na Base ou Sistema",
+      "SomePinnedTitle": "Problema na Base, Sistema ou Fixado"
+    },
+    "MissingDependencies": {
+      "Header": "Estado Inválido do Módulo",
+      "NotActiveDescription": "Os módulos abaixo não estão ativos, apesar de serem dependências obrigatórias dos módulos ativos listados.",
+      "NotActiveNotInstalledClickInstruction": "Clicar em Sair irá habilitá-los antes de sair.",
+      "NotActiveOnlyClickInstruction": "Clique abaixo em Habilitar Tudo para habilitar esses módulos e recarregar.",
+      "NotInstalledDescription": "Os módulos abaixo não estão instalados, apesar de serem dependências obrigatórias dos módulos ativos listados. Clique abaixo em Sair para voltar à configuração onde você pode instalá-los.",
+      "Title": "Dependências Ausentes",
+      "Unavailable": "Find the Culprit não está disponível devido à falta de dependências de módulos ativos."
+    },
+    "ModuleID": "ID do Módulo",
+    "ModuleTitle": "Título do Módulo",
+    "NotActive": "Desabilitado",
+    "NotInstalled": "Não Instalado",
     "SelectMods": {
       "ForcedTooltip": {
-        "Preamble": "Este estado é forçado porque:",
-        "LockedLibrary": "O módulo é uma biblioteca e a alternância Bloquear Bibliotecas está habilitada",
         "DependencyOf": "O módulo é uma dependência do(s) módulo(s) fixado(s) {pinnedDependants}",
-        "ExcludedDependencies": "O módulo depende do(s) módulo(s) excluído(s) {excludedDependencies}"
+        "ExcludedDependencies": "O módulo depende do(s) módulo(s) excluído(s) {excludedDependencies}",
+        "LockedLibrary": "O módulo é uma biblioteca e a alternância Bloquear Bibliotecas está habilitada",
+        "Preamble": "Este estado é forçado porque:"
       },
       "FilterModules": "Filtrar Módulos"
     },
+    "Setting": {
+      "debugLevel": {
+        "Choices": {
+          "Debugger": "Pontos de Interrupção Ativados",
+          "Logging": "Registro e globalThis.ftc",
+          "None": "Nenhum"
+        },
+        "Hint": "O grau em que os recursos de depuração estão habilitados para Find the Culprit",
+        "Name": "Nível de Debug"
+      }
+    },
     "Start": "Começar",
     "StartOfRun": {
-      "SomePinnedTitle": "Apenas Módulos Fixados Ativos",
-      "NonePinnedTitle": "Nenhum Módulo Ativo",
       "AllModulesDeactivated": "Todos os módulos, exceto Find the Culprit, estão desativados.",
       "AllButPinnedDeactivated": "Todos os módulos, exceto aqueles fixados e o próprio Find the Culprit, estão desativados.",
+      "DoesIssuePersist": "Seu problema persiste?",
       "MaxSteps": "A pesquisa levará no máximo {maxSteps} passos.",
-      "DoesIssuePersist": "Seu problema persiste?"
+      "NonePinnedTitle": "Nenhum Módulo Ativo",
+      "SomePinnedTitle": "Apenas Módulos Fixados Ativos"
     },
     "StateTooltip": {
       "active": "<strong>Ativo:</strong> Atualmente ativo para esta etapa de teste",
