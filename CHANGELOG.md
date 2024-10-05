@@ -1,3 +1,7 @@
+## Version 3.1.1
+
+- Update pr-BR Translation for 3.1
+
 ## Version 3.1.0
 
 - New Missing Dependencies handling
