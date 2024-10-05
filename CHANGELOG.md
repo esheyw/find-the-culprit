@@ -11,7 +11,6 @@
   - Pending their next release with the css class on body to key off of
 - Actually enable pt-BR translation
 
-
 ## Version 3.0.1
 
 - Add pt-BR translation (thanks @Kharmans !)
