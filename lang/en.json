@@ -75,12 +75,13 @@
     "ModuleID": "Module ID",
     "ModuleTitle": "Module Title",
     "DependencyOf": "Dependency Of",
+    "CopyModuleList": "Copy Module List",
     "MissingDependencies":{
       "Title": "Missing Dependencies",
       "Header": "Invalid Module State",
       "Unavailable": "Find the Culprit is unavailable due to missing dependencies of active modules.",
-      "NotInstalledDescription":"One or more modules depend on each of the following modules which are not installed. Click Log Out below to go back to setup where you can install them.",
-      "NotActiveDescription":"One or more modules depend on each of the following inactive modules.",
+      "NotInstalledDescription":"The modules below are not installed, despite being required dependencies of the listed active modules. Click Log Out below to go back to setup where you can install them.",
+      "NotActiveDescription":"The modules below are not active, despite being required dependencies of the listed active modules.",
       "NotActiveOnlyClickInstruction":"Click Enable All below to enable these modules and reload.",
       "NotActiveNotInstalledClickInstruction":"Clicking Log Out will enable these prior to logging out."
       
