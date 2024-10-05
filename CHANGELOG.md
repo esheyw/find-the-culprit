@@ -1,3 +1,7 @@
+## Version 3.1.2
+
+- Fix release screw-up
+
 ## Version 3.1.1
 
 - Update pr-BR Translation for 3.1
