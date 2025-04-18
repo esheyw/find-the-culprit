@@ -2,8 +2,9 @@
   "name": "find-the-culprit",
   "version": "1.5.0",
   "description": "A foundry module to find misbehaving modules using binary search",
-  "main": "scripts/init.mjs",
+  "main": "scripts/find-the-culprit.mjs",
   "scripts": {
+    "createSymlinks": "node ./tools/create-symlinks.mjs",
     "sass": "sass styles/find-the-culprit.scss styles/find-the-culprit.css"
   },
   "repository": {
