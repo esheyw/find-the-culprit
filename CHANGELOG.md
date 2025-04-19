@@ -1,3 +1,7 @@
+## Version 3.2.0
+
+- V13 Compatibility, no feature or logic changes
+
 ## Version 3.1.2
 
 - Fix release screw-up
@@ -40,7 +44,7 @@
     - Dialog will appear the first time you open the main FtC app each page refresh
     - Has an option to disable the above behaviour
     - Can be rendered via the Instructions button in the main app
-  - Added button to restart with "Zero Modules" (other than FtC) enabled, for quick sanity checks  
+  - Added button to restart with "Zero Modules" (other than FtC) enabled, for quick sanity checks
 - Implemented new algorithm for splitting mods in half between steps
   - Attempts to keep dependency chains together when possible, should reduce false positives
   - By default will shuffle the members of the list once dependencies are accounted for

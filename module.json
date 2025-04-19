@@ -19,12 +19,12 @@
   "readme": "https://github.com/esheyw/find-the-culprit#find-the-culprit",
   "bugs": "https://github.com/esheyw/find-the-culprit/issues",
   "changelog": "https://github.com/esheyw/find-the-culprit/blob/main/CHANGELOG.md",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "compatibility": {
-    "minimum": "12",
-    "verified": "12.331"
+    "minimum": "13",
+    "verified": "13.340"
   },
-  "esmodules": ["scripts/find-the-culprit.mjs"],
+  "esmodules": ["src/find-the-culprit.mjs"],
   "styles": ["styles/find-the-culprit.css"],
   "languages": [
     {

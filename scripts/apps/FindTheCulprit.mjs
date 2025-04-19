@@ -1,8 +1,9 @@
-import { MODULE, MODULE_ID } from "../constants.mjs";
+import { MODULE, MODULE_ID, MMSetting } from "../constants.mjs";
 import { FindTheCulpritModuleData } from "../data/models.mjs";
 import { debug, oxfordList, shuffleArray } from "../helpers.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const standardWidth = 425;
+
 export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     classes: ["find-the-culprit-app"],
@@ -39,10 +40,8 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     },
   };
 
-  static #instance = null;
-
   static get instance() {
-    return this.#instance;
+    return ui.ftc;
   }
 
   #icons = {
@@ -102,9 +101,8 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor() {
     if (FindTheCulprit.instance) return FindTheCulprit.instance;
 
-    super();
+    super(); // there are no options we want to be user-changeable, so we're neither taking in nor passing on an `options` object
 
-    FindTheCulprit.#instance = MODULE().app = this;
     if (MODULE().debug && !("ftc" in globalThis)) globalThis.ftc = this;
 
     this.#data = game.settings.get(MODULE_ID, "data");
@@ -131,7 +129,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     // don't prepare modules if we're in an error state to preserve source
     // only prepare modules if we're not mid-run
     this.#error = game.settings.get(MODULE_ID, "error");
-    this.doStep();
+    Hooks.once("ready", this.doStep.bind(this));
   }
 
   async #update(changes = {}, { render = false } = {}) {
@@ -243,8 +241,8 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     btn.type = "button";
     btn.innerHTML = `<i class="fa-solid fa-search"></i> ${game.i18n.localize("FindTheCulprit.FindTheCulprit")}`;
     btn.addEventListener("click", async () => {
+      if (this.rendered) return void this.bringToFront();
       await this.render({ force: true });
-      this.bringToFront();
     });
     footer.append(btn);
     app.setPosition();
@@ -524,7 +522,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     if (remainingSearchables.length === 0) {
       return FindTheCulprit.#startRun.call(this);
     }
-    const coreModuleList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
+    const coreModuleList = game.settings.get("core", MMSetting);
     // Disable every module that isn't pinned. If zero is passed, disable those too.
     for (const modID in coreModuleList) {
       if (this.#excludedIDs.includes(modID)) continue;
@@ -644,7 +642,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       for (const id of modIDsToEnable) coreModuleList[id] = true;
     }
     await this.#update(update);
-    await game.settings.set("core", ModuleManagement.CONFIG_SETTING, coreModuleList);
+    await game.settings.set("core", MMSetting, coreModuleList);
     this.#reload();
   }
 
@@ -1027,11 +1025,11 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async reactivateOriginals() {
-    const coreModList = game.settings.get("core", ModuleManagement.CONFIG_SETTING);
+    const coreModList = game.settings.get("core", MMSetting);
     for (const modID in this.#data.modules) {
       if (this.#data.modules[modID].originallyActive) coreModList[modID] = true;
     }
-    await game.settings.set("core", ModuleManagement.CONFIG_SETTING, coreModList);
+    await game.settings.set("core", MMSetting, coreModList);
     await this.#resetSetting();
     this.#reload();
   }
@@ -1040,9 +1038,9 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!this.hasMissingDependencies) return;
     const newModList = Object.keys(this.#missingDependencies.notActive).reduce(
       (modList, id) => Object.assign(modList, { [id]: true }),
-      game.settings.get("core", ModuleManagement.CONFIG_SETTING)
+      game.settings.get("core", MMSetting)
     );
-    await game.settings.set("core", ModuleManagement.CONFIG_SETTING, newModList);
+    await game.settings.set("core", MMSetting, newModList);
   }
 
   #reload(reloadAll = this.#data.reloadAll) {
@@ -1052,7 +1050,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async #forceModule(id, on = false) {
-    const newModList = Object.assign(game.settings.get("core", ModuleManagement.CONFIG_SETTING), { [id]: on });
-    return await game.settings.set("core", ModuleManagement.CONFIG_SETTING, newModList);
+    const newModList = Object.assign(game.settings.get("core", MMSetting), { [id]: on });
+    return await game.settings.set("core", MMSetting, newModList);
   }
 }
