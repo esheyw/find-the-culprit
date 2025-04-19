@@ -571,7 +571,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
           remainingSearchables[0].filteredRequires.size + remainingSearchables[0].filteredDependencyOf.size === 0 &&
           !shuffled
         ) {
-          // all remaing should have no, and not be, dependencies, so we can randomize
+          // all remaining should have no, and not be, dependencies, so we can randomize
           shuffleArray(remainingSearchables);
           shuffled = true;
         }
@@ -777,7 +777,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
           label: "Yes",
           icon: "fa-solid fa-check",
           default: true,
-          callback: this.#issuePeristsWithOnlyPinned.bind(this),
+          callback: this.#issuePersistsWithOnlyPinned.bind(this),
         },
         {
           action: "no",
@@ -791,7 +791,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     new DialogV2(dialogOptions).render({ force: true });
   }
 
-  async #issuePeristsWithOnlyPinned() {
+  async #issuePersistsWithOnlyPinned() {
     const id = "find-the-culprit-ipwop";
     const existing = foundry.applications.instances.get(id);
     if (existing) {

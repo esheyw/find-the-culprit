@@ -19,7 +19,7 @@
   - Ideally no user will ever have to change this
 - Full DorakoUI Compatibility
   - As far as I can tell, anyway. If you feel like your theme isn't being catered to, reach out.
-- Partial PathfinderUI v3 Compatilibity
+- Partial PathfinderUI v3 Compatibility
   - Pending their next release with the css class on body to key off of
 - Actually enable pt-BR translation
 
@@ -129,7 +129,7 @@
 
 ## v1.3.1
 
-- Fixed packaging, removed unecessary files from the package.
+- Fixed packaging, removed unnecessary files from the package.
 - now using some manifest+ features (created an icon)
 
 ## v1.3.0
