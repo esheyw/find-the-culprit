@@ -1,6 +1,6 @@
 ## Version 3.2.0
 
-- V13 Compatibility, no feature or logic changes
+- V13 Compatibility (v13-only release), no feature or logic changes
 
 ## Version 3.1.2
 
