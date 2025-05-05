@@ -1,3 +1,7 @@
+## Version 3.2.1
+
+- Actually release v13 code
+
 ## Version 3.2.0
 
 - V13 Compatibility (v13-only release), no feature or logic changes
