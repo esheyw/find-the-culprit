@@ -107,7 +107,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
 
     this.#data = game.settings.get(MODULE_ID, "data");
 
-    this.#searchFilter = new SearchFilter({
+    this.#searchFilter = new foundry.applications.ux.SearchFilter({
       inputSelector: 'input[name="search"]',
       contentSelector: ".ftc-module-list",
       callback: (event, query, rgx, html) => {
