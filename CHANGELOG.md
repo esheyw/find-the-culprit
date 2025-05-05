@@ -1,3 +1,7 @@
+## Version 3.2.2
+
+- Update release workflow to release v13 code instead of nothing
+
 ## Version 3.2.1
 
 - Actually release v13 code
