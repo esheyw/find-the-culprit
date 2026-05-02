@@ -1,3 +1,7 @@
+## Version 3.3.0
+
+- Switch to `TypedObjectField`, which fixed the errors in Foundry 14.360.
+
 ## Version 3.2.2
 
 - Update release workflow to release v13 code instead of nothing
