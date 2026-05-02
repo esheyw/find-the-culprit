@@ -46,6 +46,10 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     return ui.ftc;
   }
 
+  static _canDetach() {
+    return false;
+  }
+
   #icons = {
     acknowledge: ["fa-eye-slash", "fa-eye"],
     clearAll: "fa-arrow-rotate-left",
