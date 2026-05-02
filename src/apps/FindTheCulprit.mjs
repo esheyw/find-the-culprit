@@ -4,6 +4,8 @@ import { debug, oxfordList, shuffleArray } from "../helpers.mjs";
 const { ApplicationV2, HandlebarsApplicationMixin, DialogV2 } = foundry.applications.api;
 const standardWidth = 425;
 
+const renderTemplate = foundry.applications.handlebars.renderTemplate;
+
 export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   static DEFAULT_OPTIONS = {
     classes: ["find-the-culprit-app"],
@@ -318,10 +320,10 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         .map((data) => {
           const { library, title } = game.modules.get(data.id);
           const pinnedDependants = data.dependencyOf.filter(
-            (id) => this.#data.modules[id].originallyActive && this.#data.modules[id].pinned
+            (id) => this.#data.modules[id].originallyActive && this.#data.modules[id].pinned,
           );
           const excludedDependencies = data.requires.filter(
-            (id) => this.#data.modules[id].originallyActive && this.#data.modules[id].pinned === null
+            (id) => this.#data.modules[id].originallyActive && this.#data.modules[id].pinned === null,
           );
           const isLockedLibrary = library && this.#data.lockLibraries;
           let state;
@@ -368,11 +370,11 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     };
     // account for 'excluded' dependencies being force pinned because library or pinned dependant
     const mightNeedUpdating = context.modules.filter(
-      (m) => m.forced && m.state === "excluded" && m.excludedDependencies.size > 0
+      (m) => m.forced && m.state === "excluded" && m.excludedDependencies.size > 0,
     );
     for (const mod of mightNeedUpdating) {
       const stillExcluded = mod.excludedDependencies.filter(
-        (id) => context.modules.find((m) => m.id === id).state === "excluded"
+        (id) => context.modules.find((m) => m.id === id).state === "excluded",
       );
       if (stillExcluded.size === 0) {
         // previous state couldn't be pinned, logistically
@@ -419,7 +421,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       {
         [`modules.${modID}.pinned`]: newState === "pinned" ? true : newState === "excluded" ? null : false,
       },
-      { render: true }
+      { render: true },
     );
   }
 
@@ -555,7 +557,8 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       // exonerated but active list, if not already pinned.
       remainingSearchables.sort(
         (a, b) =>
-          b.filteredRequires.size - a.filteredRequires.size || b.filteredDependencyOf.size - a.filteredDependencyOf.size
+          b.filteredRequires.size - a.filteredRequires.size ||
+          b.filteredDependencyOf.size - a.filteredDependencyOf.size,
       );
       let shuffled = false;
       const newActive = [];
@@ -594,14 +597,14 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
             this.#errorDialog(
               `#updateModListAndReload | Module "${game.modules.get(pick.id).title}" requires module "${
                 game.modules.get(possiblyErroneouslyExonerated).title
-              }" which FtC's algorithm has erroneously discarded before its dependant this step.`
+              }" which FtC's algorithm has erroneously discarded before its dependant this step.`,
             );
           } else if (this.#data.modules[id].pinned === null) {
             // run was started with a dependency excluded; this should never happen
             this.#errorDialog(
               `#updateModListAndReload | Module "${game.modules.get(pick.id).title}" requires module "${
                 game.modules.get(id).title
-              }" which has been Excluded this run somehow.`
+              }" which has been Excluded this run somehow.`,
             );
           } else {
             unpickedDependencyIDs.push(id);
@@ -620,7 +623,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
               this.#errorDialog(
                 `#updateModListAndReload | Module "${
                   game.modules.get(pick.id).title
-                }" requires module ID "${depID}" which is not in the current Searchable or Exonerated modules.`
+                }" requires module ID "${depID}" which is not in the current Searchable or Exonerated modules.`,
               );
               return;
             }
@@ -702,7 +705,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
             dependencyOf: dependencyOf.map((m) => game.modules.get(m).title),
           })),
         }),
-      {}
+      {},
     );
     const dialogOptions = this.#defaultDialogOptions({
       id,
@@ -860,12 +863,12 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
           pinned: [],
           exonerated: [],
           excluded: [],
-        }
+        },
       ),
     };
     for (const group in templateContext.groups) {
       templateContext.groups[group].sort((a, b) =>
-        game.modules.get(a.id).title.localeCompare(game.modules.get(b.id).title)
+        game.modules.get(a.id).title.localeCompare(game.modules.get(b.id).title),
       );
     }
     const titleKey = `FindTheCulprit.BinarySearchStep.${isConfirmStep ? "ConfirmStep" : ""}Title`;
@@ -1000,7 +1003,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
           width: standardWidth,
         },
       },
-      rest
+      rest,
     );
   }
 
@@ -1015,7 +1018,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
               priorPinned: undefined,
             },
           }),
-        {}
+        {},
       ),
       zero: false,
       currentStep: null,
@@ -1038,7 +1041,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!this.hasMissingDependencies) return;
     const newModList = Object.keys(this.#missingDependencies.notActive).reduce(
       (modList, id) => Object.assign(modList, { [id]: true }),
-      game.settings.get("core", MMSetting)
+      game.settings.get("core", MMSetting),
     );
     await game.settings.set("core", MMSetting, newModList);
   }
