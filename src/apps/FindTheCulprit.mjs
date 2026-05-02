@@ -73,6 +73,11 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   #instructionsSession;
   #excludedIDs = [MODULE_ID, "forge-vtt"];
   #modPrep;
+
+  /**
+   * @internal
+   * @type {{ notInstalled: Record<string, Set<string>>; notActive: Record<string, Set<string>>; }}
+   */
   #missingDependencies = {
     notInstalled: {},
     notActive: {},
@@ -160,6 +165,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
         requires: [],
       });
     }
+
     // process dependencies and originallyActive status
     // has to be its own loop to guarantee all modules have models associated already
     for (const modID in modules) {
@@ -688,13 +694,12 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async #missingDependenciesDialog() {
     const id = "find-the-culprit-dependency-failures";
+    if (!this.hasMissingDependencies) return;
     const existing = foundry.applications.instances.get(id);
     if (existing) {
       await existing.render({ force: true });
       return existing.bringToFront();
     }
-
-    if (!this.hasMissingDependencies) return;
 
     const template = `modules/${MODULE_ID}/templates/missingDependencies.hbs`;
     const templateContext = Object.entries(this.#missingDependencies).reduce(
@@ -750,7 +755,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     new DialogV2(dialogOptions).render({ force: true });
   }
 
-  static async #copyModuleList(event, target) {
+  static async #copyModuleList(_event, target) {
     const tbody = target.closest("table").querySelector("tbody");
     const modList = Array.from(tbody.querySelectorAll("tr td:first-child")).map((n) => n.innerText);
     await navigator.clipboard.writeText(modList.join("\n"));

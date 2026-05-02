@@ -18,12 +18,12 @@ export class FindTheCulpritData extends foundry.abstract.DataModel {
   get remainingSteps() {
     const count = this.searchablesCount;
     //return 0 for single searchable for the confirm step
-    return count > 1 ?Math.ceil(Math.log2(this.searchablesCount)) : 0;
+    return count > 1 ? Math.ceil(Math.log2(this.searchablesCount)) : 0;
   }
 
   static defineSchema() {
     return {
-      modules: new MappingField(new fields.EmbeddedDataField(FindTheCulpritModuleData)),
+      modules: new fields.TypedObjectField(new fields.EmbeddedDataField(FindTheCulpritModuleData)),
       currentStep: new fields.NumberField({ nullable: true, required: false, integer: true }),
       mute: new fields.BooleanField(),
       lockLibraries: new fields.BooleanField({
@@ -63,13 +63,13 @@ export class FindTheCulpritModuleData extends foundry.abstract.DataModel {
         new fields.StringField({
           required: true,
           blank: false,
-        })
+        }),
       ),
       dependencyOf: new fields.SetField(
         new fields.StringField({
           required: true,
           blank: false,
-        })
+        }),
       ),
     };
   }

@@ -1,5 +1,8 @@
 import { MODULE, MODULE_ID } from "./constants.mjs";
 import { FindTheCulpritData } from "./data/models.mjs";
+
+const fields = foundry.data.fields;
+
 export const SETTINGS = {
   data: {
     type: FindTheCulpritData,
@@ -13,7 +16,7 @@ export const SETTINGS = {
     },
   },
   error: {
-    type: new foundry.data.fields.StringField({
+    type: new fields.StringField({
       nullable: true,
       required: true,
       blank: false,
@@ -23,7 +26,7 @@ export const SETTINGS = {
     scope: "world",
   },
   debugLevel: {
-    type: new foundry.data.fields.NumberField({
+    type: new fields.NumberField({
       required: true,
       nullable: false,
       choices: {
