@@ -46,6 +46,12 @@ export class FindTheCulpritModuleData extends foundry.abstract.DataModel {
         nullable: false,
         blank: false,
       }),
+      // persisted so the run snapshot can render without depending on the live
+      // game.modules collection, which on The Forge drops deactivated modules
+      title: new fields.StringField({
+        required: false,
+        blank: true,
+      }),
       pinned: new fields.BooleanField({
         nullable: true,
       }),

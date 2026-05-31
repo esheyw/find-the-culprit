@@ -96,6 +96,20 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     return Object.values(this.#data.modules).filter((m) => m.originallyActive);
   }
 
+  /**
+   * Resolve a display title for a module without assuming it is still present in
+   * the live `game.modules` collection. Prefers the title captured in the run
+   * snapshot, falls back to the live module, then to the bare id.
+   *
+   * @param {string|{id: string}} idOrMod  A module id or a snapshot module object.
+   * @returns {string}
+   */
+  #titleOf(idOrMod) {
+    const id = typeof idOrMod === "string" ? idOrMod : idOrMod?.id;
+    const snapshot = typeof idOrMod === "string" ? this.#data.modules[id] : idOrMod;
+    return snapshot?.title || game.modules.get(id)?.title || id;
+  }
+
   get instructions() {
     return this.#data.instructionsAcknowledged || this.#instructionsSession;
   }
@@ -165,6 +179,9 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       modules[id] ??= new FindTheCulpritModuleData({ id });
       modules[id].updateSource({
         originallyActive: true,
+        // capture the title while the module is guaranteed live; the search may
+        // deactivate it and it can then vanish from game.modules (e.g. on The Forge)
+        title: game.modules.get(id).title,
         dependencyOf: [],
         requires: [],
       });
@@ -328,7 +345,9 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       icons: this.#icons,
       modules: this.#modules
         .map((data) => {
-          const { library, title } = game.modules.get(data.id);
+          const liveMod = game.modules.get(data.id);
+          const library = liveMod?.library;
+          const title = this.#titleOf(data);
           const pinnedDependants = data.dependencyOf.filter(
             (id) => this.#data.modules[id].originallyActive && this.#data.modules[id].pinned,
           );
@@ -366,12 +385,12 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
             excludedDependencies,
             excludedDependenciesFormatted:
               excludedDependencies.size > 0
-                ? oxfordList([...excludedDependencies.map((id) => game.modules.get(id).title)], { and: "&" })
+                ? oxfordList([...excludedDependencies.map((id) => this.#titleOf(id))], { and: "&" })
                 : null,
             pinnedDependants,
             pinnedDependantsFormatted:
               pinnedDependants.size > 0
-                ? oxfordList([...pinnedDependants.map((id) => game.modules.get(id).title)], { and: "&" })
+                ? oxfordList([...pinnedDependants.map((id) => this.#titleOf(id))], { and: "&" })
                 : null,
             isLockedLibrary,
           };
@@ -605,16 +624,16 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
           } else if ((possiblyErroneouslyExonerated = newInactive.find((m) => m.id === id))) {
             // dependency discarded before dependant; this should never happen
             this.#errorDialog(
-              `#updateModListAndReload | Module "${game.modules.get(pick.id).title}" requires module "${
-                game.modules.get(possiblyErroneouslyExonerated).title
-              }" which FtC's algorithm has erroneously discarded before its dependant this step.`,
+              `#updateModListAndReload | Module "${this.#titleOf(pick)}" requires module "${this.#titleOf(
+                possiblyErroneouslyExonerated,
+              )}" which FtC's algorithm has erroneously discarded before its dependant this step.`,
             );
           } else if (this.#data.modules[id].pinned === null) {
             // run was started with a dependency excluded; this should never happen
             this.#errorDialog(
-              `#updateModListAndReload | Module "${game.modules.get(pick.id).title}" requires module "${
-                game.modules.get(id).title
-              }" which has been Excluded this run somehow.`,
+              `#updateModListAndReload | Module "${this.#titleOf(pick)}" requires module "${this.#titleOf(
+                id,
+              )}" which has been Excluded this run somehow.`,
             );
           } else {
             unpickedDependencyIDs.push(id);
@@ -631,9 +650,9 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
               newActive.push(depData);
             } else {
               this.#errorDialog(
-                `#updateModListAndReload | Module "${
-                  game.modules.get(pick.id).title
-                }" requires module ID "${depID}" which is not in the current Searchable or Exonerated modules.`,
+                `#updateModListAndReload | Module "${this.#titleOf(
+                  pick,
+                )}" requires module ID "${depID}" which is not in the current Searchable or Exonerated modules.`,
               );
               return;
             }
@@ -710,8 +729,8 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       (tc, [group, groupMods]) =>
         Object.assign(tc, {
           [group]: Object.entries(groupMods).map(([id, dependencyOf]) => ({
-            title: game.modules.get(id)?.title ?? id, // can't get titles for notInstalled
-            dependencyOf: dependencyOf.map((m) => game.modules.get(m).title),
+            title: this.#titleOf(id), // notInstalled deps fall back to the bare id
+            dependencyOf: dependencyOf.map((m) => this.#titleOf(m)),
           })),
         }),
       {},
@@ -813,7 +832,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     const template = `modules/${MODULE_ID}/templates/issuePersistsWithOnlyPinned.hbs`;
     const templateContext = {
       icon: this.#icons.module.pinned,
-      pinned: this.#modules.filter((m) => m.pinned).map((m) => game.modules.get(m.id).title),
+      pinned: this.#modules.filter((m) => m.pinned).map((m) => this.#titleOf(m)),
     };
     const titleKey = `FindTheCulprit.IPWOP.${templateContext.pinned.length > 0 ? "Some" : "None"}PinnedTitle`;
     const dialogOptions = this.#defaultDialogOptions({
@@ -850,13 +869,13 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       icons: this.#icons,
       groups: this.#modules.reduce(
         (groups, mod) => {
-          mod.title = game.modules.get(mod.id).title;
+          mod.title = this.#titleOf(mod);
           if (mod.pinned === null) {
             groups.excluded.push(mod);
           } else if (mod.pinned === true) {
             groups.pinned.push(mod);
           } else if (mod.active === null) {
-            if (game.modules.get(mod.id).active) groups.exoneratedButActive.push(mod);
+            if (game.modules.get(mod.id)?.active) groups.exoneratedButActive.push(mod);
             else groups.exonerated.push(mod);
           } else if (mod.active === true) {
             groups.active.push(mod);
@@ -876,9 +895,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
       ),
     };
     for (const group in templateContext.groups) {
-      templateContext.groups[group].sort((a, b) =>
-        game.modules.get(a.id).title.localeCompare(game.modules.get(b.id).title),
-      );
+      templateContext.groups[group].sort((a, b) => this.#titleOf(a).localeCompare(this.#titleOf(b)));
     }
     const titleKey = `FindTheCulprit.BinarySearchStep.${isConfirmStep ? "ConfirmStep" : ""}Title`;
     const dialogOptions = this.#defaultDialogOptions({
@@ -923,10 +940,10 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
     const templateContext = {
       culprit: {
         active: culprit.active,
-        title: game.modules.get(culprit.id).title,
+        title: this.#titleOf(culprit),
       },
       confirmStep,
-      pinned: this.#modules.filter((m) => m.pinned).map((m) => game.modules.get(m.id).title),
+      pinned: this.#modules.filter((m) => m.pinned).map((m) => this.#titleOf(m)),
       icons: this.#icons,
     };
     const dialogOptions = this.#defaultDialogOptions({
