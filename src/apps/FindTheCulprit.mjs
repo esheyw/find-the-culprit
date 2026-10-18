@@ -660,6 +660,7 @@ export class FindTheCulprit extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   async doStep() {
+    if (!game.user.can("SETTINGS_MODIFY")) return;
     debug("doing step");
     if (this.#error) return this.#errorDialog();
     if (this.hasMissingDependencies) return this.#missingDependenciesDialog();
